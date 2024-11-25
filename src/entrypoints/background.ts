@@ -30,3 +30,16 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === "GET_CURRENT_URL") {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs.length > 0) {
+        sendResponse({ url: tabs[0].url });
+      } else {
+        sendResponse({ url: null });
+      }
+    });
+    return true; // Keeps the message channel open for async response
+  }
+});

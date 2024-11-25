@@ -17,6 +17,6 @@
 
 <form on:submit={async () => await signIn()} on:submit|preventDefault>
   <input type="text" bind:value={email} placeholder="Email" />
-  <input type="text" bind:value={password} placeholder="Password" />
+  <input type="password" bind:value={password} placeholder="Password" />
   <input type="submit" />
 </form>
