@@ -8,7 +8,13 @@
 
   let currentUrl: string | undefined;
   let currentComment: string = "";
-  let comments: { text: string; timestamp: string }[] = [];
+  let comments: CommentData[] = [];
+
+  type CommentData = {
+    text: string;
+    sender: string;
+    timestamp: string;
+  };
 
   // Fetch the current tab's URL on component mount
   onMount(() => {
@@ -30,22 +36,37 @@
 
 <FirebaseApp {auth} {firestore}>
   <main>
-    <SignedIn let:signOut>
+    <SignedIn let:user let:signOut>
+      <p>User: {user.email}</p>
       <button on:click={signOut}>Sign out</button>
 
       {#if currentUrl}
         <p>Current URL: {currentUrl}</p>
+        <p>Base URL: {getBaseUrl(currentUrl)}</p>
         <ul>
-          {#each comments as { text, timestamp }}
+          {#each comments as { text, sender, timestamp }}
             <li>
               <p>{text}</p>
+
+              <small>{sender}</small>
               <small>{new Date(timestamp).toLocaleString()}</small>
             </li>
           {/each}
         </ul>
       {/if}
 
-      <form on:submit={addComment} on:submit|preventDefault>
+      <form
+        on:submit={async () => {
+          if (currentUrl && getBaseUrl(currentUrl)) {
+            const baseUrl = getBaseUrl(currentUrl);
+            if (baseUrl && user.email) {
+              await addComment(baseUrl, user.email, currentComment);
+            }
+            currentComment = "";
+          }
+        }}
+        on:submit|preventDefault
+      >
         <input
           type="text"
           bind:value={currentComment}
