@@ -1,10 +1,17 @@
 <script lang="ts">
-  import EmailAuth from "./../../lib/EmailAuth.svelte";
-  import { auth, signInWithEmailLink } from "../background";
+  import Password from "@/lib/SignIn.svelte";
+  import { FirebaseApp, SignedIn, SignedOut } from "sveltefire";
+  import { auth, db as firestore } from "@/entrypoints/background";
 </script>
 
-<main>
-  <h2>Backstage</h2>
+<FirebaseApp {auth} {firestore}>
+  <main>
+    <SignedIn let:user>
+      <p>Welcome {user.email}</p>
+    </SignedIn>
 
-  <EmailAuth />
-</main>
+    <SignedOut>
+      <Password />
+    </SignedOut>
+  </main>
+</FirebaseApp>
