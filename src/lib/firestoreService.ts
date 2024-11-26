@@ -4,38 +4,83 @@ import {
   doc,
   addDoc,
   onSnapshot,
-  DocumentReference,
-  DocumentData,
+  Timestamp,
 } from "firebase/firestore";
+import moment from "moment";
+
+export type NewComment = {
+  text: string;
+  sender: string;
+  currentPath: URLPath;
+};
 
 export type CommentData = {
   text: string;
   sender: string;
-  timestamp: string;
+  timestamp: Timestamp;
 };
 
-export function addComment(
-  baseUrl: string,
-  sender: string,
-  text: string
-): Promise<DocumentReference<DocumentData>> {
-  const stageDocRef = doc(db, "stages", baseUrl);
-  const commentsCollectionRef = collection(stageDocRef, "comments");
+export type URLPath = {
+  baseUrl: string;
+  pagePath: string;
+};
 
-  return addDoc(commentsCollectionRef, {
+export async function addComment(
+  text: string,
+  sender: string,
+  currentPath: URLPath
+): Promise<void> {
+  const { baseUrl, pagePath } = currentPath;
+  // Split the pagePath into segments for recursive navigation
+  const pathSegments = pagePath.split("/").filter((segment) => segment); // Removes empty segments
+
+  // Initialize a reference starting at the base URL document
+  let currentRef = doc(db, "stages", baseUrl);
+
+  // Navigate through each segment, creating or referencing nested `pages` subcollections
+  for (const segment of pathSegments) {
+    const pagesCollectionRef = collection(currentRef, "pages");
+    currentRef = doc(pagesCollectionRef, segment);
+  }
+
+  // Reference the `comments` subcollection under the final document
+  const commentsCollectionRef = collection(currentRef, "comments");
+
+  // Add a new comment document to the `comments` subcollection
+  await addDoc(commentsCollectionRef, {
     text,
     sender,
-    timestamp: new Date().toISOString(),
+    timestamp: new Date(),
   });
+
+  console.log("====================================");
+  console.log(`Comment added for page: ${pagePath}`);
+  console.log("Timestamp:", moment(new Date()));
+  console.log("====================================");
 }
 
 export function listenToComments(
-  baseUrl: string,
+  currentPath: URLPath,
   callback: (comments: CommentData[]) => void
 ) {
-  const stageDocRef = doc(db, "stages", baseUrl);
-  const commentsCollectionRef = collection(stageDocRef, "comments");
+  const { baseUrl, pagePath } = currentPath;
 
+  // Split the pagePath into segments for recursive navigation
+  const pathSegments = pagePath.split("/").filter((segment) => segment);
+
+  // Initialize a reference starting at the base URL document
+  let currentRef = doc(db, "stages", baseUrl);
+
+  // Navigate through each segment to find the target document
+  for (const segment of pathSegments) {
+    const pagesCollectionRef = collection(currentRef, "pages");
+    currentRef = doc(pagesCollectionRef, segment);
+  }
+
+  // Reference the `comments` subcollection
+  const commentsCollectionRef = collection(currentRef, "comments");
+
+  // Listen for real-time updates in the `comments` subcollection
   return onSnapshot(commentsCollectionRef, (snapshot) => {
     const comments = snapshot.docs.map((doc) => doc.data() as CommentData);
     callback(comments);

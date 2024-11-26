@@ -1,30 +1,49 @@
 <script lang="ts">
-  import SignIn from "@/lib/SignIn.svelte";
-  import { FirebaseApp, SignedIn, SignedOut } from "sveltefire";
-  import { auth, db as firestore } from "@/entrypoints/background";
   import { onMount } from "svelte";
-  import { addComment, listenToComments } from "@/lib/firestoreService";
-  import { getBaseUrl } from "@/lib/utils";
+  import moment from "moment";
+  import { Timestamp } from "firebase/firestore";
+  import { FirebaseApp, SignedIn, SignedOut } from "sveltefire";
 
-  let currentUrl: string | undefined;
-  let currentComment: string = "";
-  let comments: CommentData[] = [];
+  import { auth, db as firestore } from "@/entrypoints/background";
+  import { addComment, listenToComments } from "@/lib/firestoreService";
+  import { getBaseUrlAndPath } from "@/lib/utils";
+
+  import SignIn from "@/lib/SignIn.svelte";
 
   type CommentData = {
     text: string;
     sender: string;
-    timestamp: string;
+    timestamp: Timestamp;
   };
+
+  type URLPath = {
+    baseUrl: string;
+    pagePath: string;
+  };
+
+  let currentUrl: string | undefined;
+  let currentText: string = "";
+
+  let comments: { text: string; sender: string; timestamp: Timestamp }[] = [];
+  let currentPath: URLPath | undefined;
 
   // Fetch the current tab's URL on component mount
   onMount(() => {
     chrome.runtime.sendMessage({ type: "GET_CURRENT_URL" }, (response) => {
       if (response?.url) {
         currentUrl = response.url;
-        const baseUrl = currentUrl ? getBaseUrl(currentUrl) : undefined;
-        if (baseUrl) {
-          listenToComments(baseUrl, (newComments) => {
-            comments = newComments;
+
+        const parsedUrl = getBaseUrlAndPath(currentUrl!);
+        if (parsedUrl) {
+          currentPath = parsedUrl;
+
+          // Listen to comments for the specific page
+          listenToComments(currentPath, (newComments) => {
+            comments = newComments.map((comment) => ({
+              ...comment,
+              sender: comment.sender || "Unknown sender",
+              timestamp: comment.timestamp,
+            }));
           });
         }
       } else {
@@ -32,6 +51,18 @@
       }
     });
   });
+
+  async function handleSubmitComment(userEmail: string) {
+    if (currentPath && userEmail) {
+      console.table({
+        currentPath,
+        currentComment: currentText,
+        userEmail,
+      });
+      await addComment(currentText, userEmail, currentPath);
+      currentText = ""; // Clear the input field
+    }
+  }
 </script>
 
 <FirebaseApp {auth} {firestore}>
@@ -41,36 +72,31 @@
       <button on:click={signOut}>Sign out</button>
 
       {#if currentUrl}
-        <p>Current URL: {currentUrl}</p>
-        <p>Base URL: {getBaseUrl(currentUrl)}</p>
+        <p>Current URL: {currentPath?.baseUrl}</p>
+        <p>Page Path: {currentPath?.pagePath}</p>
+
         <ul>
           {#each comments as { text, sender, timestamp }}
             <li>
               <p>{text}</p>
-
-              <small>{sender}</small>
-              <small>{new Date(timestamp).toLocaleString()}</small>
+              <small>By: {sender}</small>
+              {#if timestamp}
+                <small>At: {moment(timestamp.toDate()).fromNow()}</small>
+              {/if}
             </li>
           {/each}
         </ul>
       {/if}
 
       <form
-        on:submit={async () => {
-          if (currentUrl && getBaseUrl(currentUrl)) {
-            const baseUrl = getBaseUrl(currentUrl);
-            if (baseUrl && user.email) {
-              await addComment(baseUrl, user.email, currentComment);
-            }
-            currentComment = "";
-          }
-        }}
-        on:submit|preventDefault
+        on:submit|preventDefault={() =>
+          user.email && handleSubmitComment(user.email)}
       >
         <input
           type="text"
-          bind:value={currentComment}
+          bind:value={currentText}
           placeholder="Add a comment"
+          required
         />
         <button type="submit">Submit</button>
       </form>

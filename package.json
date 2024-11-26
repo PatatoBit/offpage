@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "firebase": "^11.0.2",
+    "moment": "^2.30.1",
     "sass": "^1.81.0",
     "sveltefire": "^0.4.5"
   }
