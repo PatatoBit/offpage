@@ -5,6 +5,7 @@
   export let sender: string;
   export let text: string;
   export let timestamp: Timestamp;
+  export let upvotes: number;
 </script>
 
 <div>
@@ -19,6 +20,8 @@
   </div>
 
   <p>{text}</p>
+
+  <small>{upvotes}</small>
 </div>
 
 <style lang="scss">

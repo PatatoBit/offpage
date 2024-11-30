@@ -26,7 +26,12 @@
   let currentUrl: string | undefined;
   let currentText: string = "";
 
-  let comments: { text: string; sender: string; timestamp: Timestamp }[] = [];
+  let comments: {
+    text: string;
+    sender: string;
+    timestamp: Timestamp;
+    upvotes: number;
+  }[] = [];
   let currentPath: URLPath | undefined;
 
   // Fetch the current tab's URL on component mount
@@ -56,11 +61,6 @@
 
   async function handleSubmitComment(userEmail: string) {
     if (currentPath && userEmail) {
-      console.table({
-        currentPath,
-        currentComment: currentText,
-        userEmail,
-      });
       await addComment(currentText, userEmail, currentPath);
       currentText = ""; // Clear the input field
     }
@@ -77,8 +77,8 @@
       {#if currentUrl}
         {#if comments.length > 0}
           <div class="comments">
-            {#each comments as { text, sender, timestamp }}
-              <Comment {sender} {text} {timestamp} />
+            {#each comments as { text, sender, timestamp, upvotes }}
+              <Comment {sender} {text} {timestamp} {upvotes} />
             {/each}
           </div>
         {:else}

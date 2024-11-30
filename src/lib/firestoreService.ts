@@ -18,6 +18,7 @@ export type CommentData = {
   text: string;
   sender: string;
   timestamp: Timestamp;
+  upvotes: number;
 };
 
 export type URLPath = {
@@ -51,6 +52,7 @@ export async function addComment(
     text,
     sender,
     timestamp: new Date(),
+    upvotes: 0,
   });
 
   console.log("====================================");
