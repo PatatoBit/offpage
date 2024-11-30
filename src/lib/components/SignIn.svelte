@@ -1,6 +1,6 @@
 <script lang="ts">
   import { preventDefault } from "svelte/legacy";
-  import { auth } from "../entrypoints/background";
+  import { auth } from "../../entrypoints/background";
   import { signInWithEmailAndPassword } from "firebase/auth";
   let email: string = "";
   let password: string = "";

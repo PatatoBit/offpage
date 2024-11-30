@@ -8,7 +8,9 @@
   import { addComment, listenToComments } from "@/lib/firestoreService";
   import { getBaseUrlAndPath } from "@/lib/utils";
 
-  import SignIn from "@/lib/SignIn.svelte";
+  import Header from "@/lib/components/Header.svelte";
+  import SignIn from "@/lib/components/SignIn.svelte";
+  import Comment from "@/lib/components/Comment.svelte";
 
   type CommentData = {
     text: string;
@@ -66,39 +68,32 @@
 </script>
 
 <FirebaseApp {auth} {firestore}>
-  <main>
-    <SignedIn let:user let:signOut>
-      <p>User: {user.email}</p>
-      <button on:click={signOut}>Sign out</button>
+  {#if currentPath}
+    <Header baseUrl={currentPath?.baseUrl} pagePath={currentPath?.pagePath} />
+  {/if}
 
+  <main class="page">
+    <SignedIn let:user>
       {#if currentUrl}
-        <p>Current URL: {currentPath?.baseUrl}</p>
-        <p>Page Path: {currentPath?.pagePath}</p>
-
-        <ul>
+        <div class="comments">
           {#each comments as { text, sender, timestamp }}
-            <li>
-              <p>{text}</p>
-              <small>By: {sender}</small>
-              {#if timestamp}
-                <small>At: {moment(timestamp.toDate()).fromNow()}</small>
-              {/if}
-            </li>
+            <Comment {sender} {text} {timestamp} />
           {/each}
-        </ul>
+        </div>
       {/if}
 
       <form
+        class="comment-form"
         on:submit|preventDefault={() =>
           user.email && handleSubmitComment(user.email)}
       >
         <input
           type="text"
           bind:value={currentText}
-          placeholder="Add a comment"
+          placeholder="share your thoughts..."
           required
         />
-        <button type="submit">Submit</button>
+        <button type="submit">post</button>
       </form>
     </SignedIn>
 
@@ -107,3 +102,42 @@
     </SignedOut>
   </main>
 </FirebaseApp>
+
+<style lang="scss">
+  .page {
+    gap: 1rem;
+  }
+
+  .comments {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    gap: 0.5rem;
+    overflow: scroll;
+    overflow-x: hidden;
+
+    height: 15rem;
+  }
+
+  .comment-form {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+
+    input {
+      flex: 1;
+      padding: 0.5rem;
+      border-radius: 6px;
+      border: 1px solid var(--primary);
+    }
+
+    button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  }
+</style>
