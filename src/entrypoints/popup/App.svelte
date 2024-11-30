@@ -75,11 +75,19 @@
   <main class="page">
     <SignedIn let:user>
       {#if currentUrl}
-        <div class="comments">
-          {#each comments as { text, sender, timestamp }}
-            <Comment {sender} {text} {timestamp} />
-          {/each}
-        </div>
+        {#if comments.length > 0}
+          <div class="comments">
+            {#each comments as { text, sender, timestamp }}
+              <Comment {sender} {text} {timestamp} />
+            {/each}
+          </div>
+        {:else}
+          <h3>nothing here yet</h3>
+          <p>
+            be the first to share your thoughts and this corner of the internet!
+          </p>
+          <!-- else content here -->
+        {/if}
       {/if}
 
       <form
