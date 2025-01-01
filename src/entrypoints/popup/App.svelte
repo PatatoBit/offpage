@@ -12,6 +12,14 @@
   import SignIn from "@/lib/components/SignIn.svelte";
   import Comment from "@/lib/components/Comment.svelte";
 
+  import { createClient } from "@supabase/supabase-js";
+
+  // Create a single supabase client for interacting with your database
+  const supabase = createClient(
+    "https://blbixtcshtlrvmgkgpco.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJsYml4dGNzaHRscnZtZ2tncGNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU3MTg1MDAsImV4cCI6MjA1MTI5NDUwMH0.R--eWEssN7Loz3WIEk8zthDLEcZGHTlnysQ2HX0ZadI"
+  );
+
   type CommentData = {
     text: string;
     sender: string;
@@ -65,9 +73,51 @@
       currentText = ""; // Clear the input field
     }
   }
+
+  export async function loginWithGoogle() {
+    console.log(chrome.identity.getRedirectURL());
+
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: chrome.identity.getRedirectURL(),
+      },
+    });
+    if (error) throw error;
+
+    await chrome.tabs.create({ url: data.url });
+  }
+
+  let isSignedIn: boolean = false;
+
+  onMount(async () => {
+    const { session } = await chrome.storage.local.get("session");
+    if (session) {
+      const { error: supaAuthError } = await supabase.auth.setSession(session);
+      if (supaAuthError) {
+        throw supaAuthError;
+      }
+
+      isSignedIn = true;
+    }
+  });
+
+  async function signOut() {
+    await supabase.auth.signOut();
+    isSignedIn = false;
+  }
 </script>
 
-<FirebaseApp {auth} {firestore}>
+<main class="page">
+  {#if isSignedIn}
+    <p>Signed in</p>
+    <button on:click={async () => await signOut()}>Sign out</button>
+  {:else}
+    <button on:click={async () => await loginWithGoogle()}>Sign in </button>
+  {/if}
+</main>
+
+<!-- <FirebaseApp {auth} {firestore}>
   {#if currentPath}
     <Header baseUrl={currentPath?.baseUrl} pagePath={currentPath?.pagePath} />
   {/if}
@@ -86,7 +136,6 @@
           <p>
             be the first to share your thoughts and this corner of the internet!
           </p>
-          <!-- else content here -->
         {/if}
       {/if}
 
@@ -109,7 +158,7 @@
       <SignIn />
     </SignedOut>
   </main>
-</FirebaseApp>
+</FirebaseApp> -->
 
 <style lang="scss">
   .page {

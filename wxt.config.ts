@@ -6,6 +6,6 @@ export default defineConfig({
   extensionApi: "chrome",
   modules: ["@wxt-dev/module-svelte"],
   manifest: {
-    permissions: ["tabs"],
+    permissions: ["identity", "tabs", "storage"],
   },
 });
