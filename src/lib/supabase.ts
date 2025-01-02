@@ -6,22 +6,6 @@ export const supabaseAnonKey =
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-export async function loginWithGoogle() {
-  console.log("loginWithGoogle");
-
-  console.log(chrome.identity.getRedirectURL());
-
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
-    options: {
-      redirectTo: chrome.identity.getRedirectURL(),
-    },
-  });
-  if (error) throw error;
-
-  await chrome.tabs.create({ url: data.url });
-}
-
 export async function signOut() {
   await supabase.auth.signOut();
 

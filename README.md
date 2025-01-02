@@ -1,12 +1,3 @@
-<<<<<<< HEAD
-# WXT + Svelte
-
-This template should help get you started developing with Svelte in WXT.
-
-## Recommended IDE Setup
-
-[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
-=======
 # WXT + Svelte 5 + Tailwind 4 Browser Extension Starter
 
 This template provides a solid foundation for developing browser extensions:
@@ -37,4 +28,3 @@ Special thanks to [@wilkerlucio](https://github.com/wilkerlucio) for the [origin
 
 - [YouTube Looper Code](https://github.com/wilkerlucio/media-looper)
 - [YouTube Looper Extension](https://chrome.google.com/webstore/detail/youtube-looper/bidjeabmcpopfddfcnpniceojmkklcje?hl=en-US&utm_source=chrome-ntp-launcher)
->>>>>>> 3783d74 (Working shadow dom and auth)

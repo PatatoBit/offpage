@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-
   import { supabase } from "@/lib/supabase";
   import Main from "@/lib/components/Main.svelte";
 

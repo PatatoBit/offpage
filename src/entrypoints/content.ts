@@ -1,10 +1,3 @@
-<<<<<<< HEAD
-export default defineContentScript({
-  matches: ['*://*.google.com/*'],
-  main() {
-    console.log('Hello content.');
-=======
-import "../app.css";
 import Content from "./content/App.svelte";
 import { mount } from "svelte";
 
@@ -40,6 +33,5 @@ export default defineContentScript({
         }
       }
     });
->>>>>>> 3783d74 (Working shadow dom and auth)
   },
 });

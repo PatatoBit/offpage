@@ -1,20 +1,11 @@
 import { defineConfig } from "wxt";
-<<<<<<< HEAD
-=======
 import wasm from "vite-plugin-wasm";
 import topLevelAwait from "vite-plugin-top-level-await";
 import tailwindcss from "@tailwindcss/vite";
->>>>>>> 3783d74 (Working shadow dom and auth)
 
 // See https://wxt.dev/api/config.html
 export default defineConfig({
   srcDir: "src",
-<<<<<<< HEAD
-  extensionApi: "chrome",
-  modules: ["@wxt-dev/module-svelte"],
-  manifest: {
-    permissions: ["identity", "tabs", "storage"],
-=======
   modules: ["@wxt-dev/module-svelte"],
   manifest: {
     name: "Name",
@@ -46,6 +37,5 @@ export default defineConfig({
 
   runner: {
     startUrls: ["https://www.wikipedia.com"],
->>>>>>> 3783d74 (Working shadow dom and auth)
   },
 });
