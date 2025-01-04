@@ -1,6 +1,8 @@
 import Content from "./content/App.svelte";
 import { mount } from "svelte";
 
+// import "@lib/styles/global.scss";
+
 export default defineContentScript({
   allFrames: true,
   matches: ["*://*/*"],

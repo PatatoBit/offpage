@@ -1,6 +1,7 @@
 <script lang="ts">
   import { supabase } from "@/lib/supabase";
   import Main from "@/lib/components/Main.svelte";
+  import { fly } from "svelte/transition";
 
   let isSignedIn: boolean = false;
 
@@ -30,33 +31,57 @@
     console.log("Tester");
     console.log(chrome.runtime.id);
   }
+
+  let showPopup = false;
 </script>
 
-<main class="page">
-  <button on:click={() => tester()}>Test</button>
+<div class="left-hover">
+  {#if showPopup}
+    <main class="page" transition:fly={{ x: 100, duration: 300 }}>
+      <button on:click={() => tester()}>Test</button>
 
-  {#if isSignedIn}
-    <Main isSignedIn />
+      {#if isSignedIn}
+        <Main isSignedIn />
+      {:else}
+        <button on:click={async () => await loginWithGoogle()}>Sign in </button>
+      {/if}
+
+      <button on:click={() => (showPopup = !showPopup)}>X</button>
+    </main>
   {:else}
-    <button on:click={async () => await loginWithGoogle()}>Sign in </button>
+    <button
+      transition:fly={{ x: 100, duration: 300 }}
+      on:click={() => (showPopup = !showPopup)}
+      style="position:absolute; top:50%; right:1rem; transform:translateY(-50%)"
+      >Show</button
+    >
+    <!-- else content here -->
   {/if}
-</main>
+</div>
 
 <style lang="scss">
   .page {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    right: 0;
-
     width: 500px;
     height: 80vh;
+
+    background-color: white;
+    border: 2px solid red;
 
     gap: 1rem;
 
     button {
       cursor: pointer;
     }
+  }
+
+  .left-hover {
+    position: fixed;
+    top: 50%;
+    right: 1rem;
+
+    display: flex;
+
+    transform: translateY(-50%);
   }
 
   .comments {
