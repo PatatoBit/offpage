@@ -1,4 +1,4 @@
-:global(:root) {
-  --background: #fefefe;
-  --text: #212121;
+:host {
+  position: relative;
+  z-index: 1000;
 }

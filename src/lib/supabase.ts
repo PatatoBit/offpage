@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { isSignedIn } from "./stores/sessionStore";
 
 export const supabaseUrl = "https://blbixtcshtlrvmgkgpco.supabase.co";
 export const supabaseAnonKey =
@@ -8,6 +9,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export async function signOut() {
   await supabase.auth.signOut();
+  isSignedIn.set(false);
 
-  return false;
+  console.log("Signed out");
 }

@@ -1,89 +1,16 @@
 <script lang="ts">
-  import { supabase } from "@/lib/supabase";
-  import Main from "@/lib/components/Main.svelte";
-  import { fly } from "svelte/transition";
-
-  let isSignedIn: boolean = false;
-
-  function loginWithGoogle() {
-    chrome.runtime.sendMessage({ action: "loginWithGoogle" }, (response) => {
-      if (response.success) {
-        console.log("Login successful");
-      } else {
-        console.error("Login failed:", response.error);
-      }
-    });
-  }
-
-  onMount(async () => {
-    const { session } = await chrome.storage.local.get("session");
-    if (session) {
-      const { error: supaAuthError } = await supabase.auth.setSession(session);
-      if (supaAuthError) {
-        throw supaAuthError;
-      }
-
-      isSignedIn = true;
-    }
-  });
-
-  function tester() {
-    console.log("Tester");
-    console.log(chrome.runtime.id);
-  }
-
-  let showPopup = false;
+  import Main from "@/entrypoints/content/views/Main.svelte";
+  import AppLayout from "@/lib/components/AppLayout.svelte";
+  import AuthWall from "./views/AuthWall.svelte";
 </script>
 
-<div class="left-hover">
-  {#if showPopup}
-    <main class="page" transition:fly={{ x: 100, duration: 300 }}>
-      <button on:click={() => tester()}>Test</button>
-
-      {#if isSignedIn}
-        <Main isSignedIn />
-      {:else}
-        <button on:click={async () => await loginWithGoogle()}>Sign in </button>
-      {/if}
-
-      <button on:click={() => (showPopup = !showPopup)}>X</button>
-    </main>
-  {:else}
-    <button
-      transition:fly={{ x: 100, duration: 300 }}
-      on:click={() => (showPopup = !showPopup)}
-      style="position:absolute; top:50%; right:1rem; transform:translateY(-50%)"
-      >Show</button
-    >
-    <!-- else content here -->
-  {/if}
-</div>
+<AppLayout>
+  <AuthWall>
+    <Main />
+  </AuthWall>
+</AppLayout>
 
 <style lang="scss">
-  .page {
-    width: 500px;
-    height: 80vh;
-
-    background-color: white;
-    border: 2px solid red;
-
-    gap: 1rem;
-
-    button {
-      cursor: pointer;
-    }
-  }
-
-  .left-hover {
-    position: fixed;
-    top: 50%;
-    right: 1rem;
-
-    display: flex;
-
-    transform: translateY(-50%);
-  }
-
   .comments {
     display: flex;
     flex-direction: column;

@@ -1,7 +1,7 @@
 import Content from "./content/App.svelte";
 import { mount } from "svelte";
 
-// import "@lib/styles/global.scss";
+import "../lib/styles/global.scss";
 
 export default defineContentScript({
   allFrames: true,
@@ -12,6 +12,9 @@ export default defineContentScript({
       name: "backstage-ui",
       position: "inline",
       anchor: "body",
+      append: "last",
+      mode: "open",
+      isolateEvents: ["keyup", "keydown", "keypress"],
       onMount(container) {
         const wrapper = document.createElement("div");
         container.append(wrapper);
@@ -21,6 +24,10 @@ export default defineContentScript({
         });
 
         return wrapper;
+      },
+
+      onRemove(container) {
+        container?.remove();
       },
     });
 
