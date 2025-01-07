@@ -13,19 +13,42 @@ export default defineBackground(() => {
   // });
 });
 
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === "GET_CURRENT_URL") {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs.length > 0) {
+        sendResponse({ url: tabs[0].url });
+      } else {
+        sendResponse({ url: null });
+      }
+    });
+    return true; // Keeps the message channel open for async response
+  }
+});
+
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   if (message.action === "loginWithGoogle") {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: chrome.identity.getRedirectURL(),
-      },
-    });
-    if (error) throw error;
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: chrome.identity.getRedirectURL(),
+        },
+      });
+      if (error) throw error;
 
-    await chrome.tabs.create({ url: data.url });
+      console.log(
+        "Redirecting to:",
+        `${data.url}&redirect_uri=${chrome.identity.getRedirectURL()}`
+      );
 
-    return;
+      await chrome.tabs.create({ url: data.url });
+
+      sendResponse({ success: true });
+    } catch (error) {
+      console.error(error);
+      sendResponse({ success: false });
+    }
   }
 });
 

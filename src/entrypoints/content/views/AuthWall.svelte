@@ -5,6 +5,8 @@
 
   function loginWithGoogle() {
     chrome.runtime.sendMessage({ action: "loginWithGoogle" }, (response) => {
+      console.log("Login response:", response);
+
       if (response.success) {
         console.log("Login successful");
       } else {
@@ -26,6 +28,7 @@
   function tester() {
     console.log("Tester");
     console.log(chrome.runtime.id);
+    console.log(chrome.identity.getRedirectURL());
   }
 
   $: $isSignedIn;
