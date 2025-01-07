@@ -7,8 +7,8 @@ export function getBaseUrlAndPath(
 ): { baseUrl: string; pagePath: string } | null {
   try {
     const parsedUrl = new URL(url);
-    const baseUrl = parsedUrl.hostname; // Get hostname
-    const pagePath = parsedUrl.pathname.endsWith("/")
+    const baseUrl: string = parsedUrl.hostname; // Get hostname
+    const pagePath: string = parsedUrl.pathname.endsWith("/")
       ? parsedUrl.pathname.slice(0, -1) // Remove trailing slash
       : parsedUrl.pathname; // Get pathname without trailing slash
 
