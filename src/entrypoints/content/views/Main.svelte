@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { addComment } from "@/lib/database";
   import { signOut } from "@/lib/supabase";
   import { getBaseUrlAndPath } from "@/lib/utils";
   import { onMount } from "svelte";
@@ -17,6 +18,21 @@
       }
     });
   });
+
+  let comment: string = "";
+  // Handle form submission
+  const handleSubmit = async () => {
+    console.log(comment);
+    try {
+      const newComment = await addComment(
+        "wiki.com/joe",
+        "This is a test comment."
+      );
+      console.log("Comment added:", newComment);
+    } catch (error) {
+      console.error((error as Error).message);
+    }
+  };
 </script>
 
 <p>Signed in</p>
@@ -28,8 +44,9 @@
   <p></p>
 {/if}
 
-<form action="">
-  <input type="text" placeholder="Comment something..." />
+<form action="" on:submit={async () => await handleSubmit()}>
+  <input bind:value={comment} type="text" placeholder="Comment something..." />
+  <button type="submit">Submit</button>
 </form>
 
 <button on:click={async () => await signOut()}>Sign out</button>
