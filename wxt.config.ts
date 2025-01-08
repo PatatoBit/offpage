@@ -12,8 +12,7 @@ export default defineConfig({
     description: "My extension description",
     permissions: ["storage", "activeTab", "identity"],
     oauth2: {
-      client_id:
-        "128510583025-7je22o18sg3eo5h2jk1jt62q1hdvqp05.apps.googleusercontent.com",
+      client_id: import.meta.env.OUATH_CLIENT_ID,
       scopes: ["profile", "email", "openid"],
     },
     web_accessible_resources: [

@@ -1,6 +1,5 @@
-export const supabaseUrl = "https://blbixtcshtlrvmgkgpco.supabase.co";
-export const supabaseAnonKey =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJsYml4dGNzaHRscnZtZ2tncGNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU3MTg1MDAsImV4cCI6MjA1MTI5NDUwMH0.R--eWEssN7Loz3WIEk8zthDLEcZGHTlnysQ2HX0ZadI";
+export const supabaseUrl = import.meta.env.SUPABSE_URL;
+export const supabaseAnonKey = import.meta.env.SUPABSE_ANON_KEY;
 
 export function getBaseUrlAndPath(
   url: string
