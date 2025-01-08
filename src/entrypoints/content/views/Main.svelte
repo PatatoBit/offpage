@@ -28,4 +28,8 @@
   <p></p>
 {/if}
 
+<form action="">
+  <input type="text" placeholder="Comment something..." />
+</form>
+
 <button on:click={async () => await signOut()}>Sign out</button>
