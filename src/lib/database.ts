@@ -1,4 +1,5 @@
 import { supabase } from "./supabase";
+import { getBaseUrlAndPath } from "./utils";
 
 export interface Comment {
   content: string;
@@ -6,7 +7,7 @@ export interface Comment {
   author: string;
 }
 
-export async function addComment(baseUrl: string, content: string) {
+export async function addComment(baseURL: string, content: string) {
   // Step 1: Get the currently authenticated user's ID
   const {
     data: { user },
@@ -20,19 +21,25 @@ export async function addComment(baseUrl: string, content: string) {
     return;
   }
   const userId = user.id; // This is the unique identifier for the user
+  const result = getBaseUrlAndPath(baseURL);
+  if (!result) {
+    console.error(`Failed to parse base URL and path for: ${baseURL}`);
+    return;
+  }
+  const { baseUrl, domainName, pagePath } = result;
 
   // Step 2: Fetch or create the page document
   let { data: page, error: pageError } = await supabase
     .from("pages")
     .select("id")
-    .eq("route", baseUrl)
+    .eq("route", pagePath)
     .single();
 
   if (pageError && pageError.code === "PGRST116") {
     // If the page doesn't exist, create it
     const { data: newPage, error: createPageError } = await supabase
       .from("pages")
-      .insert([{ route: baseUrl }])
+      .insert([{ domain: domainName, route: pagePath }])
       .select()
       .single();
 
@@ -62,9 +69,7 @@ export async function addComment(baseUrl: string, content: string) {
     .insert([
       {
         content,
-        timestamp: new Date().toISOString(),
         page_id: pageId,
-        author: userId, // Store the authenticated user's ID as the author
       },
     ])
     .select()

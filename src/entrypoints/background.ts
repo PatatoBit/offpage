@@ -1,4 +1,5 @@
-import { supabase, supabaseAnonKey, supabaseUrl } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase";
+import { supabaseUrl, supabaseAnonKey } from "@/lib/utils";
 import { createClient } from "@supabase/supabase-js";
 
 export default defineBackground(() => {

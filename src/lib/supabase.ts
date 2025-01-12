@@ -1,8 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { isSignedIn } from "./stores/sessionStore";
-
-export const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-export const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+import { supabaseAnonKey, supabaseUrl } from "./utils";
 
 if (!supabaseUrl || !supabaseAnonKey) {
   console.log(supabaseUrl, supabaseAnonKey);

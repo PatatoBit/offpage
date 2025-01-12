@@ -23,9 +23,14 @@
   // Handle form submission
   const handleSubmit = async () => {
     console.log(comment);
+    if (!currentUrlSplit) {
+      console.error("Unable to fetch current URL.");
+      return;
+    }
+
     try {
       const newComment = await addComment(
-        "wiki.com/joe",
+        currentUrlSplit?.baseUrl,
         "This is a test comment."
       );
       console.log("Comment added:", newComment);
@@ -44,7 +49,7 @@
   <p></p>
 {/if}
 
-<form action="" on:submit={async () => await handleSubmit()}>
+<form action="" on:submit|preventDefault={async () => await handleSubmit()}>
   <input bind:value={comment} type="text" placeholder="Comment something..." />
   <button type="submit">Submit</button>
 </form>
