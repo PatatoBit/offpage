@@ -19,19 +19,24 @@
     });
   });
 
-  let comment: string = "";
+  let currentComment: string = "";
   // Handle form submission
   const handleSubmit = async () => {
-    console.log(comment);
+    console.log(currentComment);
     if (!currentUrlSplit) {
       console.error("Unable to fetch current URL.");
+      return;
+    }
+
+    if (!currentComment) {
+      console.error("Comment cannot be empty.");
       return;
     }
 
     try {
       const newComment = await addComment(
         currentUrlSplit?.baseUrl,
-        "This is a test comment."
+        currentComment
       );
       console.log("Comment added:", newComment);
     } catch (error) {
@@ -50,7 +55,12 @@
 {/if}
 
 <form action="" on:submit|preventDefault={async () => await handleSubmit()}>
-  <input bind:value={comment} type="text" placeholder="Comment something..." />
+  <input
+    bind:value={currentComment}
+    type="text"
+    placeholder="Comment something..."
+    required
+  />
   <button type="submit">Submit</button>
 </form>
 
