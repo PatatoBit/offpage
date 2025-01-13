@@ -109,7 +109,8 @@ export async function findCommentsDataByPageId(
   const { data: comments, error } = await supabase
     .from("comments")
     .select("id, page_id, content, created_at, author")
-    .eq("page_id", id);
+    .eq("page_id", id)
+    .order("created_at", { ascending: false });
 
   if (error) {
     console.error("Error fetching comments:", error);

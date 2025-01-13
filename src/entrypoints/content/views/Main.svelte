@@ -7,8 +7,10 @@
   } from "@/lib/database";
   import { signOut, supabase } from "@/lib/supabase";
   import { getBaseUrlAndPath } from "@/lib/utils";
+
   import { onMount } from "svelte";
   import moment from "moment";
+  import { RealtimeChannel } from "@supabase/supabase-js";
 
   let currentUrl: string | undefined;
   let currentUrlSplit: {
@@ -20,7 +22,7 @@
   let initialComments: CommentData[] = [];
 
   // Fetch the current tab's URL on component mount
-  let channel;
+  let channel: RealtimeChannel;
   onMount(() => {
     chrome.runtime.sendMessage(
       { type: "GET_CURRENT_URL" },
@@ -64,7 +66,8 @@
                 },
                 (payload) => {
                   console.log("Comments table changed.");
-                  console.log(payload);
+
+                  // TODO update initialComments by changes
                 }
               )
               .subscribe();
@@ -76,6 +79,13 @@
         }
       }
     );
+  });
+
+  onDestroy(() => {
+    if (channel) {
+      console.log("Unsubscribing from comments_change channel.");
+      channel.unsubscribe();
+    }
   });
 
   let currentComment: string = "";
