@@ -8,6 +8,7 @@
   import { signOut, supabase } from "@/lib/supabase";
   import { getBaseUrlAndPath } from "@/lib/utils";
   import { onMount } from "svelte";
+  import moment from "moment";
 
   let currentUrl: string | undefined;
   let currentUrlSplit: {
@@ -119,7 +120,7 @@
     <li>
       <!-- <h4>{comment.author}</h4> -->
       <p>{comment.content}</p>
-      <p>{comment.created_at}</p>
+      <p>{moment(comment.created_at).startOf("hour").fromNow()}</p>
     </li>
   {/each}
 </ul>
