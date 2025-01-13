@@ -1,10 +1,12 @@
 import { supabase } from "./supabase";
 import { getBaseUrlAndPath } from "./utils";
 
-export interface Comment {
-  content: string;
-  createdAt: Date;
+export interface CommentData {
+  id: number;
+  page_id: number;
+  created_at: string;
   author: string;
+  content: string;
 }
 
 export async function addComment(baseURL: string, content: string) {
@@ -26,12 +28,14 @@ export async function addComment(baseURL: string, content: string) {
     console.error(`Failed to parse base URL and path for: ${baseURL}`);
     return;
   }
-  const { baseUrl, domainName, pagePath } = result;
+  console.log(result);
+  const { baseUrl, domain: domainName, route: pagePath } = result;
 
   // Step 2: Fetch or create the page document
   let { data: page, error: pageError } = await supabase
     .from("pages")
     .select("id")
+    .eq("domain", domainName)
     .eq("route", pagePath)
     .single();
 
@@ -84,94 +88,39 @@ export async function addComment(baseURL: string, content: string) {
   return comment;
 }
 
-export function listenToComments(
-  baseUrl: string,
-  callback: (comments: Comment[]) => void
-) {
-  // Step 1: Try to fetch the page by its baseUrl
-  supabase
+export async function findPageByRoute(domain: string, route: string) {
+  const { data: page, error } = await supabase
     .from("pages")
     .select("id")
-    .eq("route", baseUrl)
-    .single()
-    .then(async ({ data: page, error }) => {
-      if (error && error.code === "PGRST116") {
-        // If no page exists, return an empty array
-        console.log(
-          `No page found for URL: ${baseUrl}. Returning an empty array.`
-        );
-        callback([]);
-        return;
-      } else if (error) {
-        console.error(`Error fetching page for URL: ${baseUrl}`, error.message);
-        return;
-      }
+    .eq("domain", domain)
+    .eq("route", route)
+    .single(); // Use single() since there's only one match
+  if (error) {
+    console.error("Page not found:", error);
+    return;
+  }
 
-      const pageId = page.id;
+  return page.id;
+}
 
-      // Step 2: Fetch initial comments and pass them to the callback
-      const { data: comments, error: commentsError } = await supabase
-        .from("comments")
-        .select("content, timestamp, author")
-        .eq("page_id", pageId);
+export async function findCommentsDataByPageId(
+  id: string
+): Promise<CommentData[] | undefined> {
+  const { data: comments, error } = await supabase
+    .from("comments")
+    .select("id, page_id, content, created_at, author")
+    .eq("page_id", id);
 
-      if (commentsError) {
-        console.error("Error fetching comments:", commentsError.message);
-        return;
-      }
+  if (error) {
+    console.error("Error fetching comments:", error);
+    return;
+  }
 
-      callback(
-        (comments || []).map((comment) => ({
-          content: comment.content,
-          createdAt: new Date(comment.timestamp),
-          author: comment.author,
-        }))
-      ); // Pass an empty array if no comments are found
-
-      // Step 3: Set up a real-time subscription for future updates
-      const subscription = supabase
-        .channel("comments")
-        .on(
-          "postgres_changes",
-          {
-            event: "*", // Listen to INSERT, UPDATE, and DELETE events
-            schema: "public",
-            table: "comments",
-            filter: `page_id=eq.${pageId}`,
-          },
-          (payload) => {
-            console.log("Change detected:", payload);
-
-            // Fetch updated comments and pass them to the callback
-            supabase
-              .from("comments")
-              .select("content, timestamp, author")
-              .eq("page_id", pageId)
-              .then(
-                ({ data: updatedComments, error: updatedCommentsError }) => {
-                  if (updatedCommentsError) {
-                    console.error(
-                      "Error fetching updated comments:",
-                      updatedCommentsError.message
-                    );
-                    return;
-                  }
-                  callback(
-                    (updatedComments || []).map((comment) => ({
-                      content: comment.content,
-                      createdAt: new Date(comment.timestamp),
-                      author: comment.author,
-                    }))
-                  );
-                }
-              );
-          }
-        )
-        .subscribe();
-
-      // Return a cleanup function to unsubscribe
-      return () => {
-        supabase.removeChannel(subscription);
-      };
-    });
+  return comments.map((comment) => ({
+    id: comment.id as number,
+    page_id: comment.page_id as number,
+    created_at: comment.created_at as string,
+    author: comment.author as string,
+    content: comment.content as string,
+  }));
 }
