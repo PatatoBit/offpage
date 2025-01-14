@@ -116,36 +116,82 @@
   };
 </script>
 
-<p>Signed in</p>
+<main>
+  <button on:click={async () => await signOut()}>Sign out</button>
 
-{#if currentUrl}
-  <p>Current URL: {currentUrl}</p>
-  <p>Base URL: {currentUrlSplit?.baseUrl}</p>
-  <p>Page path: {currentUrlSplit?.route}</p>
-  <p></p>
-{/if}
+  {#if currentUrl}
+    <p>Current URL: {currentUrl}</p>
+    <p>Base URL: {currentUrlSplit?.baseUrl}</p>
+    <p>Page path: {currentUrlSplit?.route}</p>
+    <p></p>
+  {/if}
 
-<ul class="comments">
-  {#each initialComments as comment}
-    <li>
-      <!-- <h4>{comment.author}</h4> -->
-      <p>{comment.content}</p>
-      <p>{moment(comment.created_at).startOf("hour").fromNow()}</p>
-    </li>
-  {/each}
-</ul>
+  <ul class="comments">
+    {#each initialComments as comment}
+      <li>
+        <!-- <h4>{comment.author}</h4> -->
+        <p>{comment.content}</p>
+        <p class="label">
+          {moment(comment.created_at).startOf("hour").fromNow()}
+        </p>
+      </li>
+    {/each}
+  </ul>
 
-<form action="" on:submit|preventDefault={async () => await handleSubmit()}>
-  <input
-    bind:value={currentComment}
-    type="text"
-    placeholder="Comment something..."
-    required
-  />
-  <button type="submit">Submit</button>
-</form>
-
-<button on:click={async () => await signOut()}>Sign out</button>
+  <form
+    class="comment-form"
+    on:submit|preventDefault={async () => await handleSubmit()}
+  >
+    <input
+      bind:value={currentComment}
+      type="text"
+      placeholder="Comment something..."
+      required
+    />
+    <button type="submit">Submit</button>
+  </form>
+</main>
 
 <style lang="scss">
+  main {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .comments {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    gap: 0.5rem;
+    flex: 1 1 auto;
+    overflow: scroll;
+  }
+
+  .comment-form {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    flex: 1;
+
+    input {
+      flex: 1;
+      padding: 0.5rem;
+      border-radius: 6px;
+      border: 1px solid var(--primary);
+    }
+
+    button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+
+      &:hover {
+        background-color: var(--primary);
+      }
+    }
+  }
 </style>

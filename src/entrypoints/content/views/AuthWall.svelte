@@ -25,16 +25,8 @@
       });
   });
 
-  function tester() {
-    console.log("Tester");
-    console.log(chrome.runtime.id);
-    console.log(chrome.identity.getRedirectURL());
-  }
-
   $: $isSignedIn;
 </script>
-
-<button on:click={() => tester()}>Test</button>
 
 {#if $isSignedIn}
   <slot />

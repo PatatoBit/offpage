@@ -1,14 +1,17 @@
 <script lang="ts">
   import { fly } from "svelte/transition";
+  import closeButton from "../../assets/icons/cross.svg";
   let showPopup = false;
 </script>
 
 <div class="left-hover">
   {#if showPopup}
-    <main class="page" transition:fly={{ x: 100, duration: 300 }}>
-      <button on:click={() => (showPopup = !showPopup)}>X</button>
+    <div class="page" transition:fly={{ x: 100, duration: 300 }}>
+      <button class="close-button" on:click={() => (showPopup = !showPopup)}>
+        <img src={closeButton} alt="Close" />
+      </button>
       <slot />
-    </main>
+    </div>
   {:else}
     <button
       transition:fly={{ x: 100, duration: 300 }}
@@ -22,13 +25,25 @@
 <style lang="scss">
   @use "../styles/variables.scss";
 
-  .page {
-    width: 350px;
-    height: 80vh;
-    z-index: 100;
+  .close-button {
+    all: unset;
 
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+  }
+
+  .page {
+    width: 300px;
+    height: 85vh;
+    z-index: 100;
+    padding: 1.5rem;
+
+    border-radius: 0.8rem;
     background-color: var(--white);
-    border: 2px solid red;
+    -webkit-box-shadow: 0px 10px 15px 0px rgba(207, 207, 207, 1);
+    -moz-box-shadow: 0px 10px 15px 0px rgba(207, 207, 207, 1);
+    box-shadow: 0px 10px 15px 0px rgba(207, 207, 207, 1);
 
     gap: 1rem;
 
