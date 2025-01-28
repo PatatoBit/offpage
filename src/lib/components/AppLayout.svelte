@@ -24,6 +24,7 @@
 
 <style lang="scss">
   @use "../styles/variables.scss";
+  @use "../styles/fonts.scss";
 
   .close-button {
     all: unset;
@@ -37,7 +38,7 @@
     width: 300px;
     height: 85vh;
     z-index: 100;
-    padding: 1.5rem;
+    padding: 0.5rem;
 
     border-radius: 0.8rem;
     background-color: var(--white);

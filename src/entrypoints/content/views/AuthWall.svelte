@@ -1,7 +1,5 @@
 <script lang="ts">
   import { initializeSession, isSignedIn } from "@/lib/stores/sessionStore";
-  import { supabase } from "@/lib/supabase";
-  import { fly } from "svelte/transition";
 
   function loginWithGoogle() {
     chrome.runtime.sendMessage({ action: "loginWithGoogle" }, (response) => {
@@ -28,8 +26,8 @@
   $: $isSignedIn;
 </script>
 
-{#if $isSignedIn}
+{#if true}
   <slot />
 {:else}
-  <button on:click={async () => await loginWithGoogle()}>Sign in </button>
+  <button on:click={async () => await loginWithGoogle()}>Sign in</button>
 {/if}

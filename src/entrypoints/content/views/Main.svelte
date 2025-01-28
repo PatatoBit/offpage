@@ -117,14 +117,18 @@
 </script>
 
 <main>
-  <button on:click={async () => await signOut()}>Sign out</button>
+  <!-- <button on:click={async () => await signOut()}>Sign out</button> -->
 
-  {#if currentUrl}
-    <p>Current URL: {currentUrl}</p>
-    <p>Base URL: {currentUrlSplit?.baseUrl}</p>
-    <p>Page path: {currentUrlSplit?.route}</p>
-    <p></p>
-  {/if}
+  <div class="header">
+    {#if currentUrl}
+      {#if currentUrlSplit?.route}
+        <strong>{currentUrlSplit?.domain}</strong>
+        <h1>{currentUrlSplit?.route}</h1>
+      {:else}
+        <h1>{currentUrlSplit?.domain}</h1>
+      {/if}
+    {/if}
+  </div>
 
   <ul class="comments">
     {#each initialComments as comment}
@@ -156,23 +160,37 @@
   main {
     display: flex;
     flex-direction: column;
-    padding: 1rem;
+    height: 100%;
+
+    border: 1px solid pink;
+  }
+
+  .header {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid green;
+    flex: 1 1 1;
   }
 
   .comments {
     display: flex;
     flex-direction: column;
+
+    flex: auto;
     padding: 0;
     gap: 0.5rem;
-    flex: 1 1 auto;
-    overflow: scroll;
+    overflow-y: scroll;
+
+    border: 1px solid red;
   }
 
   .comment-form {
     display: flex;
     gap: 0.5rem;
     margin-top: 1rem;
-    flex: 1;
+    flex: 1 1 1;
+
+    border: 1px solid blue;
 
     input {
       flex: 1;
