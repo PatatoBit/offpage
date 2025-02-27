@@ -123,11 +123,22 @@
     {#if currentUrl}
       {#if currentUrlSplit?.route}
         <strong>{currentUrlSplit?.domain}</strong>
-        <h1>{currentUrlSplit?.route}</h1>
+        <h2>{currentUrlSplit?.route}</h2>
       {:else}
-        <h1>{currentUrlSplit?.domain}</h1>
+        <h2>{currentUrlSplit?.domain}</h2>
       {/if}
     {/if}
+
+    <div class="header-button">
+      <div>
+        <button>Like</button>
+        <button>Dislike</button>
+      </div>
+
+      <div>
+        <a href="https://google.com">view on web</a>
+      </div>
+    </div>
   </div>
 
   <ul class="comments">
@@ -161,15 +172,27 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-
-    border: 1px solid pink;
   }
 
   .header {
     display: flex;
     flex-direction: column;
-    border: 1px solid green;
     flex: 1 1 1;
+    gap: 1rem;
+
+    border-bottom: 2px dashed black;
+    padding-block: 1.3rem;
+
+    h2 {
+      font-weight: 400;
+      margin: 0;
+    }
+
+    .header-button {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
   }
 
   .comments {
@@ -180,8 +203,6 @@
     padding: 0;
     gap: 0.5rem;
     overflow-y: scroll;
-
-    border: 1px solid red;
   }
 
   .comment-form {
@@ -189,8 +210,6 @@
     gap: 0.5rem;
     margin-top: 1rem;
     flex: 1 1 1;
-
-    border: 1px solid blue;
 
     input {
       flex: 1;

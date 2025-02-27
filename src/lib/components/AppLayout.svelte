@@ -1,7 +1,7 @@
 <script lang="ts">
   import { fly } from "svelte/transition";
   import closeButton from "../../assets/icons/cross.svg";
-  let showPopup = false;
+  let showPopup = true; // DEV!!
 </script>
 
 <div class="left-hover">
@@ -38,7 +38,7 @@
     width: 300px;
     height: 85vh;
     z-index: 100;
-    padding: 0.5rem;
+    padding: 1.5rem;
 
     border-radius: 0.8rem;
     background-color: var(--white);
