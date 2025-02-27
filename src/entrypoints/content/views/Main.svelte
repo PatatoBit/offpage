@@ -186,6 +186,8 @@
     h2 {
       font-weight: 400;
       margin: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .header-button {
