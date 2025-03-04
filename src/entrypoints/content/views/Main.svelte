@@ -6,7 +6,7 @@ import {
   CommentData,
 } from "@/lib/database";
 import { signOut, supabase } from "@/lib/supabase";
-import { getBaseUrlAndPath } from "@/lib/utils";
+import { getBaseUrlAndPath, getIcon } from "@/lib/utils";
 
 import { onMount } from "svelte";
 import moment from "moment";
@@ -122,10 +122,23 @@ const handleSubmit = async () => {
     <div class="domain-route">
       {#if currentUrl}
         {#if currentUrlSplit?.route}
-          <strong>{currentUrlSplit?.domain}</strong>
+          <div class="domain">
+            {#if getIcon()}
+              <img class="webicon" src={getIcon()} alt=" " />
+            {/if}
+
+            <strong>{currentUrlSplit?.domain}</strong>
+          </div>
+
           <h2>{currentUrlSplit?.route}</h2>
         {:else}
-          <h2>{currentUrlSplit?.domain}</h2>
+          <div class="domain">
+            {#if getIcon()}
+              <img class="webicon" src={getIcon()} alt=" " />
+            {/if}
+
+            <h2>{currentUrlSplit?.domain}</h2>
+          </div>
         {/if}
       {/if}
     </div>
@@ -184,6 +197,18 @@ main {
   display: flex;
   flex-direction: column;
   height: 100%;
+}
+
+.webicon {
+  width: 20px;
+  height: 20px;
+}
+
+.domain {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  align-items: center;
 }
 
 .header {
