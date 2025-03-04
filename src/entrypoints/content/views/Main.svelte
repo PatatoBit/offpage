@@ -11,8 +11,10 @@ import { getBaseUrlAndPath, getIcon } from "@/lib/utils";
 import { onMount } from "svelte";
 import moment from "moment";
 import { RealtimeChannel } from "@supabase/supabase-js";
+import Header from "@/lib/components/Header.svelte";
 
 let currentUrl: string | undefined;
+
 let currentUrlSplit: {
   baseUrl: string;
   domain: string;
@@ -80,14 +82,8 @@ onMount(() => {
   });
 });
 
-onDestroy(() => {
-  if (channel) {
-    console.log("Unsubscribing from comments_change channel.");
-    channel.unsubscribe();
-  }
-});
-
 let currentComment: string = "";
+
 // Handle form submission
 const handleSubmit = async () => {
   console.log(currentComment);
@@ -113,47 +109,18 @@ const handleSubmit = async () => {
     console.error((error as Error).message);
   }
 };
+
+onDestroy(() => {
+  if (channel) {
+    console.log("Unsubscribing from comments_change channel.");
+    channel.unsubscribe();
+  }
+});
 </script>
 
 <main>
   <!-- <button on:click={async () => await signOut()}>Sign out</button> -->
-
-  <div class="header">
-    <div class="domain-route">
-      {#if currentUrl}
-        {#if currentUrlSplit?.route}
-          <div class="domain">
-            {#if getIcon()}
-              <img class="webicon" src={getIcon()} alt=" " />
-            {/if}
-
-            <strong>{currentUrlSplit?.domain}</strong>
-          </div>
-
-          <h2>{currentUrlSplit?.route}</h2>
-        {:else}
-          <div class="domain">
-            {#if getIcon()}
-              <img class="webicon" src={getIcon()} alt=" " />
-            {/if}
-
-            <h2>{currentUrlSplit?.domain}</h2>
-          </div>
-        {/if}
-      {/if}
-    </div>
-
-    <div class="header-button">
-      <div>
-        <button>Like</button>
-        <button>Dislike</button>
-      </div>
-
-      <div>
-        <a href="https://google.com" target="_blank">view on web</a>
-      </div>
-    </div>
-  </div>
+  <Header currentUrl={currentUrl} currentUrlSplit={currentUrlSplit} />
 
   <ul class="comments">
     {#each initialComments as comment}
@@ -197,47 +164,6 @@ main {
   display: flex;
   flex-direction: column;
   height: 100%;
-}
-
-.webicon {
-  width: 20px;
-  height: 20px;
-}
-
-.domain {
-  display: flex;
-  flex-direction: row;
-  gap: 0.5rem;
-  align-items: center;
-}
-
-.header {
-  display: flex;
-  flex-direction: column;
-  flex: 1 1 1;
-  gap: 1rem;
-
-  border-bottom: 1px dashed black;
-  padding-block: 1.3rem;
-
-  h2 {
-    font-weight: 400;
-    margin: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .domain-route {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-  }
-
-  .header-button {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-  }
 }
 
 .comments {
