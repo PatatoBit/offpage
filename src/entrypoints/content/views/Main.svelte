@@ -13,6 +13,8 @@ import moment from "moment";
 import { RealtimeChannel } from "@supabase/supabase-js";
 import Header from "@/lib/components/Header.svelte";
 
+import ReturnIcon from "@/assets/icons/return.svg";
+
 let currentUrl: string | undefined;
 
 let currentUrlSplit: {
@@ -110,6 +112,13 @@ const handleSubmit = async () => {
   }
 };
 
+async function handleEnterKey(event: KeyboardEvent) {
+  if (event.key === "Enter" && !event.shiftKey) {
+    event.preventDefault(); // Prevent new line
+    await handleSubmit(); // Call submit function
+  }
+}
+
 onDestroy(() => {
   if (channel) {
     console.log("Unsubscribing from comments_change channel.");
@@ -149,13 +158,20 @@ onDestroy(() => {
     class="comment-form"
     on:submit|preventDefault={async () => await handleSubmit()}
   >
-    <input
+    <textarea
       bind:value={currentComment}
-      type="text"
-      placeholder="Comment something..."
+      on:keydown={handleEnterKey}
+      placeholder="Share your thoughts..."
       required
-    />
-    <button class="form-submit" type="submit">Submit</button>
+      rows="3"
+      maxlength="500"
+    ></textarea>
+
+    <div class="form-buttons">
+      <button class="form-submit" type="submit">
+        <img src={ReturnIcon} alt="Return" />
+      </button>
+    </div>
   </form>
 </main>
 
@@ -221,29 +237,59 @@ main {
 
 .comment-form {
   display: flex;
+  flex-direction: column;
   gap: 0.5rem;
   margin-bottom: 1rem;
   flex: 1 1 1;
 
-  input {
+  textarea {
     flex: 1;
     padding: 0.5rem;
     border-radius: 6px;
-    border: 1px solid var(--text);
+    resize: none;
+
+    border: 1px solid rgb(200, 200, 200);
+    background-color: rgb(248, 248, 248);
+    font-family: "Open Runded", sans-serif;
+  }
+
+  .form-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 0.5rem;
+
+    height: 2rem;
+
+    button {
+      cursor: pointer;
+    }
   }
 
   .form-submit {
-    background-color: var(--background);
-    color: var(--text);
+    background-color: var(--text);
+    color: var(--background);
     border: none;
     padding: 0.5rem 1rem;
     border: 1px solid var(--text);
     border-radius: 6px;
     cursor: pointer;
 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    transition: scale 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+
+    img {
+      width: 20px;
+      height: 20px;
+
+      filter: invert(1);
+    }
+
     &:hover {
-      background-color: var(--text);
-      color: var(--background);
+      transform: scale(1.05);
     }
   }
 }
