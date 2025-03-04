@@ -173,7 +173,7 @@ const handleSubmit = async () => {
       placeholder="Comment something..."
       required
     />
-    <button type="submit">Submit</button>
+    <button class="form-submit" type="submit">Submit</button>
   </form>
 </main>
 
@@ -213,14 +213,21 @@ main {
 
   flex: auto;
   padding: 0;
-  gap: 1rem;
+  margin: 0;
+  padding-bottom: 1rem;
+
   overflow-y: scroll;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .comment {
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
+  padding-top: 1rem;
   width: 100%;
 
   h5,
@@ -261,7 +268,7 @@ main {
 .comment-form {
   display: flex;
   gap: 0.5rem;
-  margin-top: 1rem;
+  margin-bottom: 1rem;
   flex: 1 1 1;
 
   input {
@@ -271,11 +278,12 @@ main {
     border: 1px solid var(--text);
   }
 
-  button {
+  .form-submit {
     background-color: var(--background);
     color: var(--text);
     border: none;
     padding: 0.5rem 1rem;
+    border: 1px solid var(--text);
     border-radius: 6px;
     cursor: pointer;
 

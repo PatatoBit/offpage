@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { fly } from "svelte/transition";
-  import closeButton from "../../assets/icons/cross.svg";
-  let showPopup = true; // DEV!!
+import { fly } from "svelte/transition";
+import closeButton from "../../assets/icons/cross.svg";
+let showPopup = true; // DEV!!
 </script>
 
 <div class="left-hover">
@@ -23,43 +23,43 @@
 </div>
 
 <style lang="scss">
-  @use "../styles/variables.scss";
-  @use "../styles/fonts.scss";
+@use "../styles/variables.scss";
+@use "../styles/fonts.scss";
 
-  .close-button {
-    all: unset;
+.close-button {
+  all: unset;
 
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}
+
+.page {
+  width: 300px;
+  height: 85vh;
+  z-index: 100;
+  padding-inline: 1.5rem;
+
+  border-radius: 0.8rem;
+  background-color: var(--background);
+  box-shadow: 1px 9px 10px 2px rgba(0, 0, 0, 0.16);
+  -webkit-box-shadow: 1px 9px 10px 2px rgba(0, 0, 0, 0.16);
+  -moz-box-shadow: 1px 9px 10px 2px rgba(0, 0, 0, 0.16);
+
+  gap: 1rem;
+
+  button {
+    cursor: pointer;
   }
+}
 
-  .page {
-    width: 300px;
-    height: 85vh;
-    z-index: 100;
-    padding: 1.5rem;
+.left-hover {
+  position: fixed;
+  top: 50%;
+  right: 1rem;
 
-    border-radius: 0.8rem;
-    background-color: var(--background);
-    box-shadow: 1px 9px 10px 2px rgba(0, 0, 0, 0.16);
-    -webkit-box-shadow: 1px 9px 10px 2px rgba(0, 0, 0, 0.16);
-    -moz-box-shadow: 1px 9px 10px 2px rgba(0, 0, 0, 0.16);
+  display: flex;
 
-    gap: 1rem;
-
-    button {
-      cursor: pointer;
-    }
-  }
-
-  .left-hover {
-    position: fixed;
-    top: 50%;
-    right: 1rem;
-
-    display: flex;
-
-    transform: translateY(-50%);
-  }
+  transform: translateY(-50%);
+}
 </style>
