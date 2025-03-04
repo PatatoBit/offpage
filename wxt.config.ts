@@ -41,6 +41,6 @@ export default defineConfig({
   }),
 
   runner: {
-    startUrls: ["https://www.wikipedia.com"],
+    startUrls: ["https://www.example.com"],
   },
 });
