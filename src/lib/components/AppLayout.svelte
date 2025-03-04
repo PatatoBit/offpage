@@ -1,42 +1,44 @@
 <script lang="ts">
 import { fly } from "svelte/transition";
+import { extensionStatus } from "@/stores/AppStatus";
 import closeButton from "../../assets/icons/cross.svg";
-let showPopup = false; // TODO: store open state in local
+
+function togglePopup() {
+  extensionStatus.update((status) => {
+    status.open = !status.open;
+    return status;
+  });
+}
 </script>
 
 <div class="left-hover">
-  {#if showPopup}
-    <div class="page" transition:fly={{ x: 100, duration: 300 }}>
-      <button class="close-button" on:click={() => (showPopup = !showPopup)}>
-        <img src={closeButton} alt="Close" />
-      </button>
-      <slot />
-    </div>
-  {:else}
-    <button
-      transition:fly={{ x: 100, duration: 300 }}
-      on:click={() => (showPopup = !showPopup)}
-      style="position:absolute; top:50%; right:1rem; transform:translateY(-50%)"
-      >Show</button
-    >
-  {/if}
+  <div class="page" class:hide={!$extensionStatus.open}>
+    <slot />
+  </div>
+
+  <button class="toggle-button" on:click={togglePopup}> offpage </button>
 </div>
 
 <style lang="scss">
 @use "../styles/variables.scss";
 @use "../styles/fonts.scss";
 
-.close-button {
-  all: unset;
-
+.toggle-button {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
+  bottom: 0;
+  right: 0;
+}
+
+.hide {
+  opacity: 0;
 }
 
 .page {
+  top: 1rem;
+  right: 1rem;
+
   width: 300px;
-  height: 85vh;
+  height: 90vh;
   z-index: 100;
   padding-inline: 1.5rem;
 
@@ -48,6 +50,8 @@ let showPopup = false; // TODO: store open state in local
 
   gap: 1rem;
 
+  transition: opacity 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+
   button {
     cursor: pointer;
   }
@@ -55,11 +59,11 @@ let showPopup = false; // TODO: store open state in local
 
 .left-hover {
   position: fixed;
-  top: 50%;
+  top: 1rem;
   right: 1rem;
+  height: 95vh;
 
   display: flex;
-
-  transform: translateY(-50%);
+  flex-direction: column;
 }
 </style>
