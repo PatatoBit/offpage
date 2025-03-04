@@ -1,7 +1,7 @@
 <script lang="ts">
 import { fly } from "svelte/transition";
 import closeButton from "../../assets/icons/cross.svg";
-let showPopup = true; // DEV!!
+let showPopup = false; // TODO: store open state in local
 </script>
 
 <div class="left-hover">

@@ -20,13 +20,13 @@ let currentUrlSplit: {
 } | null;
 
 let initialComments: CommentData[] = [
-  {
-    id: 1,
-    page_id: 1,
-    created_at: new Date().toLocaleDateString(),
-    author: "John Doe",
-    content: "Hello, world!",
-  },
+  // {
+  //   id: 1,
+  //   page_id: 1,
+  //   created_at: new Date().toLocaleDateString(),
+  //   author: "John Doe",
+  //   content: "Hello, world!",
+  // },
 ];
 
 // Fetch the current tab's URL on component mount
@@ -119,14 +119,16 @@ const handleSubmit = async () => {
   <!-- <button on:click={async () => await signOut()}>Sign out</button> -->
 
   <div class="header">
-    {#if currentUrl}
-      {#if currentUrlSplit?.route}
-        <strong>{currentUrlSplit?.domain}</strong>
-        <h2>{currentUrlSplit?.route}</h2>
-      {:else}
-        <h2>{currentUrlSplit?.domain}</h2>
+    <div class="domain-route">
+      {#if currentUrl}
+        {#if currentUrlSplit?.route}
+          <strong>{currentUrlSplit?.domain}</strong>
+          <h2>{currentUrlSplit?.route}</h2>
+        {:else}
+          <h2>{currentUrlSplit?.domain}</h2>
+        {/if}
       {/if}
-    {/if}
+    </div>
 
     <div class="header-button">
       <div>
@@ -198,6 +200,12 @@ main {
     margin: 0;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  .domain-route {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
   }
 
   .header-button {
