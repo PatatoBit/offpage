@@ -2,6 +2,7 @@ import Content from "./content/App.svelte";
 import { mount } from "svelte";
 
 import "@/lib/styles/global.scss";
+import "@/lib/styles/fonts.scss";
 
 export default defineContentScript({
   allFrames: false,
