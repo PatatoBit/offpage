@@ -237,8 +237,8 @@ main {
 
   .user-profile {
     img {
-      width: 40px;
-      height: 40px;
+      width: 45px;
+      height: 45px;
       border-radius: 50%;
     }
   }
