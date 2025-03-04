@@ -4,14 +4,6 @@ import { createClient } from "@supabase/supabase-js";
 
 export default defineBackground(() => {
   console.log("Background Initiated", { id: browser.runtime.id });
-
-  // chrome.action.onClicked.addListener((tab) => {
-  //   console.log("Toggle UI");
-
-  //   if (tab.id !== undefined) {
-  //     chrome.tabs.sendMessage(tab.id, { action: "toggle-ui" });
-  //   }
-  // });
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -36,15 +28,15 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
           redirectTo: chrome.identity.getRedirectURL(),
         },
       });
+
       if (error) throw error;
 
       console.log(
         "Redirecting to:",
-        `${data.url}&redirect_uri=${chrome.identity.getRedirectURL()}`
+        `${data.url}&redirect_uri=${chrome.identity.getRedirectURL()}`,
       );
 
       await chrome.tabs.create({ url: data.url });
-
       sendResponse({ success: true });
     } catch (error) {
       console.error(error);
@@ -56,6 +48,7 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
 // add tab listener when background script starts
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.url?.startsWith(chrome.identity.getRedirectURL())) {
+    console.log(`handling OAuth callback ...`);
     finishUserOAuth(changeInfo.url);
   }
 });
@@ -108,7 +101,7 @@ function parseUrlHash(url: string) {
     hashParts.map((part) => {
       const [name, value] = part.split("=");
       return [name, value];
-    })
+    }),
   );
 
   return hashMap;

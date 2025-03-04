@@ -151,9 +151,9 @@ const handleSubmit = async () => {
           <div class="comment-main">
             <div class="comment-header">
               <h5>{comment.author.substring(0, 8)}</h5>
-              <p class="label">
-                {moment(comment.created_at).startOf("hour").fromNow()}
-              </p>
+              <h5 class="label">
+                {moment.utc(comment.created_at).local().startOf("second").fromNow()}
+              </h5>
             </div>
 
             <p>{comment.content}</p>
@@ -257,11 +257,6 @@ main {
     flex-direction: row;
     align-items: center;
     gap: 0.5rem;
-  }
-
-  .label {
-    font-size: 0.8rem;
-    color: var(--text-light);
   }
 }
 
