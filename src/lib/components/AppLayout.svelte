@@ -41,10 +41,10 @@
     padding: 1.5rem;
 
     border-radius: 0.8rem;
-    background-color: var(--white);
-    -webkit-box-shadow: 0px 10px 15px 0px rgba(207, 207, 207, 1);
-    -moz-box-shadow: 0px 10px 15px 0px rgba(207, 207, 207, 1);
-    box-shadow: 0px 10px 15px 0px rgba(207, 207, 207, 1);
+    background-color: var(--background);
+    box-shadow: 1px 9px 10px 2px rgba(0, 0, 0, 0.16);
+    -webkit-box-shadow: 1px 9px 10px 2px rgba(0, 0, 0, 0.16);
+    -moz-box-shadow: 1px 9px 10px 2px rgba(0, 0, 0, 0.16);
 
     gap: 1rem;
 

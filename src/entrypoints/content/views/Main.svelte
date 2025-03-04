@@ -136,7 +136,7 @@
       </div>
 
       <div>
-        <a href="https://google.com">view on web</a>
+        <a href="https://google.com" target="_blank">view on web</a>
       </div>
     </div>
   </div>
@@ -180,7 +180,7 @@
     flex: 1 1 1;
     gap: 1rem;
 
-    border-bottom: 2px dashed black;
+    border-bottom: 1px dashed black;
     padding-block: 1.3rem;
 
     h2 {
@@ -217,19 +217,20 @@
       flex: 1;
       padding: 0.5rem;
       border-radius: 6px;
-      border: 1px solid var(--primary);
+      border: 1px solid var(--text);
     }
 
     button {
-      background-color: var(--primary);
-      color: white;
+      background-color: var(--background);
+      color: var(--text);
       border: none;
       padding: 0.5rem 1rem;
       border-radius: 6px;
       cursor: pointer;
 
       &:hover {
-        background-color: var(--primary);
+        background-color: var(--text);
+        color: var(--background);
       }
     }
   }

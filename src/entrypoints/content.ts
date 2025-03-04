@@ -1,12 +1,19 @@
 import Content from "./content/App.svelte";
 import { mount } from "svelte";
 
-import "../lib/styles/global.scss";
+import "@/lib/styles/global.scss";
 
 export default defineContentScript({
-  allFrames: true,
-  matches: ["*://*/*"],
+  allFrames: false,
+  matches: ["https://*/*"],
+  excludeMatches: [
+    "*://localhost/*",
+    "*://127.0.0.1/*",
+    "*://*.csdn.net/*",
+    "*://*.csdn.com/*",
+  ],
   cssInjectionMode: "ui",
+  runAt: "document_idle",
   async main(ctx) {
     const ui = await createShadowRootUi(ctx, {
       name: "backstage-ui",
@@ -16,7 +23,7 @@ export default defineContentScript({
       mode: "open",
       isolateEvents: ["keyup", "keydown", "keypress"],
       onMount(container) {
-        const wrapper = document.createElement("div");
+        const wrapper = document.createElement("div.root");
         container.append(wrapper);
 
         mount(Content, {
