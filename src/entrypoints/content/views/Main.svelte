@@ -1,119 +1,118 @@
 <script lang="ts">
-  import {
-    addComment,
-    CommentData,
-    findCommentsDataByPageId,
-    findPageByRoute,
-  } from "@/lib/database";
-  import { signOut, supabase } from "@/lib/supabase";
-  import { getBaseUrlAndPath } from "@/lib/utils";
+import {
+  addComment,
+  findCommentsDataByPageId,
+  findPageByRoute,
+  CommentData,
+} from "@/lib/database";
+import { signOut, supabase } from "@/lib/supabase";
+import { getBaseUrlAndPath } from "@/lib/utils";
 
-  import { onMount } from "svelte";
-  import moment from "moment";
-  import { RealtimeChannel } from "@supabase/supabase-js";
+import { onMount } from "svelte";
+import moment from "moment";
+import { RealtimeChannel } from "@supabase/supabase-js";
 
-  let currentUrl: string | undefined;
-  let currentUrlSplit: {
-    baseUrl: string;
-    domain: string;
-    route: string;
-  } | null;
+let currentUrl: string | undefined;
+let currentUrlSplit: {
+  baseUrl: string;
+  domain: string;
+  route: string;
+} | null;
 
-  let initialComments: CommentData[] = [];
+let initialComments: CommentData[] = [
+  {
+    id: 1,
+    page_id: 1,
+    created_at: new Date().toLocaleDateString(),
+    author: "John Doe",
+    content: "Hello, world!",
+  },
+];
 
-  // Fetch the current tab's URL on component mount
-  let channel: RealtimeChannel;
-  onMount(() => {
-    chrome.runtime.sendMessage(
-      { type: "GET_CURRENT_URL" },
-      async (response) => {
-        if (response?.url) {
-          currentUrl = response.url;
-          currentUrlSplit = getBaseUrlAndPath(response.url);
+// Fetch the current tab's URL on component mount
+let channel: RealtimeChannel;
+onMount(() => {
+  chrome.runtime.sendMessage({ type: "GET_CURRENT_URL" }, async (response) => {
+    if (response?.url) {
+      currentUrl = response.url;
+      currentUrlSplit = getBaseUrlAndPath(response.url);
 
-          if (!currentUrlSplit) {
-            console.error("Unable to fetch current URL.");
-            return;
-          }
-
-          initialComments =
-            (await findCommentsDataByPageId(
-              await findPageByRoute(
-                currentUrlSplit.domain,
-                currentUrlSplit.route
-              )
-            )) || [];
-
-          // Subscribe to the comments_change channel
-          if (currentUrlSplit?.domain) {
-            console.log(
-              await findPageByRoute(
-                currentUrlSplit.domain,
-                currentUrlSplit.route
-              )
-            );
-
-            console.log("Subscribing to comments_change channel.");
-            channel = supabase
-              .channel("comments_realtime")
-              .on(
-                "postgres_changes",
-                {
-                  event: "*",
-                  schema: "public",
-                  table: "comments",
-                  filter: `page_id=eq.${await findPageByRoute(currentUrlSplit.domain, currentUrlSplit.route)}`,
-                },
-                (payload) => {
-                  console.log("Comments table changed.");
-
-                  // TODO update initialComments by changes
-                }
-              )
-              .subscribe();
-          } else {
-            console.log("Subscribing to comments_change channel.");
-          }
-        } else {
-          currentUrl = "Unable to fetch URL.";
-        }
+      if (!currentUrlSplit) {
+        console.error("Unable to fetch current URL.");
+        return;
       }
-    );
-  });
 
-  onDestroy(() => {
-    if (channel) {
-      console.log("Unsubscribing from comments_change channel.");
-      channel.unsubscribe();
+      initialComments =
+        (await findCommentsDataByPageId(
+          await findPageByRoute(currentUrlSplit.domain, currentUrlSplit.route),
+        )) || [];
+
+      // Subscribe to the comments_change channel
+      if (currentUrlSplit?.domain) {
+        console.log(
+          await findPageByRoute(currentUrlSplit.domain, currentUrlSplit.route),
+        );
+
+        console.log("Subscribing to comments_change channel.");
+        channel = supabase
+          .channel("comments_realtime")
+          .on(
+            "postgres_changes",
+            {
+              event: "*",
+              schema: "public",
+              table: "comments",
+              filter: `page_id=eq.${await findPageByRoute(currentUrlSplit.domain, currentUrlSplit.route)}`,
+            },
+            (payload) => {
+              console.log("Comments table changed.");
+
+              // TODO update initialComments by changes
+            },
+          )
+          .subscribe();
+      } else {
+        console.log("Subscribing to comments_change channel.");
+      }
+    } else {
+      currentUrl = "Unable to fetch URL.";
     }
   });
+});
 
-  let currentComment: string = "";
-  // Handle form submission
-  const handleSubmit = async () => {
-    console.log(currentComment);
-    if (!currentUrlSplit) {
-      console.error("Unable to fetch current URL.");
-      return;
-    }
+onDestroy(() => {
+  if (channel) {
+    console.log("Unsubscribing from comments_change channel.");
+    channel.unsubscribe();
+  }
+});
 
-    if (!currentComment) {
-      console.error("Comment cannot be empty.");
-      return;
-    }
+let currentComment: string = "";
+// Handle form submission
+const handleSubmit = async () => {
+  console.log(currentComment);
+  if (!currentUrlSplit) {
+    console.error("Unable to fetch current URL.");
+    return;
+  }
 
-    if (!currentUrl) {
-      console.error("Current URL cannot be empty.");
-      return;
-    }
+  if (!currentComment) {
+    console.error("Comment cannot be empty.");
+    return;
+  }
 
-    try {
-      await addComment(currentUrl, currentComment);
-      currentComment = "";
-    } catch (error) {
-      console.error((error as Error).message);
-    }
-  };
+  if (!currentUrl) {
+    console.error("Current URL cannot be empty.");
+    return;
+  }
+
+  try {
+    await addComment(currentUrl, currentComment);
+    currentComment = "";
+  } catch (error) {
+    console.error((error as Error).message);
+  }
+};
 </script>
 
 <main>
@@ -144,11 +143,22 @@
   <ul class="comments">
     {#each initialComments as comment}
       <li>
-        <!-- <h4>{comment.author}</h4> -->
-        <p>{comment.content}</p>
-        <p class="label">
-          {moment(comment.created_at).startOf("hour").fromNow()}
-        </p>
+        <div class="comment">
+          <div class="user-profile">
+            <img src="https://placehold.co/400" alt="Placeholder" />
+          </div>
+
+          <div class="comment-main">
+            <div class="comment-header">
+              <h5>{comment.author.substring(0, 8)}</h5>
+              <p class="label">
+                {moment(comment.created_at).startOf("hour").fromNow()}
+              </p>
+            </div>
+
+            <p>{comment.content}</p>
+          </div>
+        </div>
       </li>
     {/each}
   </ul>
@@ -168,70 +178,111 @@
 </main>
 
 <style lang="scss">
-  main {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+main {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 1;
+  gap: 1rem;
+
+  border-bottom: 1px dashed black;
+  padding-block: 1.3rem;
+
+  h2 {
+    font-weight: 400;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
-  .header {
+  .header-button {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+.comments {
+  display: flex;
+  flex-direction: column;
+
+  flex: auto;
+  padding: 0;
+  gap: 1rem;
+  overflow-y: scroll;
+}
+
+.comment {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  width: 100%;
+
+  h5,
+  p {
+    margin: 0;
+  }
+
+  .user-profile {
+    img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
+  }
+
+  .comment-main {
     display: flex;
     flex-direction: column;
+    gap: 0.2rem;
     flex: 1 1 1;
-    gap: 1rem;
 
-    border-bottom: 1px dashed black;
-    padding-block: 1.3rem;
-
-    h2 {
-      font-weight: 400;
-      margin: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .header-button {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-    }
+    margin-top: 0.2rem;
   }
 
-  .comments {
+  .comment-header {
     display: flex;
-    flex-direction: column;
-
-    flex: auto;
-    padding: 0;
+    flex-direction: row;
+    align-items: center;
     gap: 0.5rem;
-    overflow-y: scroll;
   }
 
-  .comment-form {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 1rem;
-    flex: 1 1 1;
+  .label {
+    font-size: 0.8rem;
+    color: var(--text-light);
+  }
+}
 
-    input {
-      flex: 1;
-      padding: 0.5rem;
-      border-radius: 6px;
-      border: 1px solid var(--text);
-    }
+.comment-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  flex: 1 1 1;
 
-    button {
-      background-color: var(--background);
-      color: var(--text);
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 6px;
-      cursor: pointer;
+  input {
+    flex: 1;
+    padding: 0.5rem;
+    border-radius: 6px;
+    border: 1px solid var(--text);
+  }
 
-      &:hover {
-        background-color: var(--text);
-        color: var(--background);
-      }
+  button {
+    background-color: var(--background);
+    color: var(--text);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--text);
+      color: var(--background);
     }
   }
+}
 </style>

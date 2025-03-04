@@ -18,7 +18,7 @@ export async function addComment(baseURL: string, content: string) {
   if (authError || !user) {
     console.error(
       "Error fetching user or user is not authenticated:",
-      authError?.message
+      authError?.message,
     );
     return;
   }
@@ -50,7 +50,7 @@ export async function addComment(baseURL: string, content: string) {
     if (createPageError) {
       console.error(
         `Failed to create page for URL: ${baseUrl}`,
-        createPageError.message
+        createPageError.message,
       );
       return;
     }
@@ -104,7 +104,7 @@ export async function findPageByRoute(domain: string, route: string) {
 }
 
 export async function findCommentsDataByPageId(
-  id: string
+  id: string,
 ): Promise<CommentData[] | undefined> {
   const { data: comments, error } = await supabase
     .from("comments")
