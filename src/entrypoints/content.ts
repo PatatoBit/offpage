@@ -12,6 +12,7 @@ export default defineContentScript({
     "*://127.0.0.1/*",
     "*://*.csdn.net/*",
     "*://*.csdn.com/*",
+    "*://*.accounts.google.com/*",
   ],
   cssInjectionMode: "ui",
   runAt: "document_idle",
