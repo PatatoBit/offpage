@@ -8,27 +8,17 @@ export default defineConfig({
   srcDir: "src",
   modules: ["@wxt-dev/module-svelte"],
   manifest: () => ({
-    name: "Name",
-    description: "My extension description",
+    name: "offpage",
+    description: "a community behind every page of the internet",
     permissions: ["storage", "activeTab", "identity"],
     oauth2: {
       client_id:
         "128510583025-7je22o18sg3eo5h2jk1jt62q1hdvqp05.apps.googleusercontent.com",
       scopes: ["profile", "email", "openid"],
     },
-    web_accessible_resources: [
-      {
-        resources: ["dashboard.html"],
-        matches: ["*://*/*"],
-      },
-    ],
-    entrypoints: {
-      // // Existing entry points
-      // background: "src/entrypoints/background.ts",
-      // popup: "src/entrypoints/popup/popup.ts",
-      // dashboard: "src/entrypoints/dashboard/dashboard.ts",
-      // // Updated content script entry point
-      content: "src/entrypoints/content/content.ts",
+    options_ui: {
+      page: "entrypoints/options/index.html",
+      open_in_tab: true,
     },
   }),
   vite: () => ({

@@ -12,12 +12,13 @@ export default defineContentScript({
     "*://127.0.0.1/*",
     "*://*.csdn.net/*",
     "*://*.csdn.com/*",
+    "*://*.account.google.com/*",
   ],
   cssInjectionMode: "ui",
   runAt: "document_idle",
   async main(ctx) {
     const ui = await createShadowRootUi(ctx, {
-      name: "backstage-ui",
+      name: "offpage-ui",
       position: "inline",
       anchor: "body",
       append: "last",

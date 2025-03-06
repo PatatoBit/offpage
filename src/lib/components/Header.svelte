@@ -7,6 +7,10 @@ export let currentUrlSplit: {
   domain: string;
   route: string;
 } | null;
+
+function handleOpenOptions() {
+  chrome.runtime.sendMessage({ type: "OPEN_OPTIONS_PAGE" });
+}
 </script>
 
 <div class="header">
@@ -41,7 +45,8 @@ export let currentUrlSplit: {
     </div>
 
     <div>
-      <a href="https://google.com" target="_blank">view on web</a>
+      <button on:click={handleOpenOptions}>options</button>
+      <!-- <a href="https://google.com" target="_blank">view on web</a> -->
     </div>
   </div>
 </div>

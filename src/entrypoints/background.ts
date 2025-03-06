@@ -19,6 +19,18 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 });
 
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === "OPEN_OPTIONS_PAGE") {
+    chrome.runtime.openOptionsPage(() => {
+      if (chrome.runtime.lastError) {
+        console.error(chrome.runtime.lastError);
+      } else {
+        console.log("Options page opened successfully.");
+      }
+    });
+  }
+});
+
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   if (message.action === "loginWithGoogle") {
     try {
