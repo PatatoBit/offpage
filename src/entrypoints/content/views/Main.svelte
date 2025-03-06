@@ -212,8 +212,8 @@ main {
 
   .user-profile {
     img {
-      width: 45px;
-      height: 45px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
     }
   }
@@ -224,7 +224,7 @@ main {
     gap: 0.2rem;
     flex: 1 1 1;
 
-    margin-top: 0.2rem;
+    margin-top: 0.1;
   }
 
   .comment-header {
