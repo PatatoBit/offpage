@@ -25,7 +25,7 @@ browser.runtime.onMessage.addListener((message) => {
 }
 
 .hide {
-  opacity: 0;
+  transform: translateX(150%);
 }
 
 .page {
@@ -42,7 +42,7 @@ browser.runtime.onMessage.addListener((message) => {
 
   gap: 1rem;
 
-  transition: opacity 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+  transition: transform 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 .left-hover {
