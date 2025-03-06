@@ -1,22 +1,17 @@
 <script lang="ts">
-import { fly } from "svelte/transition";
 import { extensionStatus } from "@/stores/AppStatus";
-import closeButton from "../../assets/icons/cross.svg";
 
-function togglePopup() {
-  extensionStatus.update((status) => {
-    status.open = !status.open;
-    return status;
-  });
-}
+browser.runtime.onMessage.addListener((message) => {
+  if (message.type === "TOGGLE_STATUS") {
+    extensionStatus.set({ open: message.open });
+  }
+});
 </script>
 
 <div class="left-hover">
   <div class="page" class:hide={!$extensionStatus.open}>
     <slot />
   </div>
-
-  <button class="toggle-button" on:click={togglePopup}> offpage </button>
 </div>
 
 <style lang="scss">
@@ -34,9 +29,6 @@ function togglePopup() {
 }
 
 .page {
-  top: 1rem;
-  right: 1rem;
-
   width: 300px;
   height: 90vh;
   z-index: 100;
@@ -51,19 +43,15 @@ function togglePopup() {
   gap: 1rem;
 
   transition: opacity 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
-
-  button {
-    cursor: pointer;
-  }
 }
 
 .left-hover {
   position: fixed;
-  top: 1rem;
+  top: 50%;
   right: 1rem;
-  height: 95vh;
 
   display: flex;
-  flex-direction: column;
+
+  transform: translateY(-50%);
 }
 </style>

@@ -21,9 +21,6 @@ export default defineConfig({
       page: "entrypoints/options/index.html",
       open_in_tab: true,
     },
-    service_worker: {
-      src: "entrypoints/background.ts",
-    },
   }),
   vite: () => ({
     plugins: [wasm(), topLevelAwait()],

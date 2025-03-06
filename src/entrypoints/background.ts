@@ -1,45 +1,50 @@
 import { supabase } from "@/lib/supabase";
 import { supabaseUrl, supabaseAnonKey } from "@/lib/utils";
+import { extensionStatus } from "@/stores/AppStatus";
 import { createClient } from "@supabase/supabase-js";
 
 export default defineBackground(() => {
   console.log("Background Initiated", { id: browser.runtime.id });
 
-  browser.action.onClicked.addListener((tab) => {
-    chrome.runtime.openOptionsPage(() => {
-      if (chrome.runtime.lastError) {
-        console.error(chrome.runtime.lastError);
-      } else {
-        console.log("Options page opened successfully.");
-      }
-    });
+  browser.action.onClicked.addListener(async (tab) => {
+    // Toggle UI
+    const { open } = (await browser.storage.local.get("open")) || {
+      open: false,
+    };
+    const newOpenState = !open;
+
+    await chrome.storage.local.set({ open: newOpenState });
   });
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.type === "GET_CURRENT_URL") {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      if (tabs.length > 0) {
-        sendResponse({ url: tabs[0].url });
-      } else {
-        sendResponse({ url: null });
-      }
-    });
-    return true; // Keeps the message channel open for async response
+  switch (message.type) {
+    case "GET_CURRENT_URL":
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        if (tabs.length > 0) {
+          sendResponse({ url: tabs[0].url });
+        } else {
+          sendResponse({ url: null });
+        }
+      });
+      return true; // Keeps the message channel open for async response
+
+    case "OPEN_OPTIONS_PAGE":
+      chrome.runtime.openOptionsPage(() => {
+        if (chrome.runtime.lastError) {
+          console.error(chrome.runtime.lastError);
+        } else {
+          console.log("Options page opened successfully.");
+        }
+      });
+      break;
+
+    default:
+      break;
   }
 });
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.type === "OPEN_OPTIONS_PAGE") {
-    chrome.runtime.openOptionsPage(() => {
-      if (chrome.runtime.lastError) {
-        console.error(chrome.runtime.lastError);
-      } else {
-        console.log("Options page opened successfully.");
-      }
-    });
-  }
-});
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {});
 
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   if (message.action === "loginWithGoogle") {

@@ -5,8 +5,8 @@ import {
   findPageByRoute,
   CommentData,
 } from "@/lib/database";
-import { signOut, supabase } from "@/lib/supabase";
-import { getBaseUrlAndPath, getIcon } from "@/lib/utils";
+import { supabase } from "@/lib/supabase";
+import { getBaseUrlAndPath } from "@/lib/utils";
 
 import { onMount } from "svelte";
 import moment from "moment";
