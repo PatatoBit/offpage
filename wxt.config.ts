@@ -10,7 +10,8 @@ export default defineConfig({
   manifest: () => ({
     name: "offpage",
     description: "a community behind every page of the internet",
-    permissions: ["storage", "activeTab", "identity"],
+    permissions: ["storage", "activeTab", "identity", "tabs"],
+    action: {},
     oauth2: {
       client_id:
         "128510583025-7je22o18sg3eo5h2jk1jt62q1hdvqp05.apps.googleusercontent.com",
@@ -19,6 +20,9 @@ export default defineConfig({
     options_ui: {
       page: "entrypoints/options/index.html",
       open_in_tab: true,
+    },
+    service_worker: {
+      src: "entrypoints/background.ts",
     },
   }),
   vite: () => ({

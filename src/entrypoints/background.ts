@@ -4,6 +4,16 @@ import { createClient } from "@supabase/supabase-js";
 
 export default defineBackground(() => {
   console.log("Background Initiated", { id: browser.runtime.id });
+
+  browser.action.onClicked.addListener((tab) => {
+    chrome.runtime.openOptionsPage(() => {
+      if (chrome.runtime.lastError) {
+        console.error(chrome.runtime.lastError);
+      } else {
+        console.log("Options page opened successfully.");
+      }
+    });
+  });
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
