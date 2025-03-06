@@ -7,6 +7,10 @@ export interface CommentData {
   created_at: string;
   author: string;
   content: string;
+  profiles?: {
+    username?: string;
+    avatar_url?: string;
+  } | null;
 }
 
 export async function addComment(baseURL: string, content: string) {
@@ -108,12 +112,21 @@ export async function findCommentsDataByPageId(
 ): Promise<CommentData[] | undefined> {
   const { data: comments, error } = await supabase
     .from("comments")
-    .select("id, page_id, content, created_at, author")
-    .eq("page_id", id)
+    .select(
+      `
+    id, content, created_at, author, page_id,
+    profiles!comments_author_fkey (username, avatar_url)
+  `,
+    )
     .order("created_at", { ascending: false });
 
   if (error) {
     console.error("Error fetching comments:", error);
+  } else {
+    console.log(comments);
+  }
+
+  if (!comments) {
     return;
   }
 
@@ -123,6 +136,17 @@ export async function findCommentsDataByPageId(
     created_at: comment.created_at as string,
     author: comment.author as string,
     content: comment.content as string,
+    profiles:
+      comment.profiles && !Array.isArray(comment.profiles)
+        ? {
+            username: (
+              comment.profiles as { username: string; avatar_url: string }
+            ).username,
+            avatar_url: (
+              comment.profiles as { username: string; avatar_url: string }
+            ).avatar_url,
+          }
+        : undefined,
   }));
 }
 

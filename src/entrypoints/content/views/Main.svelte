@@ -53,10 +53,6 @@ onMount(() => {
 
       // Subscribe to the comments_change channel
       if (currentUrlSplit?.domain) {
-        console.log(
-          await findPageByRoute(currentUrlSplit.domain, currentUrlSplit.route),
-        );
-
         console.log("Subscribing to comments_change channel.");
         channel = supabase
           .channel("comments_realtime")
@@ -136,12 +132,21 @@ onDestroy(() => {
       <li>
         <div class="comment">
           <div class="user-profile">
-            <img src="https://placehold.co/400" alt="Placeholder" />
+            {#if comment.profiles}
+              <img
+                src={comment.profiles.avatar_url}
+                alt={comment.profiles.username + "'s avatar"}
+              />
+            {:else}
+              <img src="https://placehold.co/400" alt="Placeholder" />
+            {/if}
           </div>
 
           <div class="comment-main">
             <div class="comment-header">
-              <h5>{comment.author.substring(0, 8)}</h5>
+              {#if comment.profiles}
+                <h5>{comment.profiles.username}</h5>
+              {/if}
               <h5 class="label">
                 {moment.utc(comment.created_at).local().startOf("second").fromNow()}
               </h5>
