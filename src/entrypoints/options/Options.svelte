@@ -31,3 +31,18 @@ $: if ($userId) {
     <img src={userData.avatar_url} alt="User avatar" />
   {/if}
 </AuthWall>
+
+<style>
+h1 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+}
+</style>
