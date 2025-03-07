@@ -17,50 +17,10 @@ export async function signOut() {
   console.log("Signed out");
 }
 
-// export async function fetchUserProfile(userId: string) {
-//   console.log("====================================");
-//   console.log("fetchUserProfile", userId);
-//   console.log("====================================");
-
-//   const { data, error } = await supabase
-//     .from("profiles")
-//     .select("username, avatar_url")
-//     .eq("id", "84450ce1-b39c-4503-be92-009a5e6841b2")
-//     .single(); // .single() ensures we get only one profile
-
-//   if (error) {
-//     console.error("Error fetching user profile:", error);
-//     return null;
-//   }
-
-//   console.table(data);
-//   return data;
-// }
-
 interface UserProfileData {
   username: string;
   avatar_url: string;
 }
-
-// export async function fetchUserProfile(
-//   userId: string,
-// ): Promise<UserProfileData | null> {
-//   console.log("====================================");
-//   console.log("fetchUserProfile", userId);
-//   console.log("====================================");
-
-//   const { data, error } = await supabase
-//     .from("profiles")
-//     .select("username, avatar_url")
-//     .eq("id", userId);
-
-//   if (error) {
-//     console.error("Error fetching user profile:", error);
-//     return null;
-//   }
-
-//   return data;
-// }
 
 export async function fetchUserProfile(
   userId: string,

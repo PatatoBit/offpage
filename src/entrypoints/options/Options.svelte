@@ -10,17 +10,11 @@ let userData = {
 
 $: if ($userId) {
   (async () => {
-    await fetchUserProfile("84450ce1-b39c-4503-be92-009a5e6841b2").then(
-      (profile) => {
-        console.log("====================================");
-        console.log(profile);
-        console.log("====================================");
-
-        if (profile) {
-          userData = profile;
-        }
-      },
-    );
+    await fetchUserProfile($userId).then((profile) => {
+      if (profile) {
+        userData = profile;
+      }
+    });
   })();
 }
 </script>
@@ -29,16 +23,23 @@ $: if ($userId) {
   {#if userData.username}
     <main class="page">
       <div class="card">
-        <img src={userData.avatar_url} alt="User avatar" />
-        <input type="text" value={userData.username} required />
+        <form action="">
+          <img src={userData.avatar_url} alt="User avatar" />
+          <input type="text" value={userData.username} required />
 
-        <button on:click={async() => await signOut()}>Sign out</button>
+          <div>
+            <button on:click={async() => await signOut()}>Sign out</button>
+            <button class="primary">Save</button>
+          </div>
+        </form>
       </div>
     </main>
   {/if}
 </AuthWall>
 
-<style>
+<style lang="scss">
+@use "../../lib/styles/variables.scss";
+
 .page {
   display: flex;
   justify-content: center;
@@ -50,7 +51,6 @@ $: if ($userId) {
 .card {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 1rem;
 
   padding: 1rem;
@@ -62,6 +62,17 @@ $: if ($userId) {
   min-height: 500px;
   width: 100%;
   margin: 0 auto;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  img {
+    align-self: center;
+  }
 }
 
 img {
