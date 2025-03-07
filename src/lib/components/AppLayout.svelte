@@ -55,6 +55,6 @@ browser.runtime.onMessage.addListener((message) => {
 }
 
 .left-hover.hide {
-  display: none;
+  pointer-events: none;
 }
 </style>
