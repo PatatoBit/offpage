@@ -1,5 +1,5 @@
 <script lang="ts">
-import { fetchUserProfile, signOut } from "@/lib/supabase";
+import { fetchUserProfile, signOut, updateUserProfile } from "@/lib/supabase";
 import AuthWall from "../content/views/AuthWall.svelte";
 import { userId } from "@/lib/stores/sessionStore";
 
@@ -27,9 +27,15 @@ $: if ($userId && !userData.username && !userData.avatar_url) {
 let files: FileList;
 
 async function handleProfileSave() {
-  console.log("====================================");
-  console.log(changedUserData);
-  console.log("====================================");
+  if ($userId) {
+    await updateUserProfile(
+      $userId,
+      changedUserData.username,
+      changedUserData.avatar_url,
+    );
+  } else {
+    console.error("User not found");
+  }
 }
 </script>
 
@@ -51,7 +57,7 @@ async function handleProfileSave() {
           <input type="text" bind:value={changedUserData.username} required />
 
           <div>
-            <button on:click={async() => await signOut()}>Sign out</button>
+            <!-- <button on:click={async() => await signOut()}>Sign out</button> -->
             <button type="submit" class="primary">Save</button>
           </div>
         </form>

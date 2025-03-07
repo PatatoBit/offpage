@@ -45,3 +45,24 @@ export async function fetchUserProfile(
 
   return data;
 }
+
+export async function updateUserProfile(
+  userId: string,
+  username?: string,
+  avatar_url?: string,
+) {
+  console.log("Updating user profile for user ID:", userId);
+
+  const { data, error } = await supabase.from("profiles").upsert({
+    id: userId,
+    username,
+    avatar_url,
+  });
+
+  if (error) {
+    console.error("Error updating user profile:", error);
+    return null;
+  }
+
+  return data;
+}
