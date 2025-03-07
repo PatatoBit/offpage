@@ -1,5 +1,5 @@
 <script lang="ts">
-import { fetchUserProfile } from "@/lib/supabase";
+import { fetchUserProfile, signOut } from "@/lib/supabase";
 import AuthWall from "../content/views/AuthWall.svelte";
 import { userId } from "@/lib/stores/sessionStore";
 
@@ -27,16 +27,41 @@ $: if ($userId) {
 
 <AuthWall>
   {#if userData.username}
-    <h1>{userData.username}</h1>
-    <img src={userData.avatar_url} alt="User avatar" />
+    <main class="page">
+      <div class="card">
+        <img src={userData.avatar_url} alt="User avatar" />
+        <input type="text" value={userData.username} required />
+
+        <button on:click={async() => await signOut()}>Sign out</button>
+      </div>
+    </main>
   {/if}
 </AuthWall>
 
 <style>
-h1 {
-  font-size: 24px;
-  color: #333;
-  margin-bottom: 10px;
+.page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  text-align: center;
+  max-width: 300px;
+  min-height: 500px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 img {

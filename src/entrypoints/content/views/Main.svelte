@@ -247,17 +247,6 @@ main {
   margin-bottom: 1rem;
   flex: 1 1 1;
 
-  textarea {
-    flex: 1;
-    padding: 0.5rem;
-    border-radius: 6px;
-    resize: none;
-
-    border: 1px solid rgb(200, 200, 200);
-    background-color: rgb(248, 248, 248);
-    font-family: "Open Runded", sans-serif;
-  }
-
   .form-buttons {
     display: flex;
     flex-direction: row;
