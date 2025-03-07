@@ -73,10 +73,10 @@ async function handleProfileSave() {
           <input type="text" bind:value={changedUserData.username} required />
 
           <div>
-            <!-- <button on:click={async() => await signOut()}>Sign out</button> -->
             <button type="submit" class="primary">Save</button>
           </div>
         </form>
+        <button on:click={async() => await signOut()}>Sign out</button>
       </div>
     </main>
   {/if}
