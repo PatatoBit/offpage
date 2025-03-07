@@ -8,7 +8,7 @@ browser.runtime.onMessage.addListener((message) => {
 });
 </script>
 
-<div class="left-hover">
+<div class="left-hover" class:hide={!$extensionStatus.open}>
   <div class="page" class:hide={!$extensionStatus.open}>
     <slot />
   </div>
@@ -23,10 +23,6 @@ browser.runtime.onMessage.addListener((message) => {
   position: absolute;
   bottom: 0;
   right: 0;
-}
-
-.hide {
-  transform: translateX(150%);
 }
 
 .page {
@@ -45,14 +41,20 @@ browser.runtime.onMessage.addListener((message) => {
 
   transition: transform 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
+.page.hide {
+  transform: translateX(150%);
+  pointer-events: none;
+}
 
 .left-hover {
   position: fixed;
   top: 50%;
   right: 1rem;
-
   display: flex;
-
   transform: translateY(-50%);
+}
+
+.left-hover.hide {
+  display: none;
 }
 </style>
