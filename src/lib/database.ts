@@ -153,4 +153,25 @@ export async function findCommentsDataByPageId(
   }));
 }
 
-// Users
+// Upload file to Supabase
+export async function uploadProfilePicture(
+  file: File,
+  userId: string,
+): Promise<string> {
+  const fileName: string = `${userId}-${Date.now()}-${file.name}`; // Unique file name
+  const { data, error } = await supabase.storage
+    .from("profile-pictures") // Replace with your Supabase bucket
+    .upload(fileName, file);
+
+  if (error) {
+    console.error("Upload error:", error.message);
+    alert("Upload failed!");
+  }
+
+  // Get public URL
+  const { data: publicUrlData } = supabase.storage
+    .from("profile-pictures")
+    .getPublicUrl(fileName);
+
+  return publicUrlData.publicUrl;
+}

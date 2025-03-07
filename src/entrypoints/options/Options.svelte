@@ -2,6 +2,7 @@
 import { fetchUserProfile, signOut, updateUserProfile } from "@/lib/supabase";
 import AuthWall from "../content/views/AuthWall.svelte";
 import { userId } from "@/lib/stores/sessionStore";
+import { uploadProfilePicture } from "@/lib/database";
 
 let userData = {
   username: "",
@@ -24,10 +25,25 @@ $: if ($userId && !userData.username && !userData.avatar_url) {
   })();
 }
 
-let files: FileList;
+let file: File | null = null;
+type FileChangeEvent = Event & { target: HTMLInputElement };
+
+// Handle file selection
+
+function handleFileChange(event: Event): void {
+  const input = event.target as HTMLInputElement;
+  const files = input.files;
+  if (files && files.length > 0) {
+    file = files[0];
+  }
+}
 
 async function handleProfileSave() {
   if ($userId) {
+    if (file) {
+      changedUserData.avatar_url = await uploadProfilePicture(file, $userId);
+    }
+
     await updateUserProfile(
       $userId,
       changedUserData.username,
@@ -51,7 +67,7 @@ async function handleProfileSave() {
           <input
             type="file"
             accept="image/png, image/jpeg"
-            bind:files={files}
+            on:change={handleFileChange}
           />
 
           <input type="text" bind:value={changedUserData.username} required />
