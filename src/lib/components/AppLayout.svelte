@@ -15,6 +15,7 @@ browser.runtime.onMessage.addListener((message) => {
 </div>
 
 <style lang="scss">
+@use "../styles/global.scss";
 @use "../styles/variables.scss";
 @use "../styles/fonts.scss";
 
@@ -33,9 +34,9 @@ browser.runtime.onMessage.addListener((message) => {
   height: 90vh;
   z-index: 100;
   padding-inline: 1.5rem;
+  background-color: var(--background);
 
   border-radius: 0.8rem;
-  background-color: var(--background);
   box-shadow: 1px 9px 10px 2px rgba(0, 0, 0, 0.16);
   -webkit-box-shadow: 1px 9px 10px 2px rgba(0, 0, 0, 0.16);
   -moz-box-shadow: 1px 9px 10px 2px rgba(0, 0, 0, 0.16);

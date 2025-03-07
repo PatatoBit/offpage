@@ -185,6 +185,8 @@ main {
   display: flex;
   flex-direction: column;
   height: 100%;
+
+  background-color: transparent;
 }
 
 .comments {
@@ -220,6 +222,7 @@ main {
       width: 40px;
       height: 40px;
       border-radius: 50%;
+      border: 1px solid var(--border);
     }
   }
 
