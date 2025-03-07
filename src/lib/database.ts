@@ -118,6 +118,7 @@ export async function findCommentsDataByPageId(
     profiles!comments_author_fkey (username, avatar_url)
   `,
     )
+    .eq("page_id", id)
     .order("created_at", { ascending: false });
 
   if (error) {
