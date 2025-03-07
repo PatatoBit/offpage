@@ -158,6 +158,16 @@ export async function uploadProfilePicture(
   file: File,
   userId: string,
 ): Promise<string> {
+  // Delete old file if it exists (jpg or png)
+  const { data: existingFiles, error: listError } = await supabase.storage
+    .from("profile-pictures")
+    .list("", { search: userId });
+
+  if (existingFiles?.length) {
+    const oldFilePaths = existingFiles.map((f) => f.name);
+    await supabase.storage.from("profile-pictures").remove(oldFilePaths);
+  }
+
   const fileName: string = `${userId}-${Date.now()}-${file.name}`; // Unique file name
   const { data, error } = await supabase.storage
     .from("profile-pictures") // Replace with your Supabase bucket

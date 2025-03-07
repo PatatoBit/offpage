@@ -223,6 +223,8 @@ main {
       height: 40px;
       border-radius: 50%;
       border: 1px solid var(--border);
+
+      object-fit: cover;
     }
   }
 
