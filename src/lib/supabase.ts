@@ -25,9 +25,7 @@ interface UserProfileData {
 export async function fetchUserProfile(
   userId: string,
 ): Promise<UserProfileData | null> {
-  console.log("====================================");
-  console.log("fetchUserProfile", userId);
-  console.log("====================================");
+  console.log("Fetching user profile for user ID:", userId);
 
   const { data, error } = await supabase
     .from("profiles")

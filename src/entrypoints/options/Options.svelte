@@ -8,14 +8,28 @@ let userData = {
   avatar_url: "",
 };
 
-$: if ($userId) {
+let changedUserData = {
+  username: "",
+  avatar_url: "",
+};
+
+$: if ($userId && !userData.username && !userData.avatar_url) {
   (async () => {
     await fetchUserProfile($userId).then((profile) => {
       if (profile) {
         userData = profile;
+        changedUserData = profile;
       }
     });
   })();
+}
+
+let files: FileList;
+
+async function handleProfileSave() {
+  console.log("====================================");
+  console.log(changedUserData);
+  console.log("====================================");
 }
 </script>
 
@@ -23,13 +37,22 @@ $: if ($userId) {
   {#if userData.username}
     <main class="page">
       <div class="card">
-        <form action="">
+        <form
+          on:submit={async() => await handleProfileSave()}
+          on:submit|preventDefault
+        >
           <img src={userData.avatar_url} alt="User avatar" />
-          <input type="text" value={userData.username} required />
+          <input
+            type="file"
+            accept="image/png, image/jpeg"
+            bind:files={files}
+          />
+
+          <input type="text" bind:value={changedUserData.username} required />
 
           <div>
             <button on:click={async() => await signOut()}>Sign out</button>
-            <button class="primary">Save</button>
+            <button type="submit" class="primary">Save</button>
           </div>
         </form>
       </div>

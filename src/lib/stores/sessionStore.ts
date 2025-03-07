@@ -15,5 +15,4 @@ export async function initializeSession() {
     isSignedIn.set(true); // Update the store
     userId.set(session.user.id); // Update the store
   }
-  console.log("User ID:", userId); // You can now use the userId as needed
 }

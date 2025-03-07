@@ -7,10 +7,12 @@ export interface CommentData {
   created_at: string;
   author: string;
   content: string;
-  profiles?: {
-    username?: string;
-    avatar_url?: string;
-  } | null;
+  profiles?: UserProfileData | null;
+}
+
+export interface UserProfileData {
+  username: string;
+  avatar_url: string;
 }
 
 export async function addComment(baseURL: string, content: string) {
