@@ -14,6 +14,8 @@ let changedUserData = {
   avatar_url: "",
 };
 
+let previewProfilePicture: string | null = null;
+
 $: if ($userId && !userData.username && !userData.avatar_url) {
   (async () => {
     await fetchUserProfile($userId).then((profile) => {
@@ -35,6 +37,7 @@ function handleFileChange(event: Event): void {
   const files = input.files;
   if (files && files.length > 0) {
     file = files[0];
+    previewProfilePicture = URL.createObjectURL(file);
   }
 }
 
@@ -63,7 +66,10 @@ async function handleProfileSave() {
           on:submit={async() => await handleProfileSave()}
           on:submit|preventDefault
         >
-          <img src={userData.avatar_url} alt="User avatar" />
+          <img
+            src={previewProfilePicture ? previewProfilePicture : userData.avatar_url}
+            alt="User avatar"
+          />
           <input
             type="file"
             accept="image/png, image/jpeg"
