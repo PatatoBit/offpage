@@ -6,7 +6,7 @@ import {
   CommentData,
 } from "@/lib/database";
 import { fetchUserProfile, supabase } from "@/lib/supabase";
-import { getBaseUrlAndPath, isEmpty } from "@/lib/utils";
+import { getBaseUrlAndPath } from "@/lib/utils";
 
 import { onMount } from "svelte";
 import moment from "moment";
@@ -15,7 +15,6 @@ import {
   RealtimePostgresChangesPayload,
 } from "@supabase/supabase-js";
 import Header from "@/lib/components/Header.svelte";
-
 import ReturnIcon from "@/assets/icons/return.svg";
 
 let currentUrl: string | undefined;

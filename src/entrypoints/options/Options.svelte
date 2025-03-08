@@ -1,8 +1,19 @@
 <script lang="ts">
-import { fetchUserProfile, signOut, updateUserProfile } from "@/lib/supabase";
+import { RealtimeChannel } from "@supabase/supabase-js";
+import {
+  fetchUserProfile,
+  signOut,
+  supabase,
+  updateUserProfile,
+} from "@/lib/supabase";
 import AuthWall from "../content/views/AuthWall.svelte";
 import { userId } from "@/lib/stores/sessionStore";
 import { uploadProfilePicture } from "@/lib/database";
+
+interface UserProfileData {
+  username: string;
+  avatar_url: string;
+}
 
 let userData = {
   username: "",
@@ -56,6 +67,33 @@ async function handleProfileSave() {
     console.error("User not found");
   }
 }
+
+// Realtime updates
+let channel: RealtimeChannel;
+onMount(async () => {
+  channel = supabase.channel("profile_updates").on(
+    "postgres_changes",
+    {
+      event: "UPDATE",
+      schema: "public",
+      table: "profiles",
+    },
+    (payload) => {
+      console.log("Profile table changed.");
+      console.log(payload.new);
+
+      if (Object.keys(payload.new).length > 0) {
+        const profile = payload.new as UserProfileData;
+        userData = profile;
+        changedUserData = profile;
+      } else {
+        console.warn("Received an empty object as payload.new");
+      }
+    },
+  );
+
+  channel.subscribe();
+});
 </script>
 
 <AuthWall>
