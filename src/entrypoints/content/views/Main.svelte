@@ -71,12 +71,18 @@ onMount(() => {
               console.log("Comments table changed.");
               console.log(payload.new);
 
-              const newUpdatedComment = {
-                ...payload.new,
-                profiles: await fetchUserProfile(payload.new.author),
-              };
+              // Check if payload.new is not an empty object
+              if (Object.keys(payload.new).length > 0) {
+                const comment = payload.new as CommentData; // Type assertion
+                const newUpdatedComment = {
+                  ...comment,
+                  profiles: await fetchUserProfile(comment.author),
+                };
 
-              initialComments = [newUpdatedComment, ...initialComments];
+                initialComments = [newUpdatedComment, ...initialComments];
+              } else {
+                console.warn("Received an empty object as payload.new");
+              }
             },
           )
           .subscribe();
