@@ -5,12 +5,15 @@ import {
   findPageByRoute,
   CommentData,
 } from "@/lib/database";
-import { supabase } from "@/lib/supabase";
-import { getBaseUrlAndPath } from "@/lib/utils";
+import { fetchUserProfile, supabase } from "@/lib/supabase";
+import { getBaseUrlAndPath, isEmpty } from "@/lib/utils";
 
 import { onMount } from "svelte";
 import moment from "moment";
-import { RealtimeChannel } from "@supabase/supabase-js";
+import {
+  RealtimeChannel,
+  RealtimePostgresChangesPayload,
+} from "@supabase/supabase-js";
 import Header from "@/lib/components/Header.svelte";
 
 import ReturnIcon from "@/assets/icons/return.svg";
@@ -55,7 +58,7 @@ onMount(() => {
       if (currentUrlSplit?.domain) {
         console.log("Subscribing to comments_change channel.");
         channel = supabase
-          .channel("comments_realtime")
+          .channel("comments_inserts")
           .on(
             "postgres_changes",
             {
@@ -64,10 +67,16 @@ onMount(() => {
               table: "comments",
               filter: `page_id=eq.${await findPageByRoute(currentUrlSplit.domain, currentUrlSplit.route)}`,
             },
-            (payload) => {
+            async (payload: RealtimePostgresChangesPayload<CommentData>) => {
               console.log("Comments table changed.");
+              console.log(payload.new);
 
-              // TODO update initialComments by changes
+              const newUpdatedComment = {
+                ...payload.new,
+                profiles: await fetchUserProfile(payload.new.author),
+              };
+
+              initialComments = [newUpdatedComment, ...initialComments];
             },
           )
           .subscribe();
