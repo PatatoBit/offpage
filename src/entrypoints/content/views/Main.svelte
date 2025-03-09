@@ -17,54 +17,47 @@ import {
 import Header from "@/lib/components/Header.svelte";
 import ReturnIcon from "@/assets/icons/return.svg";
 import Loading from "@/lib/components/Loading.svelte";
-
-let currentUrl: string | undefined;
-
-let currentUrlSplit: {
-  baseUrl: string;
-  domain: string;
-  route: string;
-} | null;
-
-let initialComments: CommentData[] = [];
-let isEmpty: boolean = false;
+import {
+  currentUrl,
+  currentUrlSplit,
+  initialComments,
+  isEmpty,
+} from "@/stores/AppStatus";
 
 // Fetch the current tab's URL on component mount
 let channel: RealtimeChannel;
 onMount(() => {
   chrome.runtime.sendMessage({ type: "GET_CURRENT_URL" }, async (response) => {
     if (response?.url) {
-      currentUrl = response.url;
-      currentUrlSplit = getBaseUrlAndPath(response.url);
+      $currentUrl = response.url;
+      $currentUrlSplit = getBaseUrlAndPath(response.url);
 
-      if (!currentUrlSplit) {
-        isEmpty = true;
+      if (!$currentUrlSplit) {
+        isEmpty.set(true);
         console.error("Unable to fetch current URL.");
         return;
       }
 
       const page = await findPageByRoute(
-        currentUrlSplit.domain,
-        currentUrlSplit.route,
+        $currentUrlSplit.domain,
+        $currentUrlSplit.route,
       );
 
       if (page == null) {
-        isEmpty = true;
+        isEmpty.set(true);
         console.error("Page not found.");
         return;
       }
 
-      initialComments =
-        (await findCommentsDataByPageId(
-          await findPageByRoute(currentUrlSplit.domain, currentUrlSplit.route),
-        )) || [];
+      const comments = await findCommentsDataByPageId(page);
+      initialComments.set(comments || []);
 
-      if (initialComments.length == 0) {
-        isEmpty = true;
+      if ($initialComments.length == 0) {
+        isEmpty.set(true);
       }
 
       // Subscribe to the comments_change channel
-      if (currentUrlSplit?.domain) {
+      if ($currentUrlSplit?.domain) {
         console.log("Subscribing to comments_change channel.");
         channel = supabase
           .channel("comments_inserts")
@@ -74,12 +67,12 @@ onMount(() => {
               event: "*",
               schema: "public",
               table: "comments",
-              filter: `page_id=eq.${await findPageByRoute(currentUrlSplit.domain, currentUrlSplit.route)}`,
+              filter: `page_id=eq.${await findPageByRoute($currentUrlSplit.domain, $currentUrlSplit.route)}`,
             },
             async (payload: RealtimePostgresChangesPayload<CommentData>) => {
               console.log("Comments table changed.");
               console.log(payload.new);
-              isEmpty = false;
+              isEmpty.set(false);
 
               // Check if payload.new is not an empty object
               if (Object.keys(payload.new).length > 0) {
@@ -89,7 +82,7 @@ onMount(() => {
                   profiles: await fetchUserProfile(comment.author),
                 };
 
-                initialComments = [newUpdatedComment, ...initialComments];
+                initialComments.update((prev) => [newUpdatedComment, ...prev]);
               } else {
                 console.warn("Received an empty object as payload.new");
               }
@@ -100,7 +93,7 @@ onMount(() => {
         console.log("Subscribing to comments_change channel.");
       }
     } else {
-      currentUrl = "Unable to fetch URL.";
+      currentUrl.set("Unable to fetch URL");
     }
   });
 });
@@ -126,7 +119,7 @@ const handleSubmit = async () => {
   }
 
   try {
-    await addComment(currentUrl, currentComment);
+    await addComment($currentUrl as string, currentComment);
     currentComment = "";
   } catch (error) {
     console.error((error as Error).message);
@@ -150,12 +143,15 @@ onDestroy(() => {
 
 <main>
   <!-- <button on:click={async () => await signOut()}>Sign out</button> -->
-  <Header currentUrl={currentUrl} currentUrlSplit={currentUrlSplit} />
+  <Header
+    currentUrl={$currentUrl as string}
+    currentUrlSplit={$currentUrlSplit}
+  />
 
-  {#if initialComments.length != 0 || isEmpty}
+  {#if $initialComments.length != 0 || isEmpty}
     <!-- content here -->
     <ul class="comments">
-      {#each initialComments as comment}
+      {#each $initialComments as comment}
         <li>
           <div class="comment">
             <div class="user-profile">

@@ -1,6 +1,16 @@
+import { CommentData } from "@/lib/database";
 import { writable } from "svelte/store";
 
 const appStatusKey = "extension_status";
+
+export const currentUrl = writable<string | null>(null);
+export const currentUrlSplit = writable<{
+  baseUrl: string;
+  domain: string;
+  route: string;
+} | null>(null);
+export const initialComments = writable<CommentData[]>([]);
+export const isEmpty = writable<boolean>(false);
 
 export const extensionStatus = writable({
   open: false,
