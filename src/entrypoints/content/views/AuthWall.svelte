@@ -1,6 +1,6 @@
 <script lang="ts">
 import { initializeSession, isSignedIn } from "@/lib/stores/sessionStore";
-import Cat from "@/assets/cat.gif";
+import Loading from "@/lib/components/Loading.svelte";
 
 let loading: boolean = $state(true);
 
@@ -24,13 +24,17 @@ onMount(() => {
     .then(() => {
       console.log("Session initialized");
     });
+
+  setTimeout(() => {
+    loading = false;
+  }, 1000);
 });
 </script>
 
 {#if $isSignedIn}
   <slot />
 {:else if loading}
-  <img src={Cat} alt="oia cat" />
+  <Loading />
 {:else}
   <button onclick={async () => await loginWithGoogle()}>Sign in</button>
 {/if}

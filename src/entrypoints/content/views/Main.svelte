@@ -16,6 +16,7 @@ import {
 } from "@supabase/supabase-js";
 import Header from "@/lib/components/Header.svelte";
 import ReturnIcon from "@/assets/icons/return.svg";
+import Loading from "@/lib/components/Loading.svelte";
 
 let currentUrl: string | undefined;
 
@@ -26,6 +27,7 @@ let currentUrlSplit: {
 } | null;
 
 let initialComments: CommentData[] = [];
+let isEmpty: boolean = false;
 
 // Fetch the current tab's URL on component mount
 let channel: RealtimeChannel;
@@ -36,7 +38,19 @@ onMount(() => {
       currentUrlSplit = getBaseUrlAndPath(response.url);
 
       if (!currentUrlSplit) {
+        isEmpty = true;
         console.error("Unable to fetch current URL.");
+        return;
+      }
+
+      const page = await findPageByRoute(
+        currentUrlSplit.domain,
+        currentUrlSplit.route,
+      );
+
+      if (page == null) {
+        isEmpty = true;
+        console.error("Page not found.");
         return;
       }
 
@@ -44,6 +58,10 @@ onMount(() => {
         (await findCommentsDataByPageId(
           await findPageByRoute(currentUrlSplit.domain, currentUrlSplit.route),
         )) || [];
+
+      if (initialComments.length == 0) {
+        isEmpty = true;
+      }
 
       // Subscribe to the comments_change channel
       if (currentUrlSplit?.domain) {
@@ -61,6 +79,7 @@ onMount(() => {
             async (payload: RealtimePostgresChangesPayload<CommentData>) => {
               console.log("Comments table changed.");
               console.log(payload.new);
+              isEmpty = false;
 
               // Check if payload.new is not an empty object
               if (Object.keys(payload.new).length > 0) {
@@ -133,37 +152,42 @@ onDestroy(() => {
   <!-- <button on:click={async () => await signOut()}>Sign out</button> -->
   <Header currentUrl={currentUrl} currentUrlSplit={currentUrlSplit} />
 
-  <ul class="comments">
-    {#each initialComments as comment}
-      <li>
-        <div class="comment">
-          <div class="user-profile">
-            {#if comment.profiles}
-              <img
-                src={comment.profiles.avatar_url}
-                alt={comment.profiles.username + "'s avatar"}
-              />
-            {:else}
-              <img src="https://placehold.co/400" alt="Placeholder" />
-            {/if}
-          </div>
-
-          <div class="comment-main">
-            <div class="comment-header">
+  {#if initialComments.length != 0 || isEmpty}
+    <!-- content here -->
+    <ul class="comments">
+      {#each initialComments as comment}
+        <li>
+          <div class="comment">
+            <div class="user-profile">
               {#if comment.profiles}
-                <h5>{comment.profiles.username}</h5>
+                <img
+                  src={comment.profiles.avatar_url}
+                  alt={comment.profiles.username + "'s avatar"}
+                />
+              {:else}
+                <img src="https://placehold.co/400" alt="Placeholder" />
               {/if}
-              <h5 class="label">
-                {moment.utc(comment.created_at).local().startOf("second").fromNow()}
-              </h5>
             </div>
 
-            <p>{comment.content}</p>
+            <div class="comment-main">
+              <div class="comment-header">
+                {#if comment.profiles}
+                  <h5>{comment.profiles.username}</h5>
+                {/if}
+                <h5 class="label">
+                  {moment.utc(comment.created_at).local().startOf("second").fromNow()}
+                </h5>
+              </div>
+
+              <p>{comment.content}</p>
+            </div>
           </div>
-        </div>
-      </li>
-    {/each}
-  </ul>
+        </li>
+      {/each}
+    </ul>
+  {:else}
+    <Loading />
+  {/if}
 
   <form
     class="comment-form"
