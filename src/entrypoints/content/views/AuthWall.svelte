@@ -1,5 +1,8 @@
 <script lang="ts">
 import { initializeSession, isSignedIn } from "@/lib/stores/sessionStore";
+import Cat from "@/assets/cat.gif";
+
+let loading: boolean = $state(true);
 
 function loginWithGoogle() {
   chrome.runtime.sendMessage({ action: "loginWithGoogle" }, (response) => {
@@ -22,12 +25,12 @@ onMount(() => {
       console.log("Session initialized");
     });
 });
-
-$: $isSignedIn;
 </script>
 
 {#if $isSignedIn}
   <slot />
+{:else if loading}
+  <img src={Cat} alt="oia cat" />
 {:else}
-  <button on:click={async () => await loginWithGoogle()}>Sign in</button>
+  <button onclick={async () => await loginWithGoogle()}>Sign in</button>
 {/if}

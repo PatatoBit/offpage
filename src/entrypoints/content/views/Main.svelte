@@ -25,15 +25,7 @@ let currentUrlSplit: {
   route: string;
 } | null;
 
-let initialComments: CommentData[] = [
-  // {
-  //   id: 1,
-  //   page_id: 1,
-  //   created_at: new Date().toLocaleDateString(),
-  //   author: "John Doe",
-  //   content: "Hello, world!",
-  // },
-];
+let initialComments: CommentData[] = [];
 
 // Fetch the current tab's URL on component mount
 let channel: RealtimeChannel;
