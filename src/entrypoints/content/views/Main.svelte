@@ -4,6 +4,7 @@ import {
   findCommentsDataByPageId,
   findPageByRoute,
   CommentData,
+  findVotesByPageId,
 } from "@/lib/database";
 import { fetchUserProfile, supabase } from "@/lib/supabase";
 import { getBaseUrlAndPath } from "@/lib/utils";
@@ -26,6 +27,7 @@ import {
 
 // Fetch the current tab's URL on component mount
 let channel: RealtimeChannel;
+let currentPageVotes: number = 0;
 onMount(() => {
   chrome.runtime.sendMessage({ type: "GET_CURRENT_URL" }, async (response) => {
     if (response?.url) {
@@ -38,18 +40,29 @@ onMount(() => {
         return;
       }
 
-      const page = await findPageByRoute(
+      const currentPageId = await findPageByRoute(
         $currentUrlSplit.domain,
         $currentUrlSplit.route,
       );
 
-      if (page == null) {
+      if (currentPageId == null) {
         isEmpty.set(true);
         console.error("Page not found.");
         return;
       }
 
-      const comments = await findCommentsDataByPageId(page);
+      const comments = await findCommentsDataByPageId(currentPageId);
+      const upvotes = await findVotesByPageId(currentPageId);
+
+      if (upvotes) {
+        currentPageVotes = upvotes;
+        console.log("====================================");
+        console.log("Current page votes: ", currentPageVotes);
+        console.log("====================================");
+      } else {
+        console.error("Unable to fetch current page votes.");
+      }
+
       initialComments.set(comments || []);
 
       if ($initialComments.length == 0) {

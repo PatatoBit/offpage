@@ -185,3 +185,18 @@ export async function uploadProfilePicture(
 
   return publicUrlData.publicUrl;
 }
+
+export async function findVotesByPageId(id: string): Promise<number | null> {
+  const { data: votes, error } = await supabase
+    .from("page_votes")
+    .select("vote")
+    .eq("page_id", id);
+
+  if (error) {
+    console.error("Error fetching votes of page:", id, error);
+    return null;
+  }
+
+  const totalVotes = votes.reduce((acc, voteDoc) => acc + voteDoc.vote, 0);
+  return totalVotes;
+}
