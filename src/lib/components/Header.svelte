@@ -22,6 +22,7 @@ let currentPageVotes = {
   dislikes: 0,
 };
 let channel: RealtimeChannel;
+const formatter = new Intl.NumberFormat("en", { notation: "compact" });
 
 function handleOpenOptions() {
   chrome.runtime.sendMessage({ type: "OPEN_OPTIONS_PAGE" });
@@ -131,7 +132,7 @@ onDestroy(() => {
         </div>
 
         <p>
-          {currentPageVotes.likes}
+          {formatter.format(currentPageVotes.likes)}
         </p>
       </button>
       <button
@@ -142,7 +143,7 @@ onDestroy(() => {
         </div>
 
         <p>
-          {currentPageVotes.dislikes}
+          {formatter.format(currentPageVotes.dislikes)}
         </p>
       </button>
     </div>
@@ -213,6 +214,7 @@ onDestroy(() => {
 
       height: 1rem;
       padding: 0 1rem;
+      gap: 0.4rem;
       border-right: 1px solid var(--border);
       border-radius: 0;
 
