@@ -3,7 +3,7 @@ import {
   RealtimeChannel,
   RealtimePostgresChangesPayload,
 } from "@supabase/supabase-js";
-import { findVotesByPageId, PageVoteData, votePage } from "../database";
+import { getLikeDislikeCount, PageVoteData, votePage } from "../database";
 import { userId } from "../stores/sessionStore";
 import { supabase } from "../supabase";
 import { getIcon } from "../utils";
@@ -15,8 +15,10 @@ export let currentUrlSplit: {
   route: string;
 } | null;
 export let currentPageId: string | null;
-
-let currentPageVotes: number = 0;
+let currentPageVotes = {
+  likes: 0,
+  dislikes: 0,
+};
 let channel: RealtimeChannel;
 
 function handleOpenOptions() {
@@ -31,7 +33,7 @@ onMount(() => {
     if (currentPageId && currentUrlSplit) {
       clearInterval(checkReady); // Stop checking once ready
 
-      const upvotes = await findVotesByPageId(currentPageId);
+      const upvotes = await getLikeDislikeCount(currentPageId);
       if (upvotes) {
         currentPageVotes = upvotes;
         console.log("====================================");
@@ -56,7 +58,13 @@ onMount(() => {
           console.log("Votes table changed.");
 
           const newVote = payload.new as PageVoteData;
-          currentPageVotes += newVote.vote;
+          if (newVote.vote === 1) {
+            currentPageVotes.likes += 1;
+          } else if (newVote.vote === -1) {
+            currentPageVotes.dislikes += 1;
+          } else {
+            console.log("Probably 0");
+          }
         },
       )
       .subscribe();
@@ -102,11 +110,12 @@ onDestroy(() => {
         on:click={async() => await votePage(currentPageId as string, $userId as string, 1)}
         >Like</button
       >
-      {currentPageVotes}
+      {currentPageVotes.likes}
       <button
         on:click={async() => await votePage(currentPageId as string, $userId as string, -1)}
         >Dislike</button
       >
+      {currentPageVotes.dislikes}
     </div>
 
     <div>

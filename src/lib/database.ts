@@ -191,8 +191,10 @@ export async function uploadProfilePicture(
   return publicUrlData.publicUrl;
 }
 
-export async function findVotesByPageId(id: string): Promise<number | null> {
-  const { data: votes, error } = await supabase
+export async function getLikeDislikeCount(
+  id: string,
+): Promise<{ likes: number; dislikes: number } | null> {
+  const { data, error } = await supabase
     .from("page_votes")
     .select("vote")
     .eq("page_id", id);
@@ -202,8 +204,10 @@ export async function findVotesByPageId(id: string): Promise<number | null> {
     return null;
   }
 
-  const totalVotes = votes.reduce((acc, voteDoc) => acc + voteDoc.vote, 0);
-  return totalVotes;
+  const likes = data.filter((v) => v.vote === 1).length;
+  const dislikes = data.filter((v) => v.vote === -1).length;
+
+  return { likes, dislikes };
 }
 
 export async function votePage(
