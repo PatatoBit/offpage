@@ -1,5 +1,11 @@
 <script lang="ts">
-import { findVotesByPageId } from "../database";
+import {
+  RealtimeChannel,
+  RealtimePostgresChangesPayload,
+} from "@supabase/supabase-js";
+import { findVotesByPageId, PageVoteData, votePage } from "../database";
+import { userId } from "../stores/sessionStore";
+import { supabase } from "../supabase";
 import { getIcon } from "../utils";
 
 export let currentUrl: string | undefined;
@@ -11,12 +17,16 @@ export let currentUrlSplit: {
 export let currentPageId: string | null;
 
 let currentPageVotes: number = 0;
+let channel: RealtimeChannel;
 
 function handleOpenOptions() {
   chrome.runtime.sendMessage({ type: "OPEN_OPTIONS_PAGE" });
 }
 
 onMount(() => {
+  if (currentPageId) {
+  }
+
   const checkReady = setInterval(async () => {
     if (currentPageId && currentUrlSplit) {
       clearInterval(checkReady); // Stop checking once ready
@@ -31,7 +41,33 @@ onMount(() => {
         console.error("Unable to fetch current page votes.");
       }
     }
+
+    channel = supabase
+      .channel(`votes_updates`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "page_votes",
+          filter: `page_id=eq.${currentPageId}`,
+        },
+        (payload: RealtimePostgresChangesPayload<PageVoteData>) => {
+          console.log("Votes table changed.");
+
+          const newVote = payload.new as PageVoteData;
+          currentPageVotes += newVote.vote;
+        },
+      )
+      .subscribe();
   }, 100); // Check every 100ms
+});
+
+onDestroy(() => {
+  // Unsubscribe from the channel
+  if (channel) {
+    channel.unsubscribe();
+  }
 });
 </script>
 
@@ -62,9 +98,15 @@ onMount(() => {
 
   <div class="header-button">
     <div>
-      <button>Like</button>
+      <button
+        on:click={async() => await votePage(currentPageId as string, $userId as string, 1)}
+        >Like</button
+      >
       {currentPageVotes}
-      <button>Dislike</button>
+      <button
+        on:click={async() => await votePage(currentPageId as string, $userId as string, -1)}
+        >Dislike</button
+      >
     </div>
 
     <div>

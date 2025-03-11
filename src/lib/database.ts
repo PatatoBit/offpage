@@ -10,6 +10,14 @@ export interface CommentData {
   profiles?: UserProfileData | null;
 }
 
+export interface PageVoteData {
+  id: number;
+  vote: number;
+  user_id: string;
+  page_id: number;
+  created_at: string;
+}
+
 export interface UserProfileData {
   username: string;
   avatar_url: string;
@@ -196,4 +204,16 @@ export async function findVotesByPageId(id: string): Promise<number | null> {
 
   const totalVotes = votes.reduce((acc, voteDoc) => acc + voteDoc.vote, 0);
   return totalVotes;
+}
+
+export async function votePage(
+  pageId: string,
+  userId: string,
+  value: 1 | 0 | -1,
+) {
+  await supabase.from("page_votes").upsert({
+    page_id: pageId,
+    user_id: userId,
+    vote: value,
+  });
 }

@@ -1,8 +1,8 @@
-import { writable } from "svelte/store";
+import { Writable, writable } from "svelte/store";
 import { supabase } from "../supabase";
 
 export const isSignedIn = writable(false);
-export const userId = writable(null);
+export const userId: Writable<string | null> = writable(null);
 
 export async function initializeSession() {
   const { session } = await chrome.storage.local.get("session");
