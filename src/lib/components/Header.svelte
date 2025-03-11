@@ -36,9 +36,6 @@ onMount(() => {
       const upvotes = await getLikeDislikeCount(currentPageId);
       if (upvotes) {
         currentPageVotes = upvotes;
-        console.log("====================================");
-        console.log("Current page votes: ", currentPageVotes);
-        console.log("====================================");
       } else {
         console.error("Unable to fetch current page votes.");
       }
@@ -49,21 +46,43 @@ onMount(() => {
       .on(
         "postgres_changes",
         {
-          event: "*",
+          event: "*", // Listen for inserts, updates, and deletes
           schema: "public",
           table: "page_votes",
           filter: `page_id=eq.${currentPageId}`,
         },
-        (payload: RealtimePostgresChangesPayload<PageVoteData>) => {
-          console.log("Votes table changed.");
+        async (payload: RealtimePostgresChangesPayload<PageVoteData>) => {
+          console.log("Votes table changed:", payload);
 
-          const newVote = payload.new as PageVoteData;
-          if (newVote.vote === 1) {
-            currentPageVotes.likes += 1;
-          } else if (newVote.vote === -1) {
-            currentPageVotes.dislikes += 1;
-          } else {
-            console.log("Probably 0");
+          const oldVote = (payload.old as Partial<PageVoteData>)?.vote ?? 0; // Previous vote before change
+          const newVote = (payload.new as Partial<PageVoteData>)?.vote ?? 0; // New vote after change
+
+          // If it's an INSERT (new vote)
+          if (payload.eventType === "INSERT") {
+            if (newVote === 1) currentPageVotes.likes += 1;
+            if (newVote === -1) currentPageVotes.dislikes += 1;
+          }
+
+          // If it's an UPDATE (changing vote)
+          else if (payload.eventType === "UPDATE") {
+            if (newVote === 1) {
+              currentPageVotes.likes += 1;
+              currentPageVotes.dislikes -= 1;
+            }
+            if (newVote === -1) {
+              currentPageVotes.likes -= 1;
+              currentPageVotes.dislikes += 1;
+            }
+          }
+
+          // If it's a DELETE (user removed their vote)
+          else if (payload.eventType === "DELETE") {
+            const upvotes = await getLikeDislikeCount(currentPageId as string);
+            if (upvotes) {
+              currentPageVotes = upvotes;
+            } else {
+              console.error("Unable to fetch current page votes.");
+            }
           }
         },
       )

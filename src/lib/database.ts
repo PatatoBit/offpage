@@ -215,9 +215,54 @@ export async function votePage(
   userId: string,
   value: 1 | 0 | -1,
 ) {
-  await supabase.from("page_votes").upsert({
-    page_id: pageId,
-    user_id: userId,
-    vote: value,
-  });
+  console.log("Voting for page:", pageId, userId, value);
+  const { data, error: fetchError } = await supabase
+    .from("page_votes")
+    .select("vote")
+    .eq("page_id", pageId)
+    .eq("user_id", userId)
+    .single();
+
+  if (fetchError) {
+    console.error("Error fetching vote for page:", fetchError.message);
+  }
+
+  if (data) {
+    if (data.vote === value) {
+      console.log("Existing vote found:", data);
+      console.log("Removing vote for page:", pageId, userId);
+
+      // If the vote is the same as the current vote, remove the vote
+      const { error: deleteError } = await supabase
+        .from("page_votes")
+        .delete()
+        .eq("page_id", pageId)
+        .eq("user_id", userId);
+
+      if (deleteError) {
+        console.error("Error deleting vote for page:", deleteError.message);
+        return;
+      }
+
+      return;
+    }
+  }
+
+  console.log("Voting for page:", pageId, userId, value);
+
+  const { error: updatingError } = await supabase.from("page_votes").upsert(
+    {
+      page_id: pageId,
+      user_id: userId,
+      vote: value,
+    },
+    {
+      onConflict: "user_id",
+    },
+  );
+
+  if (updatingError) {
+    console.error("Error voting for page:", updatingError.message);
+    return;
+  }
 }

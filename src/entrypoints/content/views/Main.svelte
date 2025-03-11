@@ -4,7 +4,6 @@ import {
   findCommentsDataByPageId,
   findPageByRoute,
   CommentData,
-  findVotesByPageId,
 } from "@/lib/database";
 import { fetchUserProfile, supabase } from "@/lib/supabase";
 import { getBaseUrlAndPath } from "@/lib/utils";
