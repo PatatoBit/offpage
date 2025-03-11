@@ -125,8 +125,6 @@ export async function findCommentsDataByPageId(
 
   if (error) {
     console.error("Error fetching comments:", error);
-  } else {
-    console.log(comments);
   }
 
   if (!comments) {
@@ -153,7 +151,6 @@ export async function findCommentsDataByPageId(
   }));
 }
 
-// Upload file to Supabase
 export async function uploadProfilePicture(
   file: File,
   userId: string,

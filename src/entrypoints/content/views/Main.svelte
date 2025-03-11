@@ -19,6 +19,7 @@ import Header from "@/lib/components/Header.svelte";
 import ReturnIcon from "@/assets/icons/return.svg";
 import Loading from "@/lib/components/Loading.svelte";
 import {
+  currentPageId,
   currentUrl,
   currentUrlSplit,
   initialComments,
@@ -27,7 +28,6 @@ import {
 
 // Fetch the current tab's URL on component mount
 let channel: RealtimeChannel;
-let currentPageVotes: number = 0;
 onMount(() => {
   chrome.runtime.sendMessage({ type: "GET_CURRENT_URL" }, async (response) => {
     if (response?.url) {
@@ -40,9 +40,8 @@ onMount(() => {
         return;
       }
 
-      const currentPageId = await findPageByRoute(
-        $currentUrlSplit.domain,
-        $currentUrlSplit.route,
+      currentPageId.set(
+        await findPageByRoute($currentUrlSplit.domain, $currentUrlSplit.route),
       );
 
       if (currentPageId == null) {
@@ -51,17 +50,7 @@ onMount(() => {
         return;
       }
 
-      const comments = await findCommentsDataByPageId(currentPageId);
-      const upvotes = await findVotesByPageId(currentPageId);
-
-      if (upvotes) {
-        currentPageVotes = upvotes;
-        console.log("====================================");
-        console.log("Current page votes: ", currentPageVotes);
-        console.log("====================================");
-      } else {
-        console.error("Unable to fetch current page votes.");
-      }
+      const comments = await findCommentsDataByPageId($currentPageId as string);
 
       initialComments.set(comments || []);
 
@@ -71,7 +60,6 @@ onMount(() => {
 
       // Subscribe to the comments_change channel
       if ($currentUrlSplit?.domain) {
-        console.log("Subscribing to comments_change channel.");
         channel = supabase
           .channel("comments_inserts")
           .on(
@@ -159,6 +147,7 @@ onDestroy(() => {
   <Header
     currentUrl={$currentUrl as string}
     currentUrlSplit={$currentUrlSplit}
+    currentPageId={$currentPageId as string}
   />
 
   {#if $initialComments.length != 0 || isEmpty}

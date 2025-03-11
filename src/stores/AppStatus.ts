@@ -9,6 +9,7 @@ export const currentUrlSplit = writable<{
   domain: string;
   route: string;
 } | null>(null);
+export const currentPageId = writable<string | null>(null);
 export const initialComments = writable<CommentData[]>([]);
 export const isEmpty = writable<boolean>(false);
 

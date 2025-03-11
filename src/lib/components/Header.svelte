@@ -1,4 +1,5 @@
 <script lang="ts">
+import { findVotesByPageId } from "../database";
 import { getIcon } from "../utils";
 
 export let currentUrl: string | undefined;
@@ -7,10 +8,31 @@ export let currentUrlSplit: {
   domain: string;
   route: string;
 } | null;
+export let currentPageId: string | null;
+
+let currentPageVotes: number = 0;
 
 function handleOpenOptions() {
   chrome.runtime.sendMessage({ type: "OPEN_OPTIONS_PAGE" });
 }
+
+onMount(() => {
+  const checkReady = setInterval(async () => {
+    if (currentPageId && currentUrlSplit) {
+      clearInterval(checkReady); // Stop checking once ready
+
+      const upvotes = await findVotesByPageId(currentPageId);
+      if (upvotes) {
+        currentPageVotes = upvotes;
+        console.log("====================================");
+        console.log("Current page votes: ", currentPageVotes);
+        console.log("====================================");
+      } else {
+        console.error("Unable to fetch current page votes.");
+      }
+    }
+  }, 100); // Check every 100ms
+});
 </script>
 
 <div class="header">
@@ -41,6 +63,7 @@ function handleOpenOptions() {
   <div class="header-button">
     <div>
       <button>Like</button>
+      {currentPageVotes}
       <button>Dislike</button>
     </div>
 
