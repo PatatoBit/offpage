@@ -7,6 +7,8 @@ import { getLikeDislikeCount, PageVoteData, votePage } from "../database";
 import { userId } from "../stores/sessionStore";
 import { supabase } from "../supabase";
 import { getIcon } from "../utils";
+import ThumbUp from "../../assets/icons/thumb-up.svg";
+import ThumbDown from "../../assets/icons/thumb-down.svg";
 
 export let currentUrl: string | undefined;
 export let currentUrlSplit: {
@@ -26,9 +28,6 @@ function handleOpenOptions() {
 }
 
 onMount(() => {
-  if (currentPageId) {
-  }
-
   const checkReady = setInterval(async () => {
     if (currentPageId && currentUrlSplit) {
       clearInterval(checkReady); // Stop checking once ready
@@ -54,7 +53,6 @@ onMount(() => {
         async (payload: RealtimePostgresChangesPayload<PageVoteData>) => {
           console.log("Votes table changed:", payload);
 
-          const oldVote = (payload.old as Partial<PageVoteData>)?.vote ?? 0; // Previous vote before change
           const newVote = (payload.new as Partial<PageVoteData>)?.vote ?? 0; // New vote after change
 
           // If it's an INSERT (new vote)
@@ -124,17 +122,29 @@ onDestroy(() => {
   </div>
 
   <div class="header-button">
-    <div>
+    <div class="votes-button">
       <button
         on:click={async() => await votePage(currentPageId as string, $userId as string, 1)}
-        >Like</button
       >
-      {currentPageVotes.likes}
+        <div>
+          <img class="vote-icon like" src={ThumbUp} alt="Like" />
+        </div>
+
+        <p>
+          {currentPageVotes.likes}
+        </p>
+      </button>
       <button
         on:click={async() => await votePage(currentPageId as string, $userId as string, -1)}
-        >Dislike</button
       >
-      {currentPageVotes.dislikes}
+        <div>
+          <img class="vote-icon dislike" src={ThumbDown} alt="Dislike" />
+        </div>
+
+        <p>
+          {currentPageVotes.dislikes}
+        </p>
+      </button>
     </div>
 
     <div>
@@ -183,6 +193,44 @@ onDestroy(() => {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+  }
+
+  .votes-button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    overflow: hidden;
+
+    width: 10rem;
+    border: 1px solid var(--border);
+    border-radius: 5rem;
+
+    button {
+      all: unset;
+      cursor: pointer;
+      height: 100%;
+      width: 100%;
+
+      height: 1rem;
+      padding: 0 1rem;
+      border-right: 1px solid var(--border);
+      border-radius: 0;
+
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    button:last-child {
+      border-right: none;
+    }
+  }
+
+  .vote-icon {
+    width: 18px;
+    height: 18px;
+    transform: translateY(10%);
   }
 }
 </style>

@@ -229,9 +229,6 @@ export async function votePage(
 
   if (data) {
     if (data.vote === value) {
-      console.log("Existing vote found:", data);
-      console.log("Removing vote for page:", pageId, userId);
-
       // If the vote is the same as the current vote, remove the vote
       const { error: deleteError } = await supabase
         .from("page_votes")
@@ -248,8 +245,6 @@ export async function votePage(
     }
   }
 
-  console.log("Voting for page:", pageId, userId, value);
-
   const { error: updatingError } = await supabase.from("page_votes").upsert(
     {
       page_id: pageId,
@@ -257,7 +252,7 @@ export async function votePage(
       vote: value,
     },
     {
-      onConflict: "user_id",
+      onConflict: "page_id, user_id",
     },
   );
 
