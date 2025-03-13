@@ -32,7 +32,8 @@ import { userId } from "@/lib/stores/sessionStore";
 
 // Fetch the current tab's URL on component mount
 let channel: RealtimeChannel;
-onMount(() => {
+
+async function initialize() {
   chrome.runtime.sendMessage({ type: "GET_CURRENT_URL" }, async (response) => {
     if (response?.url) {
       $currentUrl = response.url;
@@ -101,6 +102,10 @@ onMount(() => {
       currentUrl.set("Unable to fetch URL");
     }
   });
+}
+
+onMount(() => {
+  initialize();
 });
 
 let currentComment: string = "";
@@ -144,6 +149,7 @@ const handleSubmit = async () => {
 
   try {
     await addComment($currentUrl as string, comment, uploadedImageUrl);
+    initialize();
   } catch (error) {
     console.error((error as Error).message);
   }
