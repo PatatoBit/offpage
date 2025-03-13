@@ -98,3 +98,7 @@ export function isEmpty(obj: Object) {
 
   return true;
 }
+
+export function isValidImage(file: File) {
+  return ["image/png", "image/jpeg", "image/gif"].includes(file.type);
+}

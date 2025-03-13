@@ -6,7 +6,7 @@ import {
   CommentData,
 } from "@/lib/database";
 import { fetchUserProfile, supabase } from "@/lib/supabase";
-import { getBaseUrlAndPath } from "@/lib/utils";
+import { getBaseUrlAndPath, isValidImage } from "@/lib/utils";
 
 import { onMount } from "svelte";
 import moment from "moment";
@@ -24,6 +24,9 @@ import {
   initialComments,
   isEmpty,
 } from "@/stores/AppStatus";
+import { fade } from "svelte/transition";
+
+import Cross from "../../../assets/icons/cross.svg";
 
 // Fetch the current tab's URL on component mount
 let channel: RealtimeChannel;
@@ -134,6 +137,20 @@ async function handleEnterKey(event: KeyboardEvent) {
   }
 }
 
+let file: File | null = null;
+let currentFileUrl: string | null = "https://placehold.co/400";
+
+function handleFileDrop(event: DragEvent) {
+  event.preventDefault();
+  const droppedFile = event.dataTransfer?.files[0];
+
+  if (droppedFile && isValidImage(droppedFile)) {
+    file = droppedFile;
+    currentFileUrl = URL.createObjectURL(file);
+    console.log("File dropped:", file);
+  }
+}
+
 onDestroy(() => {
   if (channel) {
     console.log("Unsubscribing from comments_change channel.");
@@ -154,7 +171,7 @@ onDestroy(() => {
     <!-- content here -->
     <ul class="comments">
       {#each $initialComments as comment}
-        <li>
+        <li transition:fade>
           <div class="comment">
             <div class="user-profile">
               {#if comment.profiles}
@@ -188,9 +205,28 @@ onDestroy(() => {
   {/if}
 
   <form
-    class="comment-form"
+    class="input-form"
     on:submit|preventDefault={async () => await handleSubmit()}
+    on:dragover|preventDefault
+    on:drop={handleFileDrop}
   >
+    {#if currentFileUrl}
+      <div class="file-dropdown-area">
+        <div class="dropped-image">
+          <img src={currentFileUrl} alt="Dropped file" />
+
+          <button
+            on:click={() => {
+            file = null;
+            currentFileUrl = null;
+          }}
+          >
+            <img src={Cross} alt="Remove" />
+          </button>
+        </div>
+      </div>
+    {/if}
+
     <textarea
       bind:value={currentComment}
       on:keydown={handleEnterKey}
@@ -273,7 +309,56 @@ main {
   }
 }
 
-.comment-form {
+.file-dropdown-area {
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  /* overflow-x: scroll; */
+  gap: 0.5rem;
+  height: 10rem;
+  width: 100%;
+  top: -10.5rem;
+
+  .dropped-image {
+    position: relative;
+    border-radius: 0.5rem;
+    background-color: var(--border);
+
+    box-shadow: -1px 5px 7px 0px rgba(0, 0, 0, 0.17);
+    -webkit-box-shadow: -1px 5px 7px 0px rgba(0, 0, 0, 0.17);
+    -moz-box-shadow: -1px 5px 7px 0px rgba(0, 0, 0, 0.17);
+
+    button {
+      position: absolute;
+      top: -0.5rem;
+      right: -0.5rem;
+
+      background-color: var(--red);
+      border: none;
+      padding: 0.25rem;
+      border-radius: 50%;
+      cursor: pointer;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      img {
+        filter: invert(1);
+        width: 10px;
+        height: 10px;
+      }
+    }
+
+    img {
+      height: 100%;
+      width: auto;
+    }
+  }
+}
+
+.input-form {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;

@@ -29,7 +29,7 @@ browser.runtime.onMessage.addListener((message) => {
   width: 300px;
   height: 90vh;
   z-index: 100;
-  padding-inline: 1.5rem;
+  padding-inline: 1rem;
   background-color: var(--background);
 
   border-radius: 0.8rem;
