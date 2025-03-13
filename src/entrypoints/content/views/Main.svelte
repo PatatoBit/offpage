@@ -102,7 +102,6 @@ let currentComment: string = "";
 
 // Handle form submission
 const handleSubmit = async () => {
-  console.log(currentComment);
   if (!currentUrlSplit) {
     console.error("Unable to fetch current URL.");
     return;
@@ -118,9 +117,11 @@ const handleSubmit = async () => {
     return;
   }
 
+  const comment = currentComment;
+  currentComment = "";
+
   try {
-    await addComment($currentUrl as string, currentComment);
-    currentComment = "";
+    await addComment($currentUrl as string, comment);
   } catch (error) {
     console.error((error as Error).message);
   }
