@@ -4,6 +4,7 @@ import {
   findCommentsDataByPageId,
   findPageByRoute,
   CommentData,
+  uploadCommentImage,
 } from "@/lib/database";
 import { fetchUserProfile, supabase } from "@/lib/supabase";
 import { getBaseUrlAndPath, isValidImage } from "@/lib/utils";
@@ -27,6 +28,7 @@ import {
 import { fade } from "svelte/transition";
 
 import Cross from "../../../assets/icons/cross.svg";
+import { userId } from "@/lib/stores/sessionStore";
 
 // Fetch the current tab's URL on component mount
 let channel: RealtimeChannel;
@@ -123,8 +125,18 @@ const handleSubmit = async () => {
   const comment = currentComment;
   currentComment = "";
 
+  let uploadedImageUrl: string | null = null;
+
+  if (file) {
+    uploadedImageUrl = await uploadCommentImage(
+      file,
+      $currentPageId as string,
+      $userId as string,
+    );
+  }
+
   try {
-    await addComment($currentUrl as string, comment);
+    await addComment($currentUrl as string, comment, uploadedImageUrl);
   } catch (error) {
     console.error((error as Error).message);
   }

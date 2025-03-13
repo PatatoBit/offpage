@@ -23,7 +23,11 @@ export interface UserProfileData {
   avatar_url: string;
 }
 
-export async function addComment(baseURL: string, content: string) {
+export async function addComment(
+  baseURL: string,
+  content: string,
+  image_url: string | null,
+) {
   // Step 1: Get the currently authenticated user's ID
   const {
     data: { user },
@@ -88,6 +92,7 @@ export async function addComment(baseURL: string, content: string) {
       {
         content,
         page_id: pageId,
+        image_url,
       },
     ])
     .select()
@@ -187,6 +192,30 @@ export async function uploadProfilePicture(
   const { data: publicUrlData } = supabase.storage
     .from("profile-pictures")
     .getPublicUrl(fileName);
+
+  return publicUrlData.publicUrl;
+}
+
+export async function uploadCommentImage(
+  file: File,
+  pageId: string,
+  userId: string,
+): Promise<string | null> {
+  const uniqueFileName = `${Date.now()}-${file.name}`;
+  const path = `comments-images/${pageId}/${userId}${uniqueFileName}`;
+
+  const { data, error } = await supabase.storage
+    .from("comments-images")
+    .upload(path, file);
+
+  if (error) {
+    console.error("Error uploading comment image:", error.message);
+    return null;
+  }
+
+  const { data: publicUrlData } = supabase.storage
+    .from("comments-images")
+    .getPublicUrl(path);
 
   return publicUrlData.publicUrl;
 }
