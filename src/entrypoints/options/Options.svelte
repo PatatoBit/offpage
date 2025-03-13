@@ -9,6 +9,9 @@ import {
 import AuthWall from "../content/views/AuthWall.svelte";
 import { userId } from "@/lib/stores/sessionStore";
 import { uploadProfilePicture } from "@/lib/database";
+import { fade } from "svelte/transition";
+
+let profileSaveSuccess: boolean = false;
 
 interface UserProfileData {
   username: string;
@@ -39,8 +42,6 @@ $: if ($userId && !userData.username && !userData.avatar_url) {
 }
 
 let file: File | null = null;
-type FileChangeEvent = Event & { target: HTMLInputElement };
-
 // Handle file selection
 
 function handleFileChange(event: Event): void {
@@ -57,6 +58,8 @@ async function handleProfileSave() {
     if (file) {
       changedUserData.avatar_url = await uploadProfilePicture(file, $userId);
     }
+
+    profileSaveSuccess = false;
 
     await updateUserProfile(
       $userId,
@@ -86,6 +89,8 @@ onMount(async () => {
         const profile = payload.new as UserProfileData;
         userData = profile;
         changedUserData = profile;
+
+        profileSaveSuccess = true;
       } else {
         console.warn("Received an empty object as payload.new");
       }
@@ -108,19 +113,33 @@ onMount(async () => {
             src={previewProfilePicture ? previewProfilePicture : userData.avatar_url}
             alt="User avatar"
           />
-          <input
-            type="file"
-            accept="image/png, image/jpeg"
-            on:change={handleFileChange}
-          />
 
-          <input type="text" bind:value={changedUserData.username} required />
+          <div class="input">
+            <label for="profile"><p class="label">Avatar</p></label>
+            <input
+              type="file"
+              accept="image/png, image/jpeg"
+              on:change={handleFileChange}
+            />
+          </div>
+
+          <div class="input">
+            <label for="profile"><p class="label">Username</p></label>
+            <input type="text" bind:value={changedUserData.username} required />
+          </div>
 
           <div>
             <button type="submit" class="primary">Save</button>
           </div>
         </form>
-        <button on:click={async() => await signOut()}>Sign out</button>
+
+        {#if profileSaveSuccess}
+          <p transition:fade>Profile saved ✅</p>
+        {/if}
+
+        <button class="flexend" on:click={async() => await signOut()}
+          >Sign out</button
+        >
       </div>
     </main>
   {/if}
@@ -171,5 +190,32 @@ img {
   border: 2px solid #ccc;
 
   object-fit: cover;
+}
+
+.input {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  input {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+}
+
+label {
+  width: 100%;
+
+  .label {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #666;
+    text-align: left;
+  }
+}
+
+.flexend {
+  margin-top: auto;
 }
 </style>
