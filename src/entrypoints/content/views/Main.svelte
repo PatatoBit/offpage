@@ -133,6 +133,13 @@ const handleSubmit = async () => {
       $currentPageId as string,
       $userId as string,
     );
+
+    if (uploadedImageUrl) {
+      file = null;
+      currentFileUrl = null;
+    } else {
+      console.error("Unable to upload image.");
+    }
   }
 
   try {
@@ -207,6 +214,10 @@ onDestroy(() => {
               </div>
 
               <p>{comment.content}</p>
+
+              {#if comment.image_url}
+                <img src={comment.image_url} alt="Comment's image" />
+              {/if}
             </div>
           </div>
         </li>
@@ -318,6 +329,12 @@ main {
     flex-direction: row;
     align-items: center;
     gap: 0.5rem;
+  }
+
+  img {
+    width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
   }
 }
 

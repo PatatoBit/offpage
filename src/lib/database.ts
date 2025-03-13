@@ -8,6 +8,8 @@ export interface CommentData {
   author: string;
   content: string;
   profiles?: UserProfileData | null;
+
+  image_url: string | null;
 }
 
 export interface PageVoteData {
@@ -129,7 +131,7 @@ export async function findCommentsDataByPageId(
     .from("comments")
     .select(
       `
-    id, content, created_at, author, page_id,
+    id, content, created_at, author, page_id, image_url,
     profiles!comments_author_fkey (username, avatar_url)
   `,
     )
@@ -161,6 +163,7 @@ export async function findCommentsDataByPageId(
             ).avatar_url,
           }
         : undefined,
+    image_url: comment.image_url as string | null,
   }));
 }
 
