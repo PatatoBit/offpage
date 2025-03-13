@@ -9,6 +9,8 @@ import { supabase } from "../supabase";
 import { getIcon } from "../utils";
 import ThumbUp from "../../assets/icons/thumb-up.svg";
 import ThumbDown from "../../assets/icons/thumb-down.svg";
+import { slide } from "svelte/transition";
+import { duration } from "moment";
 
 export let currentUrl: string | undefined;
 export let currentUrlSplit: {
@@ -131,9 +133,11 @@ onDestroy(() => {
           <img class="vote-icon like" src={ThumbUp} alt="Like" />
         </div>
 
-        <p>
-          {formatter.format(currentPageVotes.likes)}
-        </p>
+        {#key currentPageVotes.likes}
+          <p in:slide={{duration: 200, delay: 300}} out:slide={{duration: 200}}>
+            {formatter.format(currentPageVotes.likes)}
+          </p>
+        {/key}
       </button>
       <button
         on:click={async() => await votePage(currentPageId as string, $userId as string, -1)}
@@ -142,9 +146,11 @@ onDestroy(() => {
           <img class="vote-icon dislike" src={ThumbDown} alt="Dislike" />
         </div>
 
-        <p>
-          {formatter.format(currentPageVotes.dislikes)}
-        </p>
+        {#key currentPageVotes.dislikes}
+          <p in:slide={{duration: 200, delay: 300}} out:slide={{duration: 200}}>
+            {formatter.format(currentPageVotes.dislikes)}
+          </p>
+        {/key}
       </button>
     </div>
 
@@ -202,6 +208,7 @@ onDestroy(() => {
     align-items: center;
     overflow: hidden;
 
+    height: 2rem;
     width: 10rem;
     border: 1px solid var(--border);
     border-radius: 5rem;
@@ -212,7 +219,7 @@ onDestroy(() => {
       height: 100%;
       width: 100%;
 
-      height: 1rem;
+      height: 100%;
       padding: 0 1rem;
       gap: 0.4rem;
       border-right: 1px solid var(--border);
@@ -222,6 +229,10 @@ onDestroy(() => {
       flex-direction: row;
       justify-content: space-between;
       align-items: center;
+
+      &:active {
+        background-color: var(--border);
+      }
     }
 
     button:last-child {
