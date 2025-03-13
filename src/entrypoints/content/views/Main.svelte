@@ -157,7 +157,7 @@ async function handleEnterKey(event: KeyboardEvent) {
 }
 
 let file: File | null = null;
-let currentFileUrl: string | null = "https://placehold.co/400";
+let currentFileUrl: string | null = null;
 
 function handleFileDrop(event: DragEvent) {
   event.preventDefault();
@@ -166,7 +166,6 @@ function handleFileDrop(event: DragEvent) {
   if (droppedFile && isValidImage(droppedFile)) {
     file = droppedFile;
     currentFileUrl = URL.createObjectURL(file);
-    console.log("File dropped:", file);
   }
 }
 
@@ -216,7 +215,7 @@ onDestroy(() => {
               <p>{comment.content}</p>
 
               {#if comment.image_url}
-                <img src={comment.image_url} alt="Comment's image" />
+                <img src={comment.image_url} alt={comment.content} />
               {/if}
             </div>
           </div>
