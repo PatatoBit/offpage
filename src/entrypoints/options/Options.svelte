@@ -134,10 +134,10 @@ onMount(async () => {
         </form>
 
         {#if profileSaveSuccess}
-          <p transition:fade>Profile saved ✅</p>
+          <p transition:fade>✅Profile Saved</p>
         {/if}
 
-        <button class="flexend" on:click={async() => await signOut()}
+        <button class="signout" on:click={async() => await signOut()}
           >Sign out</button
         >
       </div>
@@ -154,6 +154,8 @@ onMount(async () => {
   align-items: center;
   min-height: 100vh;
   width: 100%;
+
+  background-color: var(--background);
 }
 
 .card {
@@ -215,7 +217,9 @@ label {
   }
 }
 
-.flexend {
+.signout {
   margin-top: auto;
+  border-color: var(--red);
+  color: var(--red);
 }
 </style>
