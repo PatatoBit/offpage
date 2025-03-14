@@ -1,4 +1,12 @@
 <script lang="ts">
+import { fade } from "svelte/transition";
+import { onMount } from "svelte";
+import moment from "moment";
+import {
+  RealtimeChannel,
+  RealtimePostgresChangesPayload,
+} from "@supabase/supabase-js";
+
 import {
   addComment,
   findCommentsDataByPageId,
@@ -6,18 +14,6 @@ import {
   CommentData,
   uploadCommentImage,
 } from "@/lib/database";
-import { fetchUserProfile, supabase } from "@/lib/supabase";
-import { getBaseUrlAndPath, isValidImage } from "@/lib/utils";
-
-import { onMount } from "svelte";
-import moment from "moment";
-import {
-  RealtimeChannel,
-  RealtimePostgresChangesPayload,
-} from "@supabase/supabase-js";
-import Header from "@/lib/components/Header.svelte";
-import ReturnIcon from "@/assets/icons/return.svg";
-import Loading from "@/lib/components/Loading.svelte";
 import {
   currentPageId,
   currentUrl,
@@ -25,10 +21,16 @@ import {
   initialComments,
   isEmpty,
 } from "@/stores/AppStatus";
-import { fade } from "svelte/transition";
-
-import Cross from "../../../assets/icons/cross.svg";
 import { userId } from "@/lib/stores/sessionStore";
+import { fetchUserProfile, supabase } from "@/lib/supabase";
+import { getBaseUrlAndPath, isValidImage } from "@/lib/utils";
+
+import Header from "@/lib/components/Header.svelte";
+import Loading from "@/lib/components/Loading.svelte";
+
+import ReturnIcon from "@/assets/icons/return.svg";
+import Cross from "@/assets/icons/cross.svg";
+import Image from "@/assets/icons/image.svg";
 
 // Fetch the current tab's URL on component mount
 let channel: RealtimeChannel;
@@ -162,6 +164,7 @@ async function handleEnterKey(event: KeyboardEvent) {
   }
 }
 
+let inputRef: HTMLInputElement | null = null;
 let file: File | null = null;
 let currentFileUrl: string | null = null;
 
@@ -172,6 +175,22 @@ function handleFileDrop(event: DragEvent) {
   if (droppedFile && isValidImage(droppedFile)) {
     file = droppedFile;
     currentFileUrl = URL.createObjectURL(file);
+  }
+}
+
+function handleFileSelect(event: Event) {
+  const selectedFile = (event.target as HTMLInputElement)?.files?.[0];
+  if (selectedFile && isValidImage(selectedFile)) {
+    file = selectedFile;
+    currentFileUrl = URL.createObjectURL(file);
+  } else {
+    console.error("Invalid file type.");
+  }
+}
+
+function triggerFileInput() {
+  if (inputRef) {
+    inputRef.click();
   }
 }
 
@@ -264,7 +283,20 @@ onDestroy(() => {
       maxlength="500"
     ></textarea>
 
+    <!-- Hidden file input -->
+    <input
+      type="file"
+      bind:this={inputRef}
+      accept="image/png, image/jpeg, image/gif"
+      on:change={handleFileSelect}
+      hidden
+    />
+
     <div class="form-buttons">
+      <button type="button" class="file-input" on:click={triggerFileInput}>
+        <img src={Image} alt="File input" />
+      </button>
+
       <button class="form-submit" type="submit">
         <img src={ReturnIcon} alt="Return" />
       </button>
@@ -405,13 +437,34 @@ main {
   .form-buttons {
     display: flex;
     flex-direction: row;
-    justify-content: flex-end;
+    justify-content: space-between;
     gap: 0.5rem;
 
     height: 2rem;
 
     button {
       cursor: pointer;
+    }
+  }
+
+  .file-input {
+    all: unset;
+    border: none;
+    cursor: pointer;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    transition: scale 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+
+    img {
+      width: 30px;
+      height: 30px;
+    }
+
+    &:hover {
+      transform: scale(1.05);
     }
   }
 
