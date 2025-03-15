@@ -11,6 +11,9 @@ import { userId } from "@/lib/stores/sessionStore";
 import { uploadProfilePicture } from "@/lib/database";
 import { fade } from "svelte/transition";
 
+import "../../lib/styles/global.scss";
+import "../../lib/styles/variables.scss";
+
 let profileSaveSuccess: boolean = false;
 
 interface UserProfileData {
@@ -146,6 +149,7 @@ onMount(async () => {
 </AuthWall>
 
 <style lang="scss">
+@use "../../lib/styles/global.scss";
 @use "../../lib/styles/variables.scss";
 
 .page {
