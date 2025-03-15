@@ -32,9 +32,11 @@ onMount(() => {
 });
 
 let email = $state("");
+let sentMail = $state("");
+let magicLinkSent = $state(false);
 
 async function signInWithMagicLink() {
-  console.log("Signing in with email:", email);
+  magicLinkSent = false;
 
   const { error } = await supabase.auth.signInWithOtp({
     email,
@@ -46,7 +48,9 @@ async function signInWithMagicLink() {
   if (error) {
     console.error("Error sending magic link:", error.message);
   } else {
-    console.log("Magic link sent! Check your email.");
+    sentMail = email;
+    email = "";
+    magicLinkSent = true;
   }
 }
 </script>
@@ -57,12 +61,19 @@ async function signInWithMagicLink() {
   <Loading />
 {:else}
   <main class="page">
+    {#if magicLinkSent}
+      <p>✅Magic link sent to {sentMail}</p>
+      <p>Check spam / junk folders too!</p>
+    {/if}
+
     <form
       onsubmit={async (event) => { event.preventDefault(); await signInWithMagicLink(); }}
     >
       <input required type="email" placeholder="Email" bind:value={email} />
       <button class="primary" type="submit">Passwordless Sign-in</button>
     </form>
+
+    <br />
 
     <button onclick={async () => await loginWithGoogle()}
       >Sign in with Google</button
@@ -75,13 +86,14 @@ async function signInWithMagicLink() {
 @use "../../../lib/styles/variables.scss";
 
 .page {
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   background-color: var(--background);
+  text-align: center;
 
+  height: 100%;
   gap: 1rem;
 }
 

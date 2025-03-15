@@ -104,9 +104,9 @@ onMount(async () => {
 });
 </script>
 
-<AuthWall>
-  {#if userData.username}
-    <main class="page">
+<main class="page">
+  <AuthWall>
+    {#if userData.username}
       <div class="card">
         <form
           on:submit={async() => await handleProfileSave()}
@@ -144,9 +144,9 @@ onMount(async () => {
           >Sign out</button
         >
       </div>
-    </main>
-  {/if}
-</AuthWall>
+    {/if}
+  </AuthWall>
+</main>
 
 <style lang="scss">
 @use "../../lib/styles/global.scss";
