@@ -64,8 +64,8 @@ button {
   padding: 0.5rem 1rem;
   border-radius: 6px;
 
-  background-color: white;
-  border: 1px solid var(--primary-light);
+  background-color: var(--inner-background);
+  border: 1px solid var(--border);
   color: var(--primary);
 
   &.primary {

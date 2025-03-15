@@ -210,6 +210,7 @@ onDestroy(() => {
 
     height: 2rem;
     width: 10rem;
+    background-color: var(--inner-background);
     border: 1px solid var(--border);
     border-radius: 5rem;
 
