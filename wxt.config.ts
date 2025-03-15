@@ -10,7 +10,7 @@ export default defineConfig({
   manifest: () => ({
     name: "offpage",
     description: "a community behind every page of the internet",
-    permissions: ["storage", "activeTab", "identity", "tabs"],
+    permissions: ["storage", "identity", "tabs"],
     action: {},
     oauth2: {
       client_id:

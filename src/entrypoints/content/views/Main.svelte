@@ -151,6 +151,7 @@ const handleSubmit = async () => {
 
   try {
     await addComment($currentUrl as string, comment, uploadedImageUrl);
+    initialComments.set([]);
     initialize();
   } catch (error) {
     console.error((error as Error).message);

@@ -223,6 +223,7 @@ label {
 
 .signout {
   margin-top: auto;
+  background-color: white;
   border-color: var(--red);
   color: var(--red);
 }
