@@ -1,0 +1,12 @@
+:host {
+  all: initial; /* Reset everything */
+  font-family: sans-serif; /* Specify a default */
+  display: block;
+}
+
+*,
+*::before,
+*::after {
+  all: unset; /* Prevent styles from the host page */
+  box-sizing: border-box;
+}

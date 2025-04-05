@@ -82,9 +82,6 @@ async function signInWithMagicLink() {
 {/if}
 
 <style lang="scss">
-@use "../../../lib/styles/global.scss";
-@use "../../../lib/styles/variables.scss";
-
 .page {
   display: flex;
   flex-direction: column;
@@ -94,16 +91,16 @@ async function signInWithMagicLink() {
   text-align: center;
 
   height: 100%;
-  gap: 1rem;
+  gap: 16px;
 }
 
 .center {
-  max-width: 60rem;
+  max-width: 960px;
 }
 
 form {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 16px;
 }
 </style>

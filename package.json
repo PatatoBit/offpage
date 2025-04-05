@@ -33,6 +33,7 @@
     "moment": "^2.30.1",
     "runed": "^0.15.2",
     "sass": "^1.83.0",
+    "supabase": "^2.19.7",
     "webext-bridge": "^6.0.1"
   },
   "devDependencies": {

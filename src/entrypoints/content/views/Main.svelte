@@ -324,20 +324,16 @@ main {
   flex: auto;
   padding: 0;
   margin: 0;
-  padding-bottom: 1rem;
+  padding-bottom: 16px;
 
   overflow-y: scroll;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
 }
 
 .comment {
   display: flex;
   flex-direction: row;
-  gap: 0.5rem;
-  padding-top: 1rem;
+  gap: 8px;
+  padding-top: 16px;
   width: 100%;
 
   h5,
@@ -359,7 +355,7 @@ main {
   .comment-main {
     display: flex;
     flex-direction: column;
-    gap: 0.2rem;
+    gap: 3px;
     flex: 1 1 1;
 
     margin-top: 0.1;
@@ -387,14 +383,14 @@ main {
   display: flex;
   flex-direction: row;
   /* overflow-x: scroll; */
-  gap: 0.5rem;
-  height: 10rem;
+  gap: 8px;
+  height: 160px;
   width: 100%;
-  top: -10.5rem;
+  top: -176px;
 
   .dropped-image {
     position: relative;
-    border-radius: 0.5rem;
+    border-radius: 8px;
     background-color: var(--border);
 
     box-shadow: -1px 5px 7px 0px rgba(0, 0, 0, 0.17);
@@ -403,12 +399,12 @@ main {
 
     button {
       position: absolute;
-      top: -0.5rem;
-      right: -0.5rem;
+      top: -8px;
+      right: -8px;
 
       background-color: var(--red);
       border: none;
-      padding: 0.25rem;
+      padding: 4px;
       border-radius: 50%;
       cursor: pointer;
 
@@ -442,9 +438,9 @@ main {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    gap: 0.5rem;
+    gap: 8px;
 
-    height: 2rem;
+    height: 32px;
 
     button {
       cursor: pointer;
@@ -476,7 +472,7 @@ main {
     background-color: var(--text);
     color: var(--background);
     border: none;
-    padding: 0.5rem 1rem;
+    padding: 8px 16px;
     border: 1px solid var(--text);
     border-radius: 6px;
     cursor: pointer;

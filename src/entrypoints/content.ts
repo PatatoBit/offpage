@@ -25,7 +25,7 @@ export default defineContentScript({
       mode: "open",
       isolateEvents: ["keyup", "keydown", "keypress"],
       onMount(container) {
-        const wrapper = document.createElement("div.root");
+        const wrapper = document.createElement("div");
         container.append(wrapper);
 
         mount(Content, {

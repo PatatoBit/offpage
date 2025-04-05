@@ -15,6 +15,7 @@ browser.runtime.onMessage.addListener((message) => {
 </div>
 
 <style lang="scss">
+@use "../styles/shadow-reset.scss";
 @use "../styles/global.scss";
 @use "../styles/variables.scss";
 @use "../styles/fonts.scss";
@@ -29,7 +30,7 @@ browser.runtime.onMessage.addListener((message) => {
   width: 300px;
   height: 90vh;
   z-index: 100;
-  padding-inline: 1rem;
+  padding-inline: 10px;
   background-color: var(--background);
 
   border-radius: 0.8rem;
@@ -37,7 +38,7 @@ browser.runtime.onMessage.addListener((message) => {
   -webkit-box-shadow: 1px 9px 10px 2px rgba(0, 0, 0, 0.16);
   -moz-box-shadow: 1px 9px 10px 2px rgba(0, 0, 0, 0.16);
 
-  gap: 1rem;
+  gap: 5px;
 
   transition: transform 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
@@ -47,6 +48,10 @@ browser.runtime.onMessage.addListener((message) => {
 }
 
 .left-hover {
+  all: unset; /* Resets inherited styles */
+  position: relative;
+  z-index: 999999; /* Make sure it's above other content */
+
   position: fixed;
   top: 50%;
   right: 1rem;

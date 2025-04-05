@@ -170,7 +170,7 @@ onDestroy(() => {
 .domain {
   display: flex;
   flex-direction: row;
-  gap: 0.5rem;
+  gap: 8px;
   align-items: center;
 }
 
@@ -178,10 +178,10 @@ onDestroy(() => {
   display: flex;
   flex-direction: column;
   flex: 1 1 1;
-  gap: 1rem;
+  gap: 16px;
 
   border-bottom: 1px dashed black;
-  padding-block: 1.3rem;
+  padding-block: 20px;
 
   h2 {
     font-weight: 400;
@@ -193,7 +193,7 @@ onDestroy(() => {
   .domain-route {
     display: flex;
     flex-direction: column;
-    gap: 0.2rem;
+    gap: 3px;
   }
 
   .header-button {
@@ -208,11 +208,11 @@ onDestroy(() => {
     align-items: center;
     overflow: hidden;
 
-    height: 2rem;
-    width: 10rem;
+    height: 32px;
+    width: 160px;
     background-color: var(--inner-background);
     border: 1px solid var(--border);
-    border-radius: 5rem;
+    border-radius: 80px;
 
     button {
       all: unset;
@@ -221,8 +221,8 @@ onDestroy(() => {
       width: 100%;
 
       height: 100%;
-      padding: 0 1rem;
-      gap: 0.4rem;
+      padding: 0 16px;
+      gap: 6px;
       border-right: 1px solid var(--border);
       border-radius: 0;
 
