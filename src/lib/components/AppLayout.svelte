@@ -27,10 +27,10 @@ browser.runtime.onMessage.addListener((message) => {
 }
 
 .page {
-  width: 300px;
+  width: 400px;
   height: 90vh;
   z-index: 100;
-  padding-inline: 10px;
+  padding: 15px;
   background-color: var(--background);
 
   border-radius: 0.8rem;

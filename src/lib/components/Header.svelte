@@ -180,8 +180,8 @@ onDestroy(() => {
   flex: 1 1 1;
   gap: 16px;
 
+  padding-bottom: 10px;
   border-bottom: 1px dashed black;
-  padding-block: 20px;
 
   h2 {
     font-weight: 400;

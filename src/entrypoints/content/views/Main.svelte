@@ -324,9 +324,12 @@ main {
   flex: auto;
   padding: 0;
   margin: 0;
+  padding-right: 10px;
   padding-bottom: 16px;
 
   overflow-y: scroll;
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
 }
 
 .comment {
@@ -431,7 +434,6 @@ main {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  margin-bottom: 1rem;
   flex: 1 1 1;
 
   .form-buttons {
