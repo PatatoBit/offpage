@@ -104,24 +104,16 @@
 <div class="header">
   <div class="domain-route">
     {#if currentUrl}
+      <div class="domain">
+        {#if getIcon()}
+          <img class="webicon" src={getIcon()} alt=" " />
+        {/if}
+
+        <strong>{currentUrlSplit?.domain}</strong>
+      </div>
+
       {#if currentUrlSplit?.route}
-        <div class="domain">
-          {#if getIcon()}
-            <img class="webicon" src={getIcon()} alt=" " />
-          {/if}
-
-          <strong>{currentUrlSplit?.domain}</strong>
-        </div>
-
-        <h2>{currentUrlSplit?.route}</h2>
-      {:else}
-        <div class="domain">
-          {#if getIcon()}
-            <img class="webicon" src={getIcon()} alt=" " />
-          {/if}
-
-          <h2>{currentUrlSplit?.domain}</h2>
-        </div>
+        <h3>{currentUrlSplit?.route}</h3>
       {/if}
     {/if}
   </div>
@@ -184,7 +176,7 @@
     flex: 1 1 1;
     gap: 16px;
 
-    h2 {
+    h3 {
       font-weight: 400;
       margin: 0;
       overflow: hidden;
