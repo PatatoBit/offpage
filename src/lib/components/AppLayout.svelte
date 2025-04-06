@@ -30,8 +30,9 @@
     width: 400px;
     height: 90vh;
     z-index: 100;
-    padding: 15px;
-    background-color: var(--background);
+    background-color: var(--overlay-background);
+    backdrop-filter: blur(5px);
+    overflow: hidden;
 
     border-radius: 10px;
     border: 1px solid var(--border);

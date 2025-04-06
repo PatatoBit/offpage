@@ -27,6 +27,7 @@
     "clean": "git clean -fXd"
   },
   "dependencies": {
+    "@lucide/svelte": "^0.487.0",
     "@supabase/supabase-js": "^2.47.10",
     "dotenv": "^16.4.7",
     "mode-watcher": "^0.3.1",

@@ -3,14 +3,16 @@
 html,
 body,
 * {
-  --background: #1a2838;
-  --inner-background: #27374b;
-  --text: #e0e0e0;
+  --background: #1d1f31;
+  --inner-background: hsl(232, 26, 15);
+  --overlay-background: rgba(29, 31, 49, 0.9);
+
+  --text: #ffffff;
   --text-light: #b1b1b1;
 
-  --primary: #2e2e2e;
+  --primary: #ffffff;
   --primary-light: #7a7a7a;
-  --border: rgb(59, 66, 87);
+  --border: #ffffff;
 
   --red: #ff4144;
 }

@@ -14,8 +14,6 @@
   import "../../lib/styles/global.scss";
   import "../../lib/styles/variables.scss";
 
-  import LoadSpinner from "../../lib/components/LoadSpinner.svelte";
-
   let profileSaveSuccess: boolean = false;
 
   interface UserProfileData {
@@ -143,7 +141,7 @@
         {#if profileSaveSuccess}
           <p transition:fade>✅Profile Saved</p>
         {/if}
-        <LoadSpinner />
+        <!-- <LoadSpinner /> -->
 
         <button class="signout" on:click={async () => await signOut()}
           >Sign out</button

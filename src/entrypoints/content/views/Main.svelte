@@ -227,102 +227,104 @@
     currentPageId={$currentPageId as string}
   />
 
-  {#if $initialComments.length != 0 || isEmpty}
-    <!-- content here -->
-    <ul class="comments">
-      {#each $initialComments as comment}
-        <li transition:fade>
-          <div class="comment">
-            <div class="user-profile">
-              {#if comment.profiles}
-                <img
-                  src={comment.profiles.avatar_url}
-                  alt={comment.profiles.username + "'s avatar"}
-                />
-              {:else}
-                <img src="https://placehold.co/400" alt="Placeholder" />
-              {/if}
-            </div>
-
-            <div class="comment-main">
-              <div class="comment-header">
+  <div class="content">
+    {#if $initialComments.length != 0 || isEmpty}
+      <!-- content here -->
+      <ul class="comments">
+        {#each $initialComments as comment}
+          <li transition:fade>
+            <div class="comment">
+              <div class="user-profile">
                 {#if comment.profiles}
-                  <h5>{comment.profiles.username}</h5>
+                  <img
+                    src={comment.profiles.avatar_url}
+                    alt={comment.profiles.username + "'s avatar"}
+                  />
+                {:else}
+                  <img src="https://placehold.co/400" alt="Placeholder" />
                 {/if}
-                <h5 class="label">
-                  {moment
-                    .utc(comment.created_at)
-                    .local()
-                    .startOf("second")
-                    .fromNow()}
-                </h5>
               </div>
 
-              <p>{comment.content}</p>
+              <div class="comment-main">
+                <div class="comment-header">
+                  {#if comment.profiles}
+                    <h5>{comment.profiles.username}</h5>
+                  {/if}
+                  <h5 class="label">
+                    {moment
+                      .utc(comment.created_at)
+                      .local()
+                      .startOf("second")
+                      .fromNow()}
+                  </h5>
+                </div>
 
-              {#if comment.image_url}
-                <img src={comment.image_url} alt={comment.content} />
-              {/if}
+                <p>{comment.content}</p>
+
+                {#if comment.image_url}
+                  <img src={comment.image_url} alt={comment.content} />
+                {/if}
+              </div>
             </div>
-          </div>
-        </li>
-      {/each}
-    </ul>
-  {:else}
-    <Loading />
-  {/if}
-
-  <form
-    class="input-form"
-    on:submit|preventDefault={async () => await handleSubmit()}
-    on:dragover|preventDefault
-    on:drop={handleFileDrop}
-  >
-    {#if currentFileUrl}
-      <div class="file-dropdown-area">
-        <div class="dropped-image">
-          <img src={currentFileUrl} alt="Dropped file" />
-
-          <button
-            on:click={() => {
-              file = null;
-              currentFileUrl = null;
-            }}
-          >
-            <img src={Cross} alt="Remove" />
-          </button>
-        </div>
-      </div>
+          </li>
+        {/each}
+      </ul>
+    {:else}
+      <Loading />
     {/if}
 
-    <textarea
-      bind:value={currentComment}
-      on:keydown={handleEnterKey}
-      placeholder="Share your thoughts..."
-      required
-      rows="3"
-      maxlength="500"
-    ></textarea>
+    <form
+      class="input-form"
+      on:submit|preventDefault={async () => await handleSubmit()}
+      on:dragover|preventDefault
+      on:drop={handleFileDrop}
+    >
+      {#if currentFileUrl}
+        <div class="file-dropdown-area">
+          <div class="dropped-image">
+            <img src={currentFileUrl} alt="Dropped file" />
 
-    <!-- Hidden file input -->
-    <input
-      type="file"
-      bind:this={inputRef}
-      accept="image/png, image/jpeg, image/gif"
-      on:change={handleFileSelect}
-      hidden
-    />
+            <button
+              on:click={() => {
+                file = null;
+                currentFileUrl = null;
+              }}
+            >
+              <img src={Cross} alt="Remove" />
+            </button>
+          </div>
+        </div>
+      {/if}
 
-    <div class="form-buttons">
-      <button type="button" class="file-input" on:click={triggerFileInput}>
-        <img src={Image} alt="File input" />
-      </button>
+      <textarea
+        bind:value={currentComment}
+        on:keydown={handleEnterKey}
+        placeholder="Share your thoughts..."
+        required
+        rows="3"
+        maxlength="500"
+      ></textarea>
 
-      <button class="form-submit" type="submit">
-        <img src={ReturnIcon} alt="Return" />
-      </button>
-    </div>
-  </form>
+      <!-- Hidden file input -->
+      <input
+        type="file"
+        bind:this={inputRef}
+        accept="image/png, image/jpeg, image/gif"
+        on:change={handleFileSelect}
+        hidden
+      />
+
+      <div class="form-buttons">
+        <button type="button" class="file-input" on:click={triggerFileInput}>
+          <img src={Image} alt="File input" />
+        </button>
+
+        <button class="form-submit" type="submit">
+          <img src={ReturnIcon} alt="Return" />
+        </button>
+      </div>
+    </form>
+  </div>
 </main>
 
 <style lang="scss">
@@ -330,8 +332,16 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-
     background-color: transparent;
+  }
+
+  .content {
+    position: relative;
+    height: 100%;
+    padding: 0 16px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
   }
 
   .comments {

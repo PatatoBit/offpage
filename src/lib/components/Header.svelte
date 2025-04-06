@@ -9,8 +9,7 @@
   import { getIcon } from "../utils";
   import ThumbUp from "../../assets/icons/thumb-up.svg";
   import ThumbDown from "../../assets/icons/thumb-down.svg";
-  import { slide } from "svelte/transition";
-  import { duration } from "moment";
+  import { EllipsisVertical } from "@lucide/svelte";
 
   export let currentUrl: string | undefined;
   export let currentUrlSplit: {
@@ -102,20 +101,26 @@
 </script>
 
 <div class="header">
-  <div class="domain-route">
-    {#if currentUrl}
-      <div class="domain">
-        {#if getIcon()}
-          <img class="webicon" src={getIcon()} alt=" " />
-        {/if}
-
-        <strong>{currentUrlSplit?.domain}</strong>
-      </div>
-
-      {#if currentUrlSplit?.route}
-        <h3>{currentUrlSplit?.route}</h3>
-      {/if}
+  <div class="top-header">
+    {#if getIcon()}
+      <img class="webicon" src={getIcon()} alt=" " />
     {/if}
+
+    <div class="domain-route">
+      {#if currentUrl}
+        <div class="domain">
+          <strong>{currentUrlSplit?.domain}</strong>
+        </div>
+
+        {#if currentUrlSplit?.route}
+          <h3>{currentUrlSplit?.route}</h3>
+        {/if}
+      {/if}
+    </div>
+
+    <button on:click={handleOpenOptions} class="options-button">
+      <EllipsisVertical size={20} color="var(--text)" />
+    </button>
   </div>
 
   <div class="header-button">
@@ -149,11 +154,6 @@
         {/key}
       </button>
     </div>
-
-    <div>
-      <button on:click={handleOpenOptions}>options</button>
-      <!-- <a href="https://google.com" target="_blank">view on web</a> -->
-    </div>
   </div>
 </div>
 
@@ -163,11 +163,18 @@
     height: 20px;
   }
 
-  .domain {
+  .top-header {
     display: flex;
     flex-direction: row;
     gap: 8px;
+    padding-top: 5px;
+  }
+
+  .domain {
+    display: flex;
+    flex-direction: row;
     align-items: center;
+    gap: 8px;
   }
 
   .header {
@@ -175,6 +182,8 @@
     flex-direction: column;
     flex: 1 1 1;
     gap: 16px;
+    background-color: var(--background);
+    padding: 15px;
 
     h3 {
       font-weight: 400;
@@ -187,6 +196,19 @@
       display: flex;
       flex-direction: column;
       gap: 3px;
+    }
+
+    .options-button {
+      all: initial;
+      align-self: center;
+      cursor: pointer;
+
+      //align at the end of the header
+      position: absolute;
+      right: 15px;
+
+      border: none;
+      background: none;
     }
 
     .header-button {
