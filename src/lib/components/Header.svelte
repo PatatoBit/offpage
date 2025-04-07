@@ -3,12 +3,15 @@
     RealtimeChannel,
     RealtimePostgresChangesPayload,
   } from "@supabase/supabase-js";
-  import { getLikeDislikeCount, PageVoteData, votePage } from "../database";
+  import {
+    getLikeDislikeCount,
+    PageVoteData,
+    getUserVote,
+    votePage,
+  } from "../database";
   import { userId } from "../stores/sessionStore";
   import { supabase } from "../supabase";
   import { getIcon } from "../utils";
-  import ThumbUp from "../../assets/icons/thumb-up.svg";
-  import ThumbDown from "../../assets/icons/thumb-down.svg";
   import { EllipsisVertical, ThumbsUp, ThumbsDown } from "@lucide/svelte";
 
   export let currentUrl: string | undefined;
@@ -26,13 +29,34 @@
   };
 
   let channel: RealtimeChannel;
-  const formatter = new Intl.NumberFormat("en", { notation: "compact" });
 
+  let ThumbButtonState: "like" | "dislike" | "neutral" = "neutral";
+
+  const formatter = new Intl.NumberFormat("en", { notation: "compact" });
   function handleOpenOptions() {
     chrome.runtime.sendMessage({ type: "OPEN_OPTIONS_PAGE" });
   }
 
-  onMount(() => {
+  onMount(async () => {
+    const checkUserVote = setInterval(async () => {
+      if (currentPageId && $userId) {
+        clearInterval(checkUserVote); // Stop checking once ready
+
+        const userVote = await getUserVote(currentPageId, $userId);
+        if (userVote) {
+          if (userVote === 1) {
+            ThumbButtonState = "like";
+          } else if (userVote === -1) {
+            ThumbButtonState = "dislike";
+          } else {
+            ThumbButtonState = "neutral";
+          }
+        } else {
+          console.error("Unable to fetch user vote.");
+        }
+      }
+    }, 100); // Check every 100ms
+
     const checkReady = setInterval(async () => {
       if (currentPageId && currentUrlSplit) {
         clearInterval(checkReady); // Stop checking once ready
@@ -129,9 +153,15 @@
   <div class="header-button">
     <div class="votes-button">
       <button
-        class="active"
-        on:click={async () =>
-          await votePage(currentPageId as string, $userId as string, 1)}
+        class:active={ThumbButtonState === "like"}
+        on:click={async () => {
+          if (ThumbButtonState === "like") {
+            ThumbButtonState = "neutral";
+          } else {
+            ThumbButtonState = "like";
+          }
+          await votePage(currentPageId as string, $userId as string, 1);
+        }}
       >
         <div class="thumbs-button">
           <ThumbsUp size={20} />
@@ -143,8 +173,15 @@
       </button>
 
       <button
-        on:click={async () =>
-          await votePage(currentPageId as string, $userId as string, -1)}
+        class:active={ThumbButtonState === "dislike"}
+        on:click={async () => {
+          if (ThumbButtonState === "dislike") {
+            ThumbButtonState = "neutral";
+          } else {
+            ThumbButtonState = "dislike";
+          }
+          await votePage(currentPageId as string, $userId as string, -1);
+        }}
       >
         <div class="thumbs-button">
           <ThumbsDown size={20} />

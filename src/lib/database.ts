@@ -242,6 +242,22 @@ export async function getLikeDislikeCount(
   return { likes, dislikes };
 }
 
+export async function getUserVote(pageId: string, userId: string) {
+  const { data, error } = await supabase
+    .from("page_votes")
+    .select("vote")
+    .eq("page_id", pageId)
+    .eq("user_id", userId)
+    .single();
+
+  if (error) {
+    console.error("Error fetching user vote:", error.message);
+    return null;
+  }
+
+  return data?.vote ?? null; // Return null if no vote found
+}
+
 export async function votePage(
   pageId: string,
   userId: string,
