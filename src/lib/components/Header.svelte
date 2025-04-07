@@ -9,19 +9,22 @@
   import { getIcon } from "../utils";
   import ThumbUp from "../../assets/icons/thumb-up.svg";
   import ThumbDown from "../../assets/icons/thumb-down.svg";
-  import { EllipsisVertical } from "@lucide/svelte";
+  import { EllipsisVertical, ThumbsUp, ThumbsDown } from "@lucide/svelte";
 
   export let currentUrl: string | undefined;
+
   export let currentUrlSplit: {
     baseUrl: string;
     domain: string;
     route: string;
   } | null;
+
   export let currentPageId: string | null;
   let currentPageVotes = {
     likes: 0,
     dislikes: 0,
   };
+
   let channel: RealtimeChannel;
   const formatter = new Intl.NumberFormat("en", { notation: "compact" });
 
@@ -108,9 +111,9 @@
 
     <div class="domain-route">
       {#if currentUrl}
-        <div class="domain">
+        <h3 class="domain">
           <strong>{currentUrlSplit?.domain}</strong>
-        </div>
+        </h3>
 
         {#if currentUrlSplit?.route}
           <h3>{currentUrlSplit?.route}</h3>
@@ -126,32 +129,30 @@
   <div class="header-button">
     <div class="votes-button">
       <button
+        class="active"
         on:click={async () =>
           await votePage(currentPageId as string, $userId as string, 1)}
       >
-        <div>
-          <img class="vote-icon like" src={ThumbUp} alt="Like" />
+        <div class="thumbs-button">
+          <ThumbsUp size={20} />
         </div>
 
-        {#key currentPageVotes.likes}
-          <p>
-            {formatter.format(currentPageVotes.likes)}
-          </p>
-        {/key}
+        <p>
+          {formatter.format(currentPageVotes.likes)}
+        </p>
       </button>
+
       <button
         on:click={async () =>
           await votePage(currentPageId as string, $userId as string, -1)}
       >
-        <div>
-          <img class="vote-icon dislike" src={ThumbDown} alt="Dislike" />
+        <div class="thumbs-button">
+          <ThumbsDown size={20} />
         </div>
 
-        {#key currentPageVotes.dislikes}
-          <p>
-            {formatter.format(currentPageVotes.dislikes)}
-          </p>
-        {/key}
+        <p>
+          {formatter.format(currentPageVotes.dislikes)}
+        </p>
       </button>
     </div>
   </div>
@@ -214,23 +215,24 @@
     .header-button {
       display: flex;
       flex-direction: row;
-      justify-content: space-between;
+      justify-content: center;
     }
 
     .votes-button {
       display: flex;
       flex-direction: row;
       align-items: center;
+      justify-self: center;
+      align-self: center;
       overflow: hidden;
 
       height: 32px;
       width: 160px;
       background-color: var(--inner-background);
       border: 1px solid var(--border);
-      border-radius: 80px;
+      border-radius: 10px;
 
       button {
-        all: unset;
         cursor: pointer;
         height: 100%;
         width: 100%;
@@ -247,7 +249,18 @@
         align-items: center;
 
         &:active {
+          color: var(--background);
           background-color: var(--border);
+        }
+      }
+
+      button.active {
+        color: var(--background);
+        background-color: var(--border);
+        border: 1px solid var(--white);
+
+        p {
+          color: var(--background);
         }
       }
 
