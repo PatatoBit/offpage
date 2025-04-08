@@ -218,7 +218,7 @@
   .header {
     display: flex;
     flex-direction: column;
-    flex: 1 1 1;
+    flex: 0 0 auto;
     gap: 16px;
     background-color: var(--background);
     padding: 15px;

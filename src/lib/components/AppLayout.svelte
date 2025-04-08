@@ -36,10 +36,12 @@
 
     border-radius: 10px;
     border: 1px solid var(--border);
-
     gap: 5px;
 
     transition: transform 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+
+    display: flex;
+    flex-direction: column;
   }
   .page.hide {
     transform: translateX(150%);

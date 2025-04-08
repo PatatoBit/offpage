@@ -220,7 +220,6 @@
 </script>
 
 <main>
-  <!-- <button on:click={async () => await signOut()}>Sign out</button> -->
   <Header
     currentUrl={$currentUrl as string}
     currentUrlSplit={$currentUrlSplit}
@@ -272,15 +271,17 @@
     {:else}
       <Loading />
     {/if}
+  </div>
 
-    <form
-      class="input-form"
-      on:submit|preventDefault={async () => await handleSubmit()}
-      on:dragover|preventDefault
-      on:drop={handleFileDrop}
-    >
+  <form
+    class="file-area"
+    on:submit|preventDefault={async () => await handleSubmit()}
+    on:dragover|preventDefault
+    on:drop={handleFileDrop}
+  >
+    <div class="input-area">
       {#if currentFileUrl}
-        <div class="file-dropdown-area">
+        <div class="dropped-file-area">
           <div class="dropped-image">
             <img src={currentFileUrl} alt="Dropped file" />
 
@@ -323,8 +324,8 @@
           <img src={ReturnIcon} alt="Return" />
         </button>
       </div>
-    </form>
-  </div>
+    </div>
+  </form>
 </main>
 
 <style lang="scss">
@@ -337,11 +338,15 @@
 
   .content {
     position: relative;
-    height: 100%;
+    flex: 1 1 auto;
     padding: 0 16px 16px 16px;
     display: flex;
     flex-direction: column;
     gap: 16px;
+
+    overflow-y: scroll;
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+    scrollbar-width: none; /* Firefox */
   }
 
   .comments {
@@ -353,10 +358,6 @@
     margin: 0;
     padding-right: 10px;
     padding-bottom: 16px;
-
-    overflow-y: scroll;
-    -ms-overflow-style: none; /* Internet Explorer 10+ */
-    scrollbar-width: none; /* Firefox */
   }
 
   .comment {
@@ -409,60 +410,16 @@
     }
   }
 
-  .file-dropdown-area {
+  .file-area {
     position: absolute;
-    display: flex;
-    flex-direction: row;
-    /* overflow-x: scroll; */
-    gap: 8px;
-    height: 160px;
-    width: 100%;
-    top: -176px;
-
-    .dropped-image {
-      position: relative;
-      border-radius: 8px;
-      background-color: var(--border);
-
-      box-shadow: -1px 5px 7px 0px rgba(0, 0, 0, 0.17);
-      -webkit-box-shadow: -1px 5px 7px 0px rgba(0, 0, 0, 0.17);
-      -moz-box-shadow: -1px 5px 7px 0px rgba(0, 0, 0, 0.17);
-
-      button {
-        position: absolute;
-        top: -8px;
-        right: -8px;
-
-        background-color: var(--red);
-        border: none;
-        padding: 4px;
-        border-radius: 50%;
-        cursor: pointer;
-
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        img {
-          filter: invert(1);
-          width: 10px;
-          height: 10px;
-        }
-      }
-
-      img {
-        height: 100%;
-        width: auto;
-      }
-    }
-  }
-
-  .input-form {
-    position: relative;
+    bottom: 0;
     display: flex;
     flex-direction: column;
+
+    width: 100%;
     gap: 0.5rem;
-    flex: 1 1 1;
+
+    background-color: var(--background);
 
     .form-buttons {
       display: flex;
@@ -522,6 +479,58 @@
 
       &:hover {
         transform: scale(1.05);
+      }
+    }
+  }
+
+  .input-area {
+    padding: 16px;
+  }
+
+  .dropped-file-area {
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    /* overflow-x: scroll; */
+    gap: 8px;
+    width: 100%;
+    height: 100%;
+    top: -176px;
+
+    .dropped-image {
+      position: relative;
+      border-radius: 8px;
+      background-color: var(--border);
+
+      box-shadow: -1px 5px 7px 0px rgba(0, 0, 0, 0.17);
+      -webkit-box-shadow: -1px 5px 7px 0px rgba(0, 0, 0, 0.17);
+      -moz-box-shadow: -1px 5px 7px 0px rgba(0, 0, 0, 0.17);
+
+      button {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+
+        background-color: var(--red);
+        border: none;
+        padding: 4px;
+        border-radius: 50%;
+        cursor: pointer;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        img {
+          filter: invert(1);
+          width: 10px;
+          height: 10px;
+        }
+      }
+
+      img {
+        height: 100%;
+        width: auto;
       }
     }
   }
