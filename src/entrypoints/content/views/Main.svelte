@@ -28,9 +28,9 @@
   import Header from "@/lib/components/Header.svelte";
   import Loading from "@/lib/components/Loading.svelte";
 
+  import { MoveRight, Image } from "@lucide/svelte";
   import ReturnIcon from "@/assets/icons/return.svg";
   import Cross from "@/assets/icons/cross.svg";
-  import Image from "@/assets/icons/image.svg";
 
   // Fetch the current tab's URL on component mount
   let channel: RealtimeChannel;
@@ -317,11 +317,12 @@
 
       <div class="form-buttons">
         <button type="button" class="file-input" on:click={triggerFileInput}>
-          <img src={Image} alt="File input" />
+          <Image size={20} color="var(--text)" />
         </button>
 
         <button class="form-submit" type="submit">
-          <img src={ReturnIcon} alt="Return" />
+          <p>Send</p>
+          <MoveRight size={15} color="var(--background)" />
         </button>
       </div>
     </div>
@@ -412,14 +413,14 @@
 
   .file-area {
     position: absolute;
-    bottom: 0;
     display: flex;
     flex-direction: column;
+    pointer-events: none;
 
+    z-index: 10;
     width: 100%;
+    height: 100%;
     gap: 0.5rem;
-
-    background-color: var(--background);
 
     .form-buttons {
       display: flex;
@@ -457,9 +458,8 @@
 
     .form-submit {
       background-color: var(--text);
-      color: var(--background);
       border: none;
-      padding: 8px 16px;
+      padding: 8px 10px;
       border: 1px solid var(--text);
       border-radius: 6px;
       cursor: pointer;
@@ -467,14 +467,13 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      gap: 8px;
 
       transition: scale 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
 
-      img {
-        width: 20px;
-        height: 20px;
-
-        filter: invert(1);
+      p {
+        font-size: 14px;
+        color: var(--background);
       }
 
       &:hover {
@@ -484,7 +483,17 @@
   }
 
   .input-area {
-    padding: 16px;
+    box-sizing: border-box;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    padding: 12px;
+    pointer-events: all;
+
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background: var(--background);
   }
 
   .dropped-file-area {
@@ -495,7 +504,7 @@
     gap: 8px;
     width: 100%;
     height: 100%;
-    top: -176px;
+    top: -140px;
 
     .dropped-image {
       position: relative;

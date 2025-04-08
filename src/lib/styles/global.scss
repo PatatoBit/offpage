@@ -19,6 +19,7 @@ body {
   font-family: initial;
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 
   font-family: "Open Runde", "Noto Sans", sans-serif;
   font-optical-sizing: auto;
@@ -48,8 +49,8 @@ textarea {
   resize: none;
 
   color: var(--text);
-  border: 1px solid var(--border);
-  background-color: var(--inner-background);
+  border: 1px solid var(--highlight);
+  background-color: var(--inner-area);
   color: var(--text);
   font-family: "Open Runde", sans-serif;
 }
