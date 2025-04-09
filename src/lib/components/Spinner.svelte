@@ -1,5 +1,3 @@
-<script lang="ts"></script>
-
 <div>
   <span class="loader"></span>
 </div>

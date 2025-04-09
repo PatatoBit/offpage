@@ -135,12 +135,12 @@
 
     <div class="domain-route">
       {#if currentUrl}
-        <h3 class="domain">
-          <strong>{currentUrlSplit?.domain}</strong>
+        <h3 class="bold">
+          {currentUrlSplit?.domain}
         </h3>
 
         {#if currentUrlSplit?.route}
-          <h3>{currentUrlSplit?.route}</h3>
+          <h3 class="normal">{currentUrlSplit?.route}</h3>
         {/if}
       {/if}
     </div>
@@ -208,13 +208,6 @@
     padding-top: 5px;
   }
 
-  .domain {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 8px;
-  }
-
   .header {
     display: flex;
     flex-direction: column;
@@ -222,9 +215,9 @@
     gap: 16px;
     background-color: var(--background);
     padding: 15px;
+    padding-top: 20px;
 
     h3 {
-      font-weight: 400;
       margin: 0;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -234,6 +227,7 @@
       display: flex;
       flex-direction: column;
       gap: 3px;
+      font-weight: 400;
     }
 
     .options-button {
@@ -271,10 +265,9 @@
 
       button {
         cursor: pointer;
+        flex: 1;
         height: 100%;
-        width: 100%;
 
-        height: 100%;
         padding: 0 16px;
         gap: 6px;
         border-right: 1px solid var(--border);
@@ -294,7 +287,6 @@
       button.active {
         color: var(--background);
         background-color: var(--border);
-        border: 1px solid var(--white);
 
         p {
           color: var(--background);
@@ -304,12 +296,6 @@
       button:last-child {
         border-right: none;
       }
-    }
-
-    .vote-icon {
-      width: 18px;
-      height: 18px;
-      transform: translateY(10%);
     }
   }
 </style>

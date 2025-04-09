@@ -4,10 +4,8 @@
   font-weight: 400;
   src:
     local(""),
-    /* IE6-IE8 */ url("/fonts/OpenRunde/OpenRunde-Regular.woff2")
-      format("woff2"),
-    /* Super Modern Browsers */ url("/fonts/OpenRunde/OpenRunde-Regular.woff")
-      format("woff");
+    url("/fonts/OpenRunde/OpenRunde-Regular.woff2") format("woff2"),
+    url("/fonts/OpenRunde/OpenRunde-Regular.woff") format("woff");
 }
 
 @font-face {
@@ -16,7 +14,6 @@
   font-weight: 700;
   src:
     local(""),
-    /* IE6-IE8 */ url("/fonts/OpenRunde/OpenRunde-Bold.woff2") format("woff2"),
-    /* Super Modern Browsers */ url("/fonts/OpenRunde/OpenRunde-Bold.woff")
-      format("woff");
+    url("/fonts/OpenRunde/OpenRunde-Bold.woff2") format("woff2"),
+    url("/fonts/OpenRunde/OpenRunde-Bold.woff") format("woff");
 }

@@ -27,6 +27,14 @@ body {
   font-variation-settings: "width" 100;
 }
 
+.normal {
+  font-weight: 400;
+}
+
+.bold {
+  font-weight: 700;
+}
+
 h1 {
   font-size: 32px;
   font-weight: 700;
@@ -61,26 +69,26 @@ input {
   resize: none;
 
   color: var(--text);
-  border: 1px solid var(--border);
+  border: 1px solid var(--highlight);
   background-color: var(--inner-background);
   font-family: "Open Runde", sans-serif;
 }
 
 button {
-  all: initial;
+  all: unset;
   cursor: pointer;
   font-family: "Open Runde", sans-serif;
   padding: 5px 10px;
   border-radius: 6px;
 
-  background-color: var(--inner-background);
-  border: 1px solid var(--border);
+  background-color: var(--overlay-background);
+  border: 1px solid var(--highlight);
   color: var(--text);
 
   &.primary {
     border: none;
-    background-color: var(--primary);
-    color: white;
+    background-color: white;
+    color: var(--background);
   }
 }
 

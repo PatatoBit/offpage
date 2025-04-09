@@ -162,7 +162,7 @@
     min-height: 100vh;
     width: 100%;
 
-    background-color: var(--background);
+    background-color: var(--overlay-background);
   }
 
   .card {
@@ -173,7 +173,7 @@
     padding: 1rem;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
+    background-color: var(--background);
     text-align: center;
     max-width: 300px;
     min-height: 500px;
@@ -226,8 +226,8 @@
 
   .signout {
     margin-top: auto;
-    background-color: white;
-    border-color: var(--red);
-    color: var(--red);
+    border: 0;
+    background-color: var(--red);
+    color: white;
   }
 </style>

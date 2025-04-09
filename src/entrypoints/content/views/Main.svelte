@@ -26,7 +26,7 @@
   import { getBaseUrlAndPath, isValidImage } from "@/lib/utils";
 
   import Header from "@/lib/components/Header.svelte";
-  import Loading from "@/lib/components/Loading.svelte";
+  import LoadSpinner from "@/lib/components/LoadSpinner.svelte";
 
   import { CornerUpRight, Image } from "@lucide/svelte";
   import Cross from "@/assets/icons/cross.svg";
@@ -268,7 +268,7 @@
         {/each}
       </ul>
     {:else}
-      <Loading />
+      <LoadSpinner />
     {/if}
   </div>
 
@@ -490,7 +490,7 @@
 
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 8px;
     background: var(--background);
   }
 
