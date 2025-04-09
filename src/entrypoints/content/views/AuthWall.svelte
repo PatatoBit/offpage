@@ -58,7 +58,9 @@
 {#if $isSignedIn}
   <slot />
 {:else if loading}
-  <LoadSpinner />
+  <div class="center">
+    <LoadSpinner />
+  </div>
 {:else}
   <main class="page">
     {#if magicLinkSent}

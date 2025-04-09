@@ -268,7 +268,9 @@
         {/each}
       </ul>
     {:else}
-      <LoadSpinner />
+      <div class="center">
+        <LoadSpinner />
+      </div>
     {/if}
   </div>
 
