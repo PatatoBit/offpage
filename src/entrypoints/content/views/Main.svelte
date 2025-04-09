@@ -28,8 +28,7 @@
   import Header from "@/lib/components/Header.svelte";
   import Loading from "@/lib/components/Loading.svelte";
 
-  import { MoveRight, Image } from "@lucide/svelte";
-  import ReturnIcon from "@/assets/icons/return.svg";
+  import { CornerUpRight, Image } from "@lucide/svelte";
   import Cross from "@/assets/icons/cross.svg";
 
   // Fetch the current tab's URL on component mount
@@ -297,6 +296,17 @@
         </div>
       {/if}
 
+      <div class="form-buttons">
+        <button type="button" class="file-input" on:click={triggerFileInput}>
+          <Image size={20} color="var(--text)" />
+        </button>
+
+        <button class="form-submit" type="submit">
+          <p>Send</p>
+          <CornerUpRight size={15} color="var(--background)" />
+        </button>
+      </div>
+
       <textarea
         bind:value={currentComment}
         on:keydown={handleEnterKey}
@@ -306,7 +316,6 @@
         maxlength="500"
       ></textarea>
 
-      <!-- Hidden file input -->
       <input
         type="file"
         bind:this={inputRef}
@@ -314,17 +323,6 @@
         on:change={handleFileSelect}
         hidden
       />
-
-      <div class="form-buttons">
-        <button type="button" class="file-input" on:click={triggerFileInput}>
-          <Image size={20} color="var(--text)" />
-        </button>
-
-        <button class="form-submit" type="submit">
-          <p>Send</p>
-          <MoveRight size={15} color="var(--background)" />
-        </button>
-      </div>
     </div>
   </form>
 </main>
@@ -358,7 +356,7 @@
     padding: 0;
     margin: 0;
     padding-right: 10px;
-    padding-bottom: 16px;
+    padding-bottom: 160px;
   }
 
   .comment {
