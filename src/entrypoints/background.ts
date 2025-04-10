@@ -15,6 +15,15 @@ export default defineBackground(() => {
 
     await chrome.storage.local.set({ open: newOpenState });
   });
+
+  async () => await restoreSession();
+
+  supabase.auth.onAuthStateChange((event, session) => {
+    if (session) {
+      chrome.storage.local.set({ session });
+      console.log("Session updated in storage:", session);
+    }
+  });
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -43,8 +52,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       break;
   }
 });
-
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {});
 
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   if (message.action === "loginWithGoogle") {
@@ -116,6 +123,23 @@ async function finishUserOAuth(url: string) {
     console.log(`finished handling user OAuth callback`);
   } catch (error) {
     console.error(error);
+  }
+}
+
+async function restoreSession() {
+  const { session } = await chrome.storage.local.get("session");
+
+  if (session?.access_token && session?.refresh_token) {
+    const { data, error } = await supabase.auth.setSession({
+      access_token: session.access_token,
+      refresh_token: session.refresh_token,
+    });
+
+    if (error) {
+      console.error("Failed to restore session:", error);
+    } else {
+      console.log("Session restored:", data.session);
+    }
   }
 }
 
