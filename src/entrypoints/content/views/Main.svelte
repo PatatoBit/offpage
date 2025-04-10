@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { fade } from "svelte/transition";
+  import { fade, fly } from "svelte/transition";
   import { onMount } from "svelte";
   import moment from "moment";
   import {
@@ -30,6 +30,7 @@
 
   import { CornerUpRight, Image } from "@lucide/svelte";
   import Cross from "@/assets/icons/cross.svg";
+  import { writable } from "svelte/store";
 
   // Fetch the current tab's URL on component mount
   let channel: RealtimeChannel;
@@ -124,6 +125,8 @@
 
   let currentComment: string = "";
 
+  const postingComment = writable<boolean>(false);
+
   // Handle form submission
   const handleSubmit = async () => {
     if (!currentUrlSplit) {
@@ -162,6 +165,7 @@
     }
 
     try {
+      postingComment.set(true);
       await addComment($currentUrl as string, comment, uploadedImageUrl);
 
       if ($initialComments.length == 0) {
@@ -170,6 +174,8 @@
       }
     } catch (error) {
       console.error((error as Error).message);
+    } finally {
+      postingComment.set(false);
     }
   };
 
@@ -226,6 +232,16 @@
   />
 
   <div class="content">
+    {#if $postingComment}
+      <div transition:fly={{ y: -50 }} class="posting-spinner">
+        <div class="spinner">
+          <LoadSpinner />
+        </div>
+
+        <p>Posting</p>
+      </div>
+    {/if}
+
     {#if $initialComments.length != 0 || isEmpty}
       <!-- content here -->
       <ul class="comments">
@@ -348,6 +364,34 @@
     overflow-y: scroll;
     -ms-overflow-style: none; /* Internet Explorer 10+ */
     scrollbar-width: none; /* Firefox */
+
+    .posting-spinner {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 3px;
+      z-index: 1000; /* Ensure it appears above other content */
+
+      background-color: var(--background);
+      border: 1px solid var(--highlight);
+      border-radius: 32px;
+      padding-right: 16px;
+
+      .spinner {
+        scale: 0.5;
+      }
+
+      p {
+        font-size: 14px;
+        color: var(--text);
+        margin: 0;
+      }
+    }
   }
 
   .comments {
