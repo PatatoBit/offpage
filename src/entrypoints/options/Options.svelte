@@ -6,13 +6,13 @@
     supabase,
     updateUserProfile,
   } from "@/lib/supabase";
-  import AuthWall from "../content/views/AuthWall.svelte";
   import { userId } from "@/lib/stores/sessionStore";
   import { uploadProfilePicture } from "@/lib/database";
   import { fade } from "svelte/transition";
 
   import "../../lib/styles/global.scss";
   import "../../lib/styles/variables.scss";
+  import AuthWall from "../content/views/AuthWall.svelte";
 
   let profileSaveSuccess: boolean = false;
 
@@ -163,33 +163,6 @@
     width: 100%;
 
     background-color: var(--overlay-background);
-  }
-
-  .card {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-
-    padding: 1rem;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    background-color: var(--background);
-    text-align: center;
-    max-width: 300px;
-    min-height: 500px;
-    width: 100%;
-    margin: 0 auto;
-
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      width: 100%;
-    }
-
-    img {
-      align-self: center;
-    }
   }
 
   img {

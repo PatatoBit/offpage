@@ -62,7 +62,7 @@
     <LoadSpinner />
   </div>
 {:else}
-  <main class="page">
+  <div class="page">
     {#if magicLinkSent}
       <p>✅Magic link sent to {sentMail}</p>
       <p>Check spam / junk folders too!</p>
@@ -83,7 +83,7 @@
     <button onclick={async () => await loginWithGoogle()}
       >Sign in with Google</button
     >
-  </main>
+  </div>
 {/if}
 
 <style lang="scss">
@@ -92,7 +92,6 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: var(--background);
     text-align: center;
 
     height: 100%;
