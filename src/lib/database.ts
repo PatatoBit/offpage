@@ -259,43 +259,74 @@ export async function getUserVote(pageId: string, userId: string) {
 }
 
 export async function votePage(
-  pageId: string,
+  pageId: string | null,
   userId: string,
   value: 1 | 0 | -1,
-) {
+  domain: string,
+  route: string,
+): Promise<string | null> {
   console.log("Voting for page:", pageId, userId, value);
+
+  // Step 0: Ensure the page exists
+  let { data: page, error: pageFetchError } = await supabase
+    .from("pages")
+    .select("id")
+    .eq("domain", domain)
+    .eq("route", route)
+    .single();
+
+  if (pageFetchError && pageFetchError.code === "PGRST116") {
+    const { data: newPage, error: createPageError } = await supabase
+      .from("pages")
+      .insert([{ domain, route }])
+      .select()
+      .single();
+
+    if (createPageError) {
+      console.error("Failed to create page:", createPageError.message);
+      return null;
+    }
+    page = newPage;
+  } else if (pageFetchError) {
+    console.error("Error fetching page:", pageFetchError.message);
+    return null;
+  }
+
+  if (!page) return null;
+
+  const ensuredPageId = page.id;
+
+  // Step 1: Check if user already voted
   const { data, error: fetchError } = await supabase
     .from("page_votes")
     .select("vote")
-    .eq("page_id", pageId)
+    .eq("page_id", ensuredPageId)
     .eq("user_id", userId)
     .single();
 
-  if (fetchError) {
-    console.error("Error fetching vote for page:", fetchError.message);
+  if (fetchError && fetchError.code !== "PGRST116") {
+    console.error("Error fetching vote:", fetchError.message);
+    return null;
   }
 
-  if (data) {
-    if (data.vote === value) {
-      // If the vote is the same as the current vote, remove the vote
-      const { error: deleteError } = await supabase
-        .from("page_votes")
-        .delete()
-        .eq("page_id", pageId)
-        .eq("user_id", userId);
+  // Step 2: Remove vote if same
+  if (data && data.vote === value) {
+    const { error: deleteError } = await supabase
+      .from("page_votes")
+      .delete()
+      .eq("page_id", ensuredPageId)
+      .eq("user_id", userId);
 
-      if (deleteError) {
-        console.error("Error deleting vote for page:", deleteError.message);
-        return;
-      }
-
-      return;
+    if (deleteError) {
+      console.error("Error deleting vote:", deleteError.message);
     }
+    return ensuredPageId;
   }
 
-  const { error: updatingError } = await supabase.from("page_votes").upsert(
+  // Step 3: Upsert
+  const { error: upsertError } = await supabase.from("page_votes").upsert(
     {
-      page_id: pageId,
+      page_id: ensuredPageId,
       user_id: userId,
       vote: value,
     },
@@ -304,8 +335,9 @@ export async function votePage(
     },
   );
 
-  if (updatingError) {
-    console.error("Error voting for page:", updatingError.message);
-    return;
+  if (upsertError) {
+    console.error("Error voting for page:", upsertError.message);
   }
+
+  return ensuredPageId;
 }

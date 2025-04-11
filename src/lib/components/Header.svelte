@@ -37,86 +37,72 @@
     chrome.runtime.sendMessage({ type: "OPEN_OPTIONS_PAGE" });
   }
 
+  let hasSubscribed = false;
+
+  // reusable subscription function
+  async function subscribeToVotes(pageId: string) {
+    console.log("Subscribing to votes for pageId:", pageId);
+
+    if (channel) {
+      await channel.unsubscribe();
+    }
+
+    channel = supabase
+      .channel(`votes_updates_${pageId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "page_votes",
+          filter: `page_id=eq.${pageId}`,
+        },
+        async (payload: RealtimePostgresChangesPayload<PageVoteData>) => {
+          console.log("Votes table changed:", payload);
+          const newVote = (payload.new as Partial<PageVoteData>)?.vote ?? 0;
+
+          if (payload.eventType === "INSERT") {
+            if (newVote === 1) currentPageVotes.likes += 1;
+            if (newVote === -1) currentPageVotes.dislikes += 1;
+          } else if (payload.eventType === "UPDATE") {
+            if (newVote === 1) {
+              currentPageVotes.likes += 1;
+              currentPageVotes.dislikes -= 1;
+            } else if (newVote === -1) {
+              currentPageVotes.likes -= 1;
+              currentPageVotes.dislikes += 1;
+            }
+          } else if (payload.eventType === "DELETE") {
+            const upvotes = await getLikeDislikeCount(pageId);
+            if (upvotes) {
+              currentPageVotes = upvotes;
+            }
+          }
+        },
+      )
+      .subscribe();
+  }
+
   onMount(async () => {
     const checkUserVote = setInterval(async () => {
       if (currentPageId && $userId) {
-        clearInterval(checkUserVote); // Stop checking once ready
-
+        clearInterval(checkUserVote);
         const userVote = await getUserVote(currentPageId, $userId);
-        if (userVote) {
-          if (userVote === 1) {
-            ThumbButtonState = "like";
-          } else if (userVote === -1) {
-            ThumbButtonState = "dislike";
-          } else {
-            ThumbButtonState = "neutral";
-          }
-        } else {
-          console.error("Unable to fetch user vote.");
-        }
+        if (userVote === 1) ThumbButtonState = "like";
+        else if (userVote === -1) ThumbButtonState = "dislike";
+        else ThumbButtonState = "neutral";
       }
-    }, 100); // Check every 100ms
+    }, 100);
 
-    const checkReady = setInterval(async () => {
+    const checkVotes = setInterval(async () => {
       if (currentPageId && currentUrlSplit) {
-        clearInterval(checkReady); // Stop checking once ready
-
+        clearInterval(checkVotes);
         const upvotes = await getLikeDislikeCount(currentPageId);
         if (upvotes) {
           currentPageVotes = upvotes;
-        } else {
-          console.error("Unable to fetch current page votes.");
         }
       }
-
-      channel = supabase
-        .channel(`votes_updates`)
-        .on(
-          "postgres_changes",
-          {
-            event: "*", // Listen for inserts, updates, and deletes
-            schema: "public",
-            table: "page_votes",
-            filter: `page_id=eq.${currentPageId}`,
-          },
-          async (payload: RealtimePostgresChangesPayload<PageVoteData>) => {
-            console.log("Votes table changed:", payload);
-
-            const newVote = (payload.new as Partial<PageVoteData>)?.vote ?? 0; // New vote after change
-
-            // If it's an INSERT (new vote)
-            if (payload.eventType === "INSERT") {
-              if (newVote === 1) currentPageVotes.likes += 1;
-              if (newVote === -1) currentPageVotes.dislikes += 1;
-            }
-
-            // If it's an UPDATE (changing vote)
-            else if (payload.eventType === "UPDATE") {
-              if (newVote === 1) {
-                currentPageVotes.likes += 1;
-                currentPageVotes.dislikes -= 1;
-              }
-              if (newVote === -1) {
-                currentPageVotes.likes -= 1;
-                currentPageVotes.dislikes += 1;
-              }
-            }
-
-            // If it's a DELETE (user removed their vote)
-            else if (payload.eventType === "DELETE") {
-              const upvotes = await getLikeDislikeCount(
-                currentPageId as string,
-              );
-              if (upvotes) {
-                currentPageVotes = upvotes;
-              } else {
-                console.error("Unable to fetch current page votes.");
-              }
-            }
-          },
-        )
-        .subscribe();
-    }, 100); // Check every 100ms
+    }, 100);
   });
 
   onDestroy(() => {
@@ -125,6 +111,13 @@
       channel.unsubscribe();
     }
   });
+
+  let lastSubscribedPageId: string | null = null;
+
+  $: if (currentPageId && currentPageId !== lastSubscribedPageId) {
+    subscribeToVotes(currentPageId);
+    lastSubscribedPageId = currentPageId;
+  }
 </script>
 
 <div class="header">
@@ -160,7 +153,32 @@
           } else {
             ThumbButtonState = "like";
           }
-          await votePage(currentPageId as string, $userId as string, 1);
+
+          const newPageId = await votePage(
+            currentPageId,
+            $userId as string,
+            1,
+            currentUrlSplit?.domain as string,
+            currentUrlSplit?.route as string,
+          );
+
+          // Update page ID and subscribe if needed
+          if (newPageId && newPageId !== currentPageId) {
+            currentPageId = newPageId;
+            if (!hasSubscribed) {
+              await subscribeToVotes(newPageId);
+              hasSubscribed = true;
+            }
+          }
+
+          // Always fetch fresh counts and user vote after voting
+          currentPageVotes =
+            (await getLikeDislikeCount(currentPageId as string)) ||
+            currentPageVotes;
+          const userVote = await getUserVote(
+            currentPageId as string,
+            $userId as string,
+          );
         }}
       >
         <div class="thumbs-button">
@@ -180,7 +198,31 @@
           } else {
             ThumbButtonState = "dislike";
           }
-          await votePage(currentPageId as string, $userId as string, -1);
+          const newPageId = await votePage(
+            currentPageId,
+            $userId as string,
+            -1,
+            currentUrlSplit?.domain as string,
+            currentUrlSplit?.route as string,
+          );
+
+          // Update page ID and subscribe if needed
+          if (newPageId && newPageId !== currentPageId) {
+            currentPageId = newPageId;
+            if (!hasSubscribed) {
+              await subscribeToVotes(newPageId);
+              hasSubscribed = true;
+            }
+          }
+
+          // Always fetch fresh counts and user vote after voting
+          currentPageVotes =
+            (await getLikeDislikeCount(currentPageId as string)) ||
+            currentPageVotes;
+          const userVote = await getUserVote(
+            currentPageId as string,
+            $userId as string,
+          );
         }}
       >
         <div class="thumbs-button">
