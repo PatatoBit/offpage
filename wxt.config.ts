@@ -9,6 +9,7 @@ export default defineConfig({
   modules: ["@wxt-dev/module-svelte"],
   manifest: () => ({
     name: "offpage",
+    key: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxtClUs8pzWpvqVpIJsaJxTjzeET8JpTaodC5w3UATeJkIXiZDnn/sMV2L+QSCWDFOn7wdVkZ+w+vVBMeMzvFdQLRNuZlSsQdQVjD8QbEDJAjcl/uvFXzWEwkrZOjXeKN+l8dBiNEBttuINPre9qzBAa/a++1fc3d0Fny66CCooaaTGRp1qZaXaDaia4eJpsyH2NylsSjYJ6fy+geXkt66ERW1CKkFn8JlYIxXbeifkBWYJAG2KKgmzmAjnlRo2YTFuKY6zeQwEoPInWtvc4ueSoUPSPM0/4+yQgzFW7eVV9mg26LkdwIlKq5LpRu+smsoRHUyPN+aLiEPTZGJgnFOQIDAQAB",
     description: "a community behind every page of the internet",
     permissions: ["storage", "identity", "tabs"],
     action: {},
