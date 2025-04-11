@@ -79,6 +79,36 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   }
 });
 
+chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+  if (message.action === "logout") {
+    console.log("Logging out ...");
+
+    try {
+      await supabase.auth.signOut();
+
+      // Clear session in storage
+      await chrome.storage.local.remove("session");
+
+      console.log("Broadcasting logout to all tabs ...");
+
+      // Broadcast logout to all tabs
+      const tabs = await chrome.tabs.query({});
+      for (const tab of tabs) {
+        if (tab.id) {
+          console.log(`Sending logout message to tab ${tab.id}`);
+
+          chrome.tabs.sendMessage(tab.id, { action: "logout" });
+        }
+      }
+
+      sendResponse({ success: true });
+    } catch (error) {
+      console.error("Logout error:", error);
+      sendResponse({ success: false });
+    }
+  }
+});
+
 // add tab listener when background script starts
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.url?.startsWith(chrome.identity.getRedirectURL())) {

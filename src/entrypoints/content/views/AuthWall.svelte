@@ -17,6 +17,15 @@
     });
   }
 
+  chrome.runtime.onMessage.addListener((message) => {
+    if (message.action === "logout") {
+      console.log("Logout action received");
+
+      initializeSession(); // Re-check session and update isSignedIn
+      isSignedIn.set(false); // Set isSignedIn to false to trigger reactivity
+    }
+  });
+
   onMount(() => {
     initializeSession()
       .catch((error) => {
