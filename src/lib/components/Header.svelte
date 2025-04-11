@@ -37,7 +37,8 @@
     chrome.runtime.sendMessage({ type: "OPEN_OPTIONS_PAGE" });
   }
 
-  let hasSubscribed = false;
+  let hasSubscribed: boolean = false;
+  let voteDisabled: boolean = false;
 
   // reusable subscription function
   async function subscribeToVotes(pageId: string) {
@@ -146,8 +147,11 @@
   <div class="header-button">
     <div class="votes-button">
       <button
+        disabled={voteDisabled}
         class:active={ThumbButtonState === "like"}
         on:click={async () => {
+          voteDisabled = true;
+
           if (ThumbButtonState === "like") {
             ThumbButtonState = "neutral";
           } else {
@@ -179,6 +183,8 @@
             currentPageId as string,
             $userId as string,
           );
+
+          voteDisabled = false;
         }}
       >
         <div class="thumbs-button">
@@ -191,8 +197,11 @@
       </button>
 
       <button
+        disabled={voteDisabled}
         class:active={ThumbButtonState === "dislike"}
         on:click={async () => {
+          voteDisabled = true;
+
           if (ThumbButtonState === "dislike") {
             ThumbButtonState = "neutral";
           } else {
@@ -223,6 +232,8 @@
             currentPageId as string,
             $userId as string,
           );
+
+          voteDisabled = false;
         }}
       >
         <div class="thumbs-button">
