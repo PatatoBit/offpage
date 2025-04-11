@@ -151,6 +151,14 @@ async function finishUserOAuth(url: string) {
     chrome.tabs.update({ url: "https://example.com" });
 
     console.log(`finished handling user OAuth callback`);
+
+    // Update all tabs
+    const tabs = await chrome.tabs.query({});
+    for (const tab of tabs) {
+      if (tab.id) {
+        chrome.tabs.sendMessage(tab.id, { action: "login" });
+      }
+    }
   } catch (error) {
     console.error(error);
   }

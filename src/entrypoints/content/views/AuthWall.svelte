@@ -18,8 +18,8 @@
   }
 
   chrome.runtime.onMessage.addListener((message) => {
-    if (message.action === "logout") {
-      console.log("Logout action received");
+    if (message.action === "logout" || message.action === "login") {
+      console.log("Auth refresh action received");
 
       initializeSession(); // Re-check session and update isSignedIn
       isSignedIn.set(false); // Set isSignedIn to false to trigger reactivity
