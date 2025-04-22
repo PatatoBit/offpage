@@ -2,9 +2,8 @@
   import { SlidersHorizontal } from "@lucide/svelte";
   import { fly } from "svelte/transition";
   import { extensionStatus } from "@/stores/AppStatus";
-  import { get } from "svelte/store";
 
-  let isOpen = $state(true);
+  let isOpen = $state(false);
   let status = $derived($extensionStatus);
 
   const broadcastChange = () => {
