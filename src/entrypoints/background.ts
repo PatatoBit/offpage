@@ -1,19 +1,34 @@
 import { supabase } from "@/lib/supabase";
 import { supabaseUrl, supabaseAnonKey } from "@/lib/utils";
-import { extensionStatus } from "@/stores/AppStatus";
 import { createClient } from "@supabase/supabase-js";
 
 export default defineBackground(() => {
   console.log("Background Initiated", { id: browser.runtime.id });
 
   browser.action.onClicked.addListener(async (tab) => {
-    // Toggle UI
-    const { open } = (await browser.storage.local.get("open")) || {
-      open: false,
-    };
-    const newOpenState = !open;
+    const { extension_status } =
+      await chrome.storage.local.get("extension_status");
+    const newOpenState = !(extension_status?.open ?? false);
 
-    await chrome.storage.local.set({ open: newOpenState });
+    const newStatus = {
+      ...(extension_status || {}),
+      open: newOpenState,
+    };
+
+    await chrome.storage.local.set({
+      extension_status: newStatus,
+    });
+
+    // Broadcast the toggle to all tabs
+    const tabs = await chrome.tabs.query({});
+    for (const tab of tabs) {
+      if (tab.id) {
+        chrome.tabs.sendMessage(tab.id, {
+          type: "TOGGLE_STATUS",
+          open: newOpenState,
+        });
+      }
+    }
   });
 
   async () => await restoreSession();
@@ -36,7 +51,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           sendResponse({ url: null });
         }
       });
-      return true; // Keeps the message channel open for async response
+      return true; // Keeps message channel open
 
     case "OPEN_OPTIONS_PAGE":
       chrome.runtime.openOptionsPage(() => {
@@ -48,64 +63,76 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       });
       break;
 
+    case "loginWithGoogle":
+      (async () => {
+        try {
+          const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: "google",
+            options: {
+              redirectTo: chrome.identity.getRedirectURL(),
+            },
+          });
+
+          if (error) throw error;
+
+          console.log(
+            "Redirecting to:",
+            `${data.url}&redirect_uri=${chrome.identity.getRedirectURL()}`,
+          );
+
+          await chrome.tabs.create({ url: data.url });
+          sendResponse({ success: true });
+        } catch (error) {
+          console.error(error);
+          sendResponse({ success: false });
+        }
+      })();
+      return true; // Keeps message channel open
+
+    case "logout":
+      (async () => {
+        console.log("Logging out ...");
+        try {
+          await supabase.auth.signOut();
+          await chrome.storage.local.remove("session");
+
+          console.log("Broadcasting logout to all tabs ...");
+          const tabs = await chrome.tabs.query({});
+          for (const tab of tabs) {
+            if (tab.id) {
+              console.log(`Sending logout message to tab ${tab.id}`);
+              chrome.tabs.sendMessage(tab.id, { action: "logout" });
+            }
+          }
+
+          sendResponse({ success: true });
+        } catch (error) {
+          console.error("Logout error:", error);
+          sendResponse({ success: false });
+        }
+      })();
+      return true; // Keeps message channel open
+
+    case "toggleBadWords":
+      (async () => {
+        const { badWordsEnabled } =
+          await chrome.storage.local.get("badWordsEnabled");
+        const newBadWordsEnabled = !badWordsEnabled;
+        await chrome.storage.local.set({ badWordsEnabled: newBadWordsEnabled });
+        sendResponse({ badWordsEnabled: newBadWordsEnabled });
+      })();
+      return true; // Keeps message channel open
+
+    case "getBadWordsFiltered":
+      (async () => {
+        const { badWordsEnabled } =
+          await chrome.storage.local.get("badWordsEnabled");
+        sendResponse({ badWordsEnabled });
+      })();
+      return true; // Keeps message channel open
+
     default:
       break;
-  }
-});
-
-chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
-  if (message.action === "loginWithGoogle") {
-    try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: chrome.identity.getRedirectURL(),
-        },
-      });
-
-      if (error) throw error;
-
-      console.log(
-        "Redirecting to:",
-        `${data.url}&redirect_uri=${chrome.identity.getRedirectURL()}`,
-      );
-
-      await chrome.tabs.create({ url: data.url });
-      sendResponse({ success: true });
-    } catch (error) {
-      console.error(error);
-      sendResponse({ success: false });
-    }
-  }
-});
-
-chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
-  if (message.action === "logout") {
-    console.log("Logging out ...");
-
-    try {
-      await supabase.auth.signOut();
-
-      // Clear session in storage
-      await chrome.storage.local.remove("session");
-
-      console.log("Broadcasting logout to all tabs ...");
-
-      // Broadcast logout to all tabs
-      const tabs = await chrome.tabs.query({});
-      for (const tab of tabs) {
-        if (tab.id) {
-          console.log(`Sending logout message to tab ${tab.id}`);
-
-          chrome.tabs.sendMessage(tab.id, { action: "logout" });
-        }
-      }
-
-      sendResponse({ success: true });
-    } catch (error) {
-      console.error("Logout error:", error);
-      sendResponse({ success: false });
-    }
   }
 });
 

@@ -13,39 +13,23 @@ export const currentPageId = writable<string | null>(null);
 export const initialComments = writable<CommentData[]>([]);
 export const isEmpty = writable<boolean>(false);
 
-export const extensionStatus = writable({
+// Add any new toggle fields here (e.g., filterBadwords)
+export const extensionStatus = writable<{
+  open: boolean;
+  filterBadwords: boolean;
+}>({
   open: false,
+  filterBadwords: true,
 });
 
-// Initialize the store with the value from chrome.storage.local
+// Initialize store from chrome.storage.local
 chrome.storage.local.get([appStatusKey], (data) => {
   if (data[appStatusKey]) {
     extensionStatus.set(data[appStatusKey]);
   }
 });
 
-// Subscribe to store changes and update chrome.storage.local
+// Sync Svelte store updates to chrome.storage.local
 extensionStatus.subscribe((value) => {
   chrome.storage.local.set({ [appStatusKey]: value });
-});
-
-// Load the initial state when the UI loads
-chrome.storage.local.get("open").then(({ open }) => {
-  if (open !== undefined) {
-    extensionStatus.set({ open });
-  }
-});
-
-// Listen for storage changes (delayed update)
-chrome.storage.onChanged.addListener((changes) => {
-  if (changes.open) {
-    extensionStatus.set({ open: changes.open.newValue });
-  }
-});
-
-// Listen for direct messages (instant update)
-chrome.runtime.onMessage.addListener((message) => {
-  if (message.type === "TOGGLE_STATUS") {
-    extensionStatus.set({ open: message.open });
-  }
 });
