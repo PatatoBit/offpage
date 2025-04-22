@@ -275,9 +275,11 @@
 
                 <p>{comment.content}</p>
 
-                {#if comment.image_url}
-                  <img src={comment.image_url} alt={comment.content} />
-                {/if}
+                <div class="comment-image">
+                  {#if comment.image_url}
+                    <img src={comment.image_url} alt={comment.content} />
+                  {/if}
+                </div>
               </div>
             </div>
           </li>
@@ -418,6 +420,8 @@
     }
 
     .user-profile {
+      display: flex;
+      flex-shrink: 0;
       img {
         width: 40px;
         height: 40px;
@@ -444,12 +448,18 @@
       gap: 0.5rem;
     }
 
-    img {
-      width: 100%;
+    .comment-image {
+      max-height: 300px;
       height: auto;
-      max-height: 15rem;
-      border-radius: 10px;
+      width: auto;
+    }
 
+    img {
+      max-height: 100%;
+      max-width: 100%;
+      height: auto;
+      width: auto;
+      border-radius: 8px;
       object-fit: contain;
       object-position: left;
     }
