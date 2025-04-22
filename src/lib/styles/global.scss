@@ -46,6 +46,7 @@ h3,
 h4,
 h5,
 p,
+label,
 strong {
   color: var(--text);
 }
@@ -130,5 +131,25 @@ button {
 
   img {
     align-self: center;
+  }
+}
+
+.icon-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  all: unset;
+  cursor: pointer;
+  font-family: "Open Runde", sans-serif;
+  padding: 5px 10px;
+  border-radius: 6px;
+
+  border: none;
+  color: var(--text);
+
+  .outline {
+    border: 1px solid var(--highlight);
+    background-color: transparent;
   }
 }

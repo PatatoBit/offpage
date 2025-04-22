@@ -31,6 +31,7 @@
   import { CornerUpRight, Image } from "@lucide/svelte";
   import Cross from "@/assets/icons/cross.svg";
   import { writable } from "svelte/store";
+  import FilterOptions from "@/lib/components/CommentsOptions.svelte";
 
   // Fetch the current tab's URL on component mount
   let channel: RealtimeChannel;
@@ -240,6 +241,8 @@
       <p>Posting</p>
     </div>
   {/if}
+
+  <FilterOptions />
 
   {#if $initialComments.length != 0 || isEmpty}
     <!-- content here -->
