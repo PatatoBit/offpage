@@ -231,67 +231,64 @@
     currentPageId={$currentPageId as string}
   />
 
-  <div class="content">
-    {#if $postingComment}
-      <div transition:fly={{ y: -50 }} class="posting-spinner">
-        <div class="spinner">
-          <LoadSpinner />
-        </div>
-
-        <p>Posting</p>
-      </div>
-    {/if}
-
-    {#if $initialComments.length != 0 || isEmpty}
-      <!-- content here -->
-      <ul class="comments">
-        {#each $initialComments as comment}
-          <li transition:fade>
-            <div class="comment">
-              <div class="user-profile">
-                {#if comment.profiles}
-                  <img
-                    src={comment.profiles.avatar_url}
-                    alt={comment.profiles.username + "'s avatar"}
-                  />
-                {:else}
-                  <img src="https://placehold.co/400" alt="Placeholder" />
-                {/if}
-              </div>
-
-              <div class="comment-main">
-                <div class="comment-header">
-                  {#if comment.profiles}
-                    <h5>{comment.profiles.username}</h5>
-                  {/if}
-                  <h5 class="label">
-                    {moment
-                      .utc(comment.created_at)
-                      .local()
-                      .startOf("second")
-                      .fromNow()}
-                  </h5>
-                </div>
-
-                <p>{comment.content}</p>
-
-                <div class="comment-image">
-                  {#if comment.image_url}
-                    <img src={comment.image_url} alt={comment.content} />
-                  {/if}
-                </div>
-              </div>
-            </div>
-          </li>
-        {/each}
-      </ul>
-    {:else}
-      <div class="center">
+  {#if $postingComment}
+    <div transition:fly={{ y: -50 }} class="posting-spinner">
+      <div class="spinner">
         <LoadSpinner />
       </div>
-    {/if}
-  </div>
 
+      <p>Posting</p>
+    </div>
+  {/if}
+
+  {#if $initialComments.length != 0 || isEmpty}
+    <!-- content here -->
+    <ul class="comments">
+      {#each $initialComments as comment}
+        <li transition:fade>
+          <div class="comment">
+            <div class="user-profile">
+              {#if comment.profiles}
+                <img
+                  src={comment.profiles.avatar_url}
+                  alt={comment.profiles.username + "'s avatar"}
+                />
+              {:else}
+                <img src="https://placehold.co/400" alt="Placeholder" />
+              {/if}
+            </div>
+
+            <div class="comment-main">
+              <div class="comment-header">
+                {#if comment.profiles}
+                  <h5>{comment.profiles.username}</h5>
+                {/if}
+                <h5 class="label">
+                  {moment
+                    .utc(comment.created_at)
+                    .local()
+                    .startOf("second")
+                    .fromNow()}
+                </h5>
+              </div>
+
+              <p>{comment.content}</p>
+
+              <div class="comment-image">
+                {#if comment.image_url}
+                  <img src={comment.image_url} alt={comment.content} />
+                {/if}
+              </div>
+            </div>
+          </div>
+        </li>
+      {/each}
+    </ul>
+  {:else}
+    <div class="center">
+      <LoadSpinner />
+    </div>
+  {/if}
   <form
     class="file-area"
     on:submit|preventDefault={async () => await handleSubmit()}
@@ -355,56 +352,45 @@
     background-color: transparent;
   }
 
-  .content {
-    position: relative;
-    flex: 1 1 auto;
-    padding: 0 16px 16px 16px;
+  .posting-spinner {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+
     display: flex;
-    flex-direction: column;
-    gap: 16px;
+    justify-content: center;
+    align-items: center;
+    gap: 3px;
+    z-index: 1000; /* Ensure it appears above other content */
 
-    overflow-y: scroll;
-    -ms-overflow-style: none; /* Internet Explorer 10+ */
-    scrollbar-width: none; /* Firefox */
+    background-color: var(--background);
+    border: 1px solid var(--highlight);
+    border-radius: 32px;
+    padding-right: 16px;
 
-    .posting-spinner {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
+    .spinner {
+      scale: 0.5;
+    }
 
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 3px;
-      z-index: 1000; /* Ensure it appears above other content */
-
-      background-color: var(--background);
-      border: 1px solid var(--highlight);
-      border-radius: 32px;
-      padding-right: 16px;
-
-      .spinner {
-        scale: 0.5;
-      }
-
-      p {
-        font-size: 14px;
-        color: var(--text);
-        margin: 0;
-      }
+    p {
+      font-size: 14px;
+      color: var(--text);
+      margin: 0;
     }
   }
 
   .comments {
     display: flex;
     flex-direction: column;
+    flex: 1 1 auto;
+    padding: 0 16px;
 
-    flex: auto;
-    padding: 0;
+    overflow-y: scroll;
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+    scrollbar-width: none; /* Firefox */
+
     margin: 0;
-    padding-right: 10px;
-    padding-bottom: 160px;
   }
 
   .comment {
@@ -466,14 +452,11 @@
   }
 
   .file-area {
-    position: absolute;
     display: flex;
     flex-direction: column;
     pointer-events: none;
 
-    z-index: 10;
     width: 100%;
-    height: 100%;
     gap: 0.5rem;
 
     .form-buttons {
@@ -539,7 +522,6 @@
   .input-area {
     box-sizing: border-box;
     width: 100%;
-    position: absolute;
     bottom: 0;
     padding: 12px;
     pointer-events: all;
