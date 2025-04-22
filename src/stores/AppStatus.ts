@@ -16,10 +16,10 @@ export const isEmpty = writable<boolean>(false);
 // Add any new toggle fields here (e.g., filterBadwords)
 export const extensionStatus = writable<{
   open: boolean;
-  filterBadwords: boolean;
+  filterBadWords: boolean;
 }>({
   open: false,
-  filterBadwords: true,
+  filterBadWords: true,
 });
 
 // Initialize store from chrome.storage.local

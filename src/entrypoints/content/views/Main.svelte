@@ -2,6 +2,7 @@
   import { fade, fly } from "svelte/transition";
   import { onMount } from "svelte";
   import moment from "moment";
+  import { Filter } from "bad-words";
   import {
     RealtimeChannel,
     RealtimePostgresChangesPayload,
@@ -18,6 +19,7 @@
     currentPageId,
     currentUrl,
     currentUrlSplit,
+    extensionStatus,
     initialComments,
     isEmpty,
   } from "@/stores/AppStatus";
@@ -35,6 +37,7 @@
 
   // Fetch the current tab's URL on component mount
   let channel: RealtimeChannel;
+  const filter = new Filter();
 
   async function initialize() {
     chrome.runtime.sendMessage(
@@ -275,7 +278,12 @@
                 </h5>
               </div>
 
-              <p>{comment.content}</p>
+              {#if $extensionStatus.filterBadWords}
+                <!-- content here -->
+                <p>{filter.clean(comment.content)}</p>
+              {:else}
+                <p>{comment.content}</p>
+              {/if}
 
               <div class="comment-image">
                 {#if comment.image_url}

@@ -6,6 +6,19 @@
 
   let isOpen = $state(true);
   let status = $derived($extensionStatus);
+
+  const broadcastChange = () => {
+    chrome.tabs.query({}, (tabs) => {
+      for (const tab of tabs) {
+        if (tab.id) {
+          chrome.tabs.sendMessage(tab.id, {
+            type: "FILTER_STATUS_CHANGE",
+            filterBadWords: status.filterBadWords,
+          });
+        }
+      }
+    });
+  };
 </script>
 
 <div class="options-row">
@@ -23,11 +36,11 @@
         <label>
           <input
             type="checkbox"
-            checked={status.filterBadwords}
+            checked={status.filterBadWords}
             onchange={(e) =>
               extensionStatus.set({
                 ...status,
-                filterBadwords: e.currentTarget.checked,
+                filterBadWords: e.currentTarget.checked,
               })}
           />
           Block bad words

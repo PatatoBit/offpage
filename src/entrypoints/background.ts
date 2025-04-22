@@ -113,23 +113,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       })();
       return true; // Keeps message channel open
 
-    case "toggleBadWords":
-      (async () => {
-        const { badWordsEnabled } =
-          await chrome.storage.local.get("badWordsEnabled");
-        const newBadWordsEnabled = !badWordsEnabled;
-        await chrome.storage.local.set({ badWordsEnabled: newBadWordsEnabled });
-        sendResponse({ badWordsEnabled: newBadWordsEnabled });
-      })();
-      return true; // Keeps message channel open
-
-    case "getBadWordsFiltered":
-      (async () => {
-        const { badWordsEnabled } =
-          await chrome.storage.local.get("badWordsEnabled");
-        sendResponse({ badWordsEnabled });
-      })();
-      return true; // Keeps message channel open
+    case "TOGGLE_BAD_WORDS_FILTER":
+      const { badWordsFiltered } = message;
+      // Apply the new filter status in the current tab
+      // For example, update a local state variable or apply filter logic
+      console.log(`Bad words filter status changed: ${badWordsFiltered}`);
+    // Apply the filtering logic in this tab
 
     default:
       break;
