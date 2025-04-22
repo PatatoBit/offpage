@@ -520,11 +520,12 @@
   }
 
   .input-area {
+    position: relative;
     box-sizing: border-box;
+    pointer-events: all;
     width: 100%;
     bottom: 0;
     padding: 12px;
-    pointer-events: all;
 
     display: flex;
     flex-direction: column;
