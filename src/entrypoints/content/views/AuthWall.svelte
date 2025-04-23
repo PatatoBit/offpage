@@ -6,7 +6,7 @@
   let loading: boolean = $state(true);
 
   function loginWithGoogle() {
-    chrome.runtime.sendMessage({ action: "loginWithGoogle" }, (response) => {
+    chrome.runtime.sendMessage({ type: "loginWithGoogle" }, (response) => {
       console.log("Login response:", response);
 
       if (response.success) {

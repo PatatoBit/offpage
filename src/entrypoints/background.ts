@@ -42,6 +42,7 @@ export default defineBackground(() => {
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  console.log("Message received:", message, message.type);
   switch (message.type) {
     case "GET_CURRENT_URL":
       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -64,6 +65,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       break;
 
     case "loginWithGoogle":
+      console.log("loginWithGoogle called ...");
       (async () => {
         try {
           const { data, error } = await supabase.auth.signInWithOAuth({
