@@ -1,12 +1,13 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import { CornerUpRight, Image } from "@lucide/svelte";
+  import axios from "axios";
+
   import Cross from "@/assets/icons/cross.svg";
-  import { writable } from "svelte/store";
   import { uploadCommentImage } from "@/lib/database";
   import { currentPageId } from "@/stores/AppStatus";
   import { userId } from "@/lib/stores/sessionStore";
   import { isValidImage } from "@/lib/utils";
+  import { supabase } from "@/lib/supabase";
 
   export let onSubmit: (
     comment: string,
@@ -80,6 +81,16 @@
       inputRef.click();
     }
   }
+
+  async function testSupabaseFunction() {
+    const { data, error } = await supabase.functions.invoke("submit-comment", {
+      body: { name: "Patato" },
+    });
+
+    console.log("====================================");
+    console.log(data, error);
+    console.log("====================================");
+  }
 </script>
 
 <form
@@ -110,6 +121,8 @@
       <button type="button" class="file-input" on:click={triggerFileInput}>
         <Image size={20} color="var(--text)" />
       </button>
+
+      <button on:click={testSupabaseFunction}>Test</button>
 
       <button class="form-submit" type="submit" disabled={isPosting}>
         <p>Send</p>

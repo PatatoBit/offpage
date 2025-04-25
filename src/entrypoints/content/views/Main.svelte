@@ -164,6 +164,7 @@
   {#if $postingComment}
     <PostingSpinner />
   {/if}
+  <br />
   <FilterOptions />
   <CommentList />
   <CommentForm onSubmit={handleCommentSubmit} isPosting={$postingComment} />
