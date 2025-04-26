@@ -1,5 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
+import { decode } from "https://deno.land/std@0.167.0/encoding/base64.ts";
 
 console.log("submit-client function started");
 
@@ -86,6 +87,38 @@ Deno.serve(async (req): Promise<Response> => {
   }
   const pageId = page.id;
 
+  let uploadedUrl = null;
+
+  if (imageData) {
+    const matches = imageData.match(/^data:(image\/\w+);base64,(.+)$/);
+    if (!matches) return new Response("Invalid image format", { status: 400 });
+
+    const mimeType = matches[1];
+    const base64Data = matches[2];
+    const buffer = decode(base64Data);
+
+    const filename = `${Date.now()}-${crypto.randomUUID()}.png`;
+    const path = `comments-images/${pageId}/${userId}-${filename}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("comments-images")
+      .upload(path, buffer, {
+        contentType: mimeType,
+        upsert: false,
+      });
+
+    if (uploadError) {
+      console.error("Image upload error:", uploadError.message);
+      return new Response("Image upload failed", { status: 500 });
+    }
+
+    const { data: urlData } = supabase.storage
+      .from("comments-images")
+      .getPublicUrl(path);
+
+    uploadedUrl = urlData?.publicUrl;
+  }
+
   //  Insert the comment into the database
   const { data: comment, error: commentError } = await supabase
     .from("comments")
@@ -93,7 +126,7 @@ Deno.serve(async (req): Promise<Response> => {
       {
         content,
         page_id: pageId,
-        image_url: "",
+        image_url: uploadedUrl,
       },
     ])
     .select()

@@ -54,27 +54,6 @@ export async function addComment(
   });
 
   console.table(data);
-
-  // // Step 3: Insert the new comment with the user's ID as the author
-  // const { data: comment, error: commentError } = await supabase
-  //   .from("comments")
-  //   .insert([
-  //     {
-  //       content,
-  //       page_id: pageId,
-  //       image_url,
-  //     },
-  //   ])
-  //   .select()
-  //   .single();
-
-  // if (commentError) {
-  //   console.error("Error adding comment:", commentError.message);
-  //   return;
-  // }
-
-  // console.log("Comment added successfully:", comment);
-  // return comment;
 }
 
 export async function findCommentsDataByPageId(

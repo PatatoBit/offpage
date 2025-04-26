@@ -84,8 +84,6 @@
                 async (
                   payload: RealtimePostgresChangesPayload<CommentData>,
                 ) => {
-                  console.log("Comments table changed.");
-                  console.log(payload.new);
                   isEmpty.set(false);
 
                   // Check if payload.new is not an empty object
