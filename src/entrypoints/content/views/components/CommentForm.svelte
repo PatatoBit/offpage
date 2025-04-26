@@ -78,14 +78,6 @@
       inputRef.click();
     }
   }
-
-  async function testSupabaseFunction() {
-    const { data, error } = await supabase.functions.invoke("submit-comment", {
-      body: { name: "Patato" },
-    });
-
-    console.log(data, error);
-  }
 </script>
 
 <form
@@ -116,8 +108,6 @@
       <button type="button" class="file-input" on:click={triggerFileInput}>
         <Image size={20} color="var(--text)" />
       </button>
-
-      <button on:click={testSupabaseFunction}>Test</button>
 
       <button class="form-submit" type="submit" disabled={isPosting}>
         <p>Send</p>

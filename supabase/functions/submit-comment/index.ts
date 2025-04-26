@@ -46,7 +46,7 @@ Deno.serve(async (req): Promise<Response> => {
   }
   const { domain, route } = result;
 
-  // Step 2: Fetch or create the page document
+  // Fetch or create the page document
   let { data: page, error: pageError } = await supabase
     .from("pages")
     .select("id")
