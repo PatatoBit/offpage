@@ -1,9 +1,17 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from "jsr:@supabase/supabase-js@2";
 
-console.log("Hello from Functions!");
+console.log("submit-client function started");
 
-Deno.serve(async (req) => {
+Deno.serve(async (req): Promise<Response> => {
   const origin = req.headers.get("origin") || "*";
+  const supabase = createClient(
+    Deno.env.get("SUPABASE_URL") ?? "",
+    Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+    {
+      global: { headers: { Authorization: req.headers.get("Authorization")! } },
+    },
+  );
 
   // Handle preflight request
   if (req.method === "OPTIONS") {
@@ -19,10 +27,91 @@ Deno.serve(async (req) => {
     });
   }
 
+  // Get the session or user object
+  const authHeader = req.headers.get("Authorization")!;
+  const token = authHeader.replace("Bearer ", "");
+  const { data: requestData } = await supabase.auth.getUser(token);
+  const userId = requestData.user?.id;
+
+  if (!userId) {
+    return new Response("Unauthorized", { status: 401 });
+  }
+
   // Handle actual POST request
-  const { name } = await req.json();
+  const { content, imageData, baseUrl } = await req.json();
+
+  const result = getBaseUrlAndPath(baseUrl);
+  if (!result) {
+    return new Response("Invalid base URL", { status: 400 });
+  }
+  const { domain, route } = result;
+
+  // Step 2: Fetch or create the page document
+  let { data: page, error: pageError } = await supabase
+    .from("pages")
+    .select("id")
+    .eq("domain", domain)
+    .eq("route", route)
+    .single();
+
+  if (pageError && pageError.code === "PGRST116") {
+    // If the page doesn't exist, create it
+    const { data: newPage, error: createPageError } = await supabase
+      .from("pages")
+      .insert([{ domain, route }])
+      .select()
+      .single();
+
+    if (createPageError) {
+      console.error(
+        `Failed to create page for URL: ${baseUrl}`,
+        createPageError.message,
+      );
+      return new Response("Internal Server Error", { status: 500 });
+    }
+
+    page = newPage;
+  } else if (pageError) {
+    console.error(`Error fetching page for URL: ${baseUrl}`, pageError.message);
+    return new Response("Internal Server Error: failed to create page", {
+      status: 500,
+    });
+  }
+
+  if (!page) {
+    console.error(`Page not found for URL: ${baseUrl}`);
+    return new Response("Internal Server Error: page not found for URL", {
+      status: 500,
+    });
+  }
+  const pageId = page.id;
+
+  //  Insert the comment into the database
+  const { data: comment, error: commentError } = await supabase
+    .from("comments")
+    .insert([
+      {
+        content,
+        page_id: pageId,
+        image_url: "",
+      },
+    ])
+    .select()
+    .single();
+
+  if (commentError) {
+    console.error("Error adding comment:", commentError.message);
+    return new Response("Internal Server Error: error adding comment", {
+      status: 500,
+    });
+  }
+
   const data = {
-    message: `Hello ${name}!`,
+    message: "Comment added successfully",
+    comment,
+    pageId,
+    imageData,
+    commentId: comment.id,
   };
 
   return new Response(JSON.stringify(data), {
@@ -33,3 +122,23 @@ Deno.serve(async (req) => {
     },
   });
 });
+
+function getBaseUrlAndPath(
+  url: string,
+): { baseUrl: string; domain: string; route: string } | null {
+  try {
+    const parsedUrl = new URL(url);
+    const baseUrl: string = parsedUrl.origin; // Get origin (scheme + hostname + port)
+    const domain: string = parsedUrl.hostname; // Get hostname (domain name)
+    const route: string = parsedUrl.pathname.endsWith("/")
+      ? parsedUrl.pathname.slice(0, -1) // Remove trailing slash
+      : parsedUrl.pathname; // Get pathname without trailing slash
+
+    return { baseUrl, domain, route };
+  } catch (error) {
+    console.error("Invalid URL:", error);
+    console.error(url);
+
+    return null;
+  }
+}

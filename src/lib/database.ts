@@ -1,5 +1,5 @@
-import { supabase } from "./supabase";
-import { getBaseUrlAndPath } from "./utils";
+import { supabase } from "./supabase.ts";
+import { getBaseUrlAndPath } from "./utils.ts";
 
 export interface CommentData {
   id: number;
@@ -25,90 +25,6 @@ export interface UserProfileData {
   avatar_url: string;
 }
 
-export async function addComment(
-  baseURL: string,
-  content: string,
-  image_url: string | null,
-) {
-  // Step 1: Get the currently authenticated user's ID
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
-  if (authError || !user) {
-    console.error(
-      "Error fetching user or user is not authenticated:",
-      authError?.message,
-    );
-    return;
-  }
-  const userId = user.id; // This is the unique identifier for the user
-  const result = getBaseUrlAndPath(baseURL);
-  if (!result) {
-    console.error(`Failed to parse base URL and path for: ${baseURL}`);
-    return;
-  }
-  console.log(result);
-  const { baseUrl, domain: domainName, route: pagePath } = result;
-
-  // Step 2: Fetch or create the page document
-  let { data: page, error: pageError } = await supabase
-    .from("pages")
-    .select("id")
-    .eq("domain", domainName)
-    .eq("route", pagePath)
-    .single();
-
-  if (pageError && pageError.code === "PGRST116") {
-    // If the page doesn't exist, create it
-    const { data: newPage, error: createPageError } = await supabase
-      .from("pages")
-      .insert([{ domain: domainName, route: pagePath }])
-      .select()
-      .single();
-
-    if (createPageError) {
-      console.error(
-        `Failed to create page for URL: ${baseUrl}`,
-        createPageError.message,
-      );
-      return;
-    }
-
-    page = newPage;
-  } else if (pageError) {
-    console.error(`Error fetching page for URL: ${baseUrl}`, pageError.message);
-    return;
-  }
-
-  if (!page) {
-    console.error(`Page not found for URL: ${baseUrl}`);
-    return;
-  }
-  const pageId = page.id;
-
-  // Step 3: Insert the new comment with the user's ID as the author
-  const { data: comment, error: commentError } = await supabase
-    .from("comments")
-    .insert([
-      {
-        content,
-        page_id: pageId,
-        image_url,
-      },
-    ])
-    .select()
-    .single();
-
-  if (commentError) {
-    console.error("Error adding comment:", commentError.message);
-    return;
-  }
-
-  console.log("Comment added successfully:", comment);
-  return comment;
-}
-
 export async function findPageByRoute(domain: string, route: string) {
   const { data: page, error } = await supabase
     .from("pages")
@@ -122,6 +38,43 @@ export async function findPageByRoute(domain: string, route: string) {
   }
 
   return page.id;
+}
+
+export async function addComment(
+  baseUrl: string,
+  content: string,
+  image_url: string | null,
+) {
+  const { data, error } = await supabase.functions.invoke("submit-comment", {
+    body: {
+      content,
+      imageData: image_url,
+      baseUrl,
+    },
+  });
+
+  console.table(data);
+
+  // // Step 3: Insert the new comment with the user's ID as the author
+  // const { data: comment, error: commentError } = await supabase
+  //   .from("comments")
+  //   .insert([
+  //     {
+  //       content,
+  //       page_id: pageId,
+  //       image_url,
+  //     },
+  //   ])
+  //   .select()
+  //   .single();
+
+  // if (commentError) {
+  //   console.error("Error adding comment:", commentError.message);
+  //   return;
+  // }
+
+  // console.log("Comment added successfully:", comment);
+  // return comment;
 }
 
 export async function findCommentsDataByPageId(

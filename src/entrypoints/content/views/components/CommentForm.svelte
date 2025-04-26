@@ -6,13 +6,14 @@
   import { uploadCommentImage } from "@/lib/database";
   import { currentPageId } from "@/stores/AppStatus";
   import { userId } from "@/lib/stores/sessionStore";
-  import { isValidImage } from "@/lib/utils";
+  import { convertImageToBase64, isValidImage } from "@/lib/utils";
   import { supabase } from "@/lib/supabase";
 
   export let onSubmit: (
     comment: string,
     imageUrl: string | null,
   ) => Promise<void>;
+
   export let isPosting: boolean;
 
   let currentComment: string = "";
@@ -29,16 +30,12 @@
     const comment = currentComment;
     currentComment = "";
 
-    let uploadedImageUrl: string | null = null;
+    let image64Data: string | null = null;
 
     if (file) {
-      uploadedImageUrl = await uploadCommentImage(
-        file,
-        $currentPageId as string,
-        $userId as string,
-      );
+      image64Data = await convertImageToBase64(file);
 
-      if (uploadedImageUrl) {
+      if (image64Data) {
         file = null;
         currentFileUrl = null;
       } else {
@@ -46,7 +43,7 @@
       }
     }
 
-    await onSubmit(comment, uploadedImageUrl);
+    await onSubmit(comment, image64Data);
   }
 
   async function handleEnterKey(event: KeyboardEvent) {
@@ -87,9 +84,7 @@
       body: { name: "Patato" },
     });
 
-    console.log("====================================");
     console.log(data, error);
-    console.log("====================================");
   }
 </script>
 
