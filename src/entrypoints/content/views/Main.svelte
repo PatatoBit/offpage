@@ -71,12 +71,17 @@
 
           // Subscribe to the comments_change channel
           if ($currentUrlSplit?.domain) {
+            if (channel) {
+              console.log("Cleaning up previous subscription.");
+              await channel.unsubscribe();
+            }
+
             channel = supabase
               .channel("comments_inserts")
               .on(
                 "postgres_changes",
                 {
-                  event: "*",
+                  event: "INSERT",
                   schema: "public",
                   table: "comments",
                   filter: `page_id=eq.${await findPageByRoute($currentUrlSplit.domain, $currentUrlSplit.route)}`,
@@ -126,13 +131,8 @@
   });
 
   async function handleCommentSubmit(comment: string, imageUrl: string | null) {
-    if (!currentUrlSplit) {
+    if (!$currentUrlSplit || !$currentUrl) {
       console.error("Unable to fetch current URL.");
-      return;
-    }
-
-    if (!currentUrl) {
-      console.error("Current URL cannot be empty.");
       return;
     }
 
@@ -140,10 +140,20 @@
       postingComment.set(true);
       await addComment($currentUrl as string, comment, imageUrl);
 
-      if ($initialComments.length == 0) {
-        initialComments.set([]);
-        initialize();
+      // After adding comment, check if pageId was null before
+      if (!$currentPageId) {
+        console.log("Page was missing, trying to fetch again.");
+        const pageId = await findPageByRoute(
+          $currentUrlSplit.domain,
+          $currentUrlSplit.route,
+        );
+
+        if (pageId) {
+          currentPageId.set(pageId);
+          initialize(); // Only call initialize if pageId was missing
+        }
       }
+      // If page already existed, no need to call initialize
     } catch (error) {
       console.error((error as Error).message);
     } finally {
