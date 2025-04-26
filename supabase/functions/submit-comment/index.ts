@@ -119,6 +119,19 @@ Deno.serve(async (req): Promise<Response> => {
     uploadedUrl = urlData?.publicUrl;
   }
 
+  // Rate limiting check last X seconds
+  const { data: recentComments } = await supabase
+    .from("comments")
+    .select("id")
+    .eq("author", userId)
+    .gte("created_at", new Date(Date.now() - 60 * 1000).toISOString());
+
+  if (recentComments && recentComments.length >= 5) {
+    return new Response(JSON.stringify({ error: "Rate limit exceeded" }), {
+      status: 429,
+    });
+  }
+
   //  Insert the comment into the database
   const { data: comment, error: commentError } = await supabase
     .from("comments")
