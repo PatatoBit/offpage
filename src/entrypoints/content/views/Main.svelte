@@ -62,10 +62,6 @@
             $currentPageId as string,
           );
 
-          console.log("====================================");
-          console.table(comments);
-          console.log("====================================");
-
           initialComments.set(comments || []);
 
           if ($initialComments.length == 0) {
@@ -79,35 +75,97 @@
               await channel.unsubscribe();
             }
 
+            const pageId = await findPageByRoute(
+              $currentUrlSplit.domain,
+              $currentUrlSplit.route,
+            );
+
             channel = supabase
-              .channel("comments_inserts")
+              .channel("comments_inserts_updates_deletes")
+
+              // Listen for INSERTS
               .on(
                 "postgres_changes",
                 {
                   event: "INSERT",
                   schema: "public",
                   table: "comments",
-                  filter: `page_id=eq.${await findPageByRoute($currentUrlSplit.domain, $currentUrlSplit.route)}`,
+                  filter: `page_id=eq.${pageId}`,
                 },
                 async (
                   payload: RealtimePostgresChangesPayload<CommentData>,
                 ) => {
                   isEmpty.set(false);
-
-                  // Check if payload.new is not an empty object
                   if (Object.keys(payload.new).length > 0) {
-                    const comment = payload.new as CommentData; // Type assertion
+                    const comment = payload.new as CommentData;
                     const newUpdatedComment = {
                       ...comment,
                       profiles: await fetchUserProfile(comment.author),
                     };
-
                     initialComments.update((prev) => [
                       newUpdatedComment,
                       ...prev,
                     ]);
                   } else {
                     console.warn("Received an empty object as payload.new");
+                  }
+                },
+              )
+
+              // Listen for UPDATES
+              .on(
+                "postgres_changes",
+                {
+                  event: "UPDATE",
+                  schema: "public",
+                  table: "comments",
+                  filter: `page_id=eq.${pageId}`,
+                },
+                async (
+                  payload: RealtimePostgresChangesPayload<CommentData>,
+                ) => {
+                  if (Object.keys(payload.new).length > 0) {
+                    const updatedComment = payload.new as CommentData;
+                    const newUpdatedComment = {
+                      ...updatedComment,
+                      profiles: await fetchUserProfile(updatedComment.author),
+                    };
+                    initialComments.update((prev) =>
+                      prev.map((comment) =>
+                        comment.id === updatedComment.id
+                          ? newUpdatedComment
+                          : comment,
+                      ),
+                    );
+                  } else {
+                    console.warn(
+                      "Received an empty object as payload.new for UPDATE",
+                    );
+                  }
+                },
+              )
+
+              // Listen for DELETES
+              .on(
+                "postgres_changes",
+                {
+                  event: "DELETE",
+                  schema: "public",
+                  table: "comments",
+                  filter: `page_id=eq.${pageId}`,
+                },
+                (payload: RealtimePostgresChangesPayload<CommentData>) => {
+                  if (Object.keys(payload.old).length > 0) {
+                    const deletedComment = payload.old as CommentData;
+                    initialComments.update((prev) =>
+                      prev.filter(
+                        (comment) => comment.id !== deletedComment.id,
+                      ),
+                    );
+                  } else {
+                    console.warn(
+                      "Received an empty object as payload.old for DELETE",
+                    );
                   }
                 },
               )

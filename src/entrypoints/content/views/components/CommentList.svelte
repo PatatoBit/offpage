@@ -84,6 +84,8 @@
     flex: 1 1 auto;
     padding: 0 16px;
 
+    list-style-type: none;
+
     overflow-y: scroll;
     -ms-overflow-style: none;
     scrollbar-width: none;
