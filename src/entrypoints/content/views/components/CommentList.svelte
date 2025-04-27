@@ -43,7 +43,7 @@
             </div>
 
             {#if $extensionStatus.blockFlagged && comment.moderation_status == "flagged"}
-              <strong>Comment Flagged</strong>
+              <i>comment flagged</i>
             {:else if $extensionStatus.filterBadWords}
               <p>{filter.clean(comment.content)}</p>
             {:else}
