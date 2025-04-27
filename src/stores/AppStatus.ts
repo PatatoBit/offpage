@@ -17,9 +17,11 @@ export const isEmpty = writable<boolean>(false);
 export const extensionStatus = writable<{
   open: boolean;
   filterBadWords: boolean;
+  blockFlagged: boolean;
 }>({
   open: false,
   filterBadWords: true,
+  blockFlagged: true,
 });
 
 // Initialize store from chrome.storage.local
@@ -27,9 +29,9 @@ chrome.storage.local.get([appStatusKey], (data) => {
   if (data[appStatusKey]) {
     extensionStatus.set(data[appStatusKey]);
   }
-});
 
-// Sync Svelte store updates to chrome.storage.local
-extensionStatus.subscribe((value) => {
-  chrome.storage.local.set({ [appStatusKey]: value });
+  // Sync Svelte store updates to chrome.storage.local
+  extensionStatus.subscribe((value) => {
+    chrome.storage.local.set({ [appStatusKey]: value });
+  });
 });

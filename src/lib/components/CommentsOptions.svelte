@@ -32,6 +32,8 @@
         in:fly={{ y: -10, duration: 200 }}
         out:fly={{ y: -10, duration: 200 }}
       >
+        <h3>Block filter</h3>
+
         <label>
           <input
             type="checkbox"
@@ -42,7 +44,20 @@
                 filterBadWords: e.currentTarget.checked,
               })}
           />
-          Block bad words
+          Bad words
+        </label>
+
+        <label>
+          <input
+            type="checkbox"
+            checked={status.filterBadWords}
+            onchange={(e) =>
+              extensionStatus.set({
+                ...status,
+                blockFlagged: e.currentTarget.checked,
+              })}
+          />
+          Flagged comments
         </label>
       </div>
     {/if}
@@ -50,6 +65,14 @@
 </div>
 
 <style lang="scss">
+  h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0;
+    padding: 0;
+  }
+
   .options-row {
     display: flex;
     flex-direction: row;
@@ -70,7 +93,7 @@
       flex-direction: column;
       position: absolute;
 
-      width: 160px;
+      width: 200px;
       top: 100%;
       right: 0;
       border: 1px solid var(--highlight);
@@ -82,7 +105,6 @@
 
       label {
         display: block;
-        margin-bottom: 8px;
 
         input {
           margin-right: 8px;

@@ -60,6 +60,7 @@ Deno.serve(async (req) => {
 
     const updateData: any = {
       moderation_status: result.flagged ? "flagged" : "pass",
+      moderated_at: new Date().toISOString(),
     };
 
     if (result.flagged) {
@@ -73,7 +74,6 @@ Deno.serve(async (req) => {
       }
 
       updateData.moderation_scores = flaggedScores;
-      updateData.moderated_at = new Date().toISOString();
     }
 
     const { data, error } = await supabase
