@@ -9,6 +9,10 @@ export interface CommentData {
   content: string;
   profiles?: UserProfileData | null;
 
+  moderation_status: "pending" | "pass" | "flagged";
+  moderation_scores?: Record<string, number> | null;
+  moderated_at: Date | null;
+
   image_url: string | null;
 }
 
@@ -64,6 +68,7 @@ export async function findCommentsDataByPageId(
     .select(
       `
     id, content, created_at, author, page_id, image_url,
+    moderation_status, moderated_at, moderation_scores,
     profiles!comments_author_fkey (username, avatar_url)
   `,
     )
@@ -95,6 +100,15 @@ export async function findCommentsDataByPageId(
             ).avatar_url,
           }
         : undefined,
+    moderation_status: comment.moderation_status as
+      | "pending"
+      | "pass"
+      | "flagged",
+    moderation_scores: comment.moderation_scores as Record<
+      string,
+      number
+    > | null,
+    moderated_at: comment.moderated_at as Date | null,
     image_url: comment.image_url as string | null,
   }));
 }

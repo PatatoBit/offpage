@@ -18,7 +18,6 @@
     initialComments,
     isEmpty,
   } from "@/stores/AppStatus";
-  import { userId } from "@/lib/stores/sessionStore";
   import { fetchUserProfile, supabase } from "@/lib/supabase";
   import { getBaseUrlAndPath } from "@/lib/utils";
 
@@ -62,6 +61,10 @@
           const comments = await findCommentsDataByPageId(
             $currentPageId as string,
           );
+
+          console.log("====================================");
+          console.table(comments);
+          console.log("====================================");
 
           initialComments.set(comments || []);
 

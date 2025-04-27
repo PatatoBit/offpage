@@ -42,17 +42,30 @@
               </h5>
             </div>
 
-            {#if $extensionStatus.filterBadWords}
+            {#if $extensionStatus.blockFlagged && comment.moderation_status == "flagged"}
+              <strong>Comment Flagged</strong>
+            {:else if $extensionStatus.filterBadWords}
               <p>{filter.clean(comment.content)}</p>
             {:else}
               <p>{comment.content}</p>
             {/if}
 
-            <div class="comment-image">
-              {#if comment.image_url}
+            {#if comment.image_url}
+              <div class="comment-image">
+                {#if $extensionStatus.blockFlagged && comment.moderation_status == "flagged"}
+                  <div class="blur">
+                    {#if comment.moderation_scores}
+                      {#each Object.entries(comment.moderation_scores) as [key, value]}
+                        <p>{key}: {Math.round(value * 100)}%</p>
+                      {/each}
+                    {/if}
+                    <!-- content here -->
+                  </div>
+                {/if}
+
                 <img src={comment.image_url} alt={comment.content} />
-              {/if}
-            </div>
+              </div>
+            {/if}
           </div>
         </div>
       </li>
@@ -118,19 +131,50 @@
     }
 
     .comment-image {
+      position: relative;
       max-height: 300px;
+      width: fit-content;
       height: auto;
-      width: auto;
+
+      overflow: hidden;
+      border-radius: 8px;
+    }
+
+    .blur {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backdrop-filter: blur(8px);
+      background: rgba(0, 0, 0, 0.8);
+
+      overflow: hidden;
+      border-radius: 8px;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      text-transform: capitalize;
     }
 
     img {
       max-height: 100%;
       max-width: 100%;
-      height: auto;
-      width: auto;
-      border-radius: 8px;
       object-fit: contain;
       object-position: left;
+    }
+
+    .blocker {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: var(--background);
+      border: 1px solid var(--highlight);
+      opacity: 0.5;
+      border-radius: 8px;
     }
   }
 

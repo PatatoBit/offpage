@@ -50,7 +50,7 @@
         <label>
           <input
             type="checkbox"
-            checked={status.filterBadWords}
+            checked={status.blockFlagged}
             onchange={(e) =>
               extensionStatus.set({
                 ...status,
