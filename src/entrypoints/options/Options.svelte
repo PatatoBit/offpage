@@ -143,9 +143,15 @@
         {/if}
         <!-- <LoadSpinner /> -->
 
-        <button class="signout" on:click={async () => await signOut()}
-          >Sign out</button
-        >
+        <div class="bottom-buttons">
+          <a href="https://offpage.featurebase.app/" target="_blank">
+            <button>Feedback</button>
+          </a>
+
+          <button class="signout" on:click={async () => await signOut()}
+            >Sign out</button
+          >
+        </div>
       </div>
     {/if}
   </AuthWall>
@@ -197,8 +203,13 @@
     }
   }
 
-  .signout {
+  .bottom-buttons {
+    display: flex;
+    justify-content: space-between;
     margin-top: auto;
+  }
+
+  .signout {
     border: 0;
     background-color: var(--red);
     color: white;

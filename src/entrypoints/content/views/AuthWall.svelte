@@ -18,7 +18,7 @@
   }
 
   chrome.runtime.onMessage.addListener((message) => {
-    if (message.action === "logout" || message.action === "login") {
+    if (message.type === "logout" || message.type === "login") {
       console.log("Auth refresh action received");
 
       initializeSession(); // Re-check session and update isSignedIn

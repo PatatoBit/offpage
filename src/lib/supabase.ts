@@ -11,7 +11,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export async function signOut() {
-  chrome.runtime.sendMessage({ action: "logout" }, (response) => {
+  chrome.runtime.sendMessage({ type: "logout" }, (response) => {
     if (response.success) {
       console.log("Logged out successfully");
       isSignedIn.set(false);
