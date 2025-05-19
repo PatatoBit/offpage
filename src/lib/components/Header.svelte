@@ -289,10 +289,12 @@
   .votes-button {
     display: flex;
     flex-direction: row;
+    width: 130px;
     gap: 15px;
 
     button {
       display: flex;
+      flex: 1;
       flex-direction: row;
       align-items: center;
     }
