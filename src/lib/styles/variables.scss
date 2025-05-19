@@ -3,19 +3,15 @@
 html,
 body,
 * {
-  --background: #1d1f31;
-  --inner-background: hsl(232, 26, 15);
-  --overlay-background: rgba(29, 31, 49, 0.9);
+  --primary: #20a0b7;
+  --secondary: #ee7245;
+  --background: #f9f9f9;
+  --accent: #f0e9db;
 
-  --text: #ffffff;
-  --text-light: #b1b1b1;
+  --text: #212121;
+  --border: #adadad;
+  --innie: #eaeaea;
 
-  --primary: #0a64ff;
-  --primary-light: #7a7a7a;
-  --border: #ffffff;
-
-  --red: #ff4144;
-
-  --inner-area: #324162;
-  --highlight: #586d9c;
+  --green: #34c25a;
+  --red: #ee4343;
 }
