@@ -187,7 +187,7 @@
           voteDisabled = false;
         }}
       >
-        <div class="thumbs-button">
+        <div class="thumbs-button" class:active={ThumbButtonState === "like"}>
           <ThumbsUp size={20} />
         </div>
 
@@ -198,7 +198,6 @@
 
       <button
         disabled={voteDisabled}
-        class:active={ThumbButtonState === "dislike"}
         on:click={async () => {
           voteDisabled = true;
 
@@ -236,7 +235,10 @@
           voteDisabled = false;
         }}
       >
-        <div class="thumbs-button">
+        <div
+          class="thumbs-button"
+          class:active={ThumbButtonState === "dislike"}
+        >
           <ThumbsDown size={20} />
         </div>
 
@@ -282,73 +284,34 @@
       gap: 3px;
       font-weight: 400;
     }
+  }
 
-    .options-button {
-      all: initial;
-      align-self: center;
-      cursor: pointer;
+  .votes-button {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
 
-      //align at the end of the header
-      position: absolute;
-      right: 15px;
-
-      border: none;
-      background: none;
-    }
-
-    .header-button {
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-    }
-
-    .votes-button {
+    button {
       display: flex;
       flex-direction: row;
       align-items: center;
-      justify-self: center;
-      align-self: center;
-      overflow: hidden;
+    }
+  }
 
-      height: 32px;
-      width: 160px;
-      background-color: var(--inner-background);
-      border: 1px solid var(--border);
-      border-radius: 10px;
+  .thumbs-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+    padding: 7px;
+    border-radius: 7px;
 
-      button {
-        cursor: pointer;
-        flex: 1;
-        height: 100%;
-
-        padding: 0 16px;
-        gap: 6px;
-        border-right: 1px solid var(--border);
-        border-radius: 0;
-
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-
-        &:active {
-          color: var(--background);
-          background-color: var(--border);
-        }
-      }
-
-      button.active {
-        color: var(--background);
-        background-color: var(--border);
-
-        p {
-          color: var(--background);
-        }
-      }
-
-      button:last-child {
-        border-right: none;
-      }
+    &:active,
+    &.active {
+      background-color: var(--primary);
+      color: var(--background);
     }
   }
 </style>
