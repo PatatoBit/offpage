@@ -104,17 +104,6 @@
       </div>
     {/if}
 
-    <div class="form-buttons">
-      <button type="button" class="file-input" on:click={triggerFileInput}>
-        <Image size={20} color="var(--text)" />
-      </button>
-
-      <button class="form-submit" type="submit" disabled={isPosting}>
-        <p>Send</p>
-        <CornerUpRight size={15} color="var(--background)" />
-      </button>
-    </div>
-
     <textarea
       bind:value={currentComment}
       on:keydown={handleEnterKey}
@@ -132,6 +121,17 @@
       on:change={handleFileSelect}
       hidden
     />
+
+    <div class="form-buttons">
+      <button type="button" class="file-input" on:click={triggerFileInput}>
+        <Image size={20} color="var(--text)" />
+      </button>
+
+      <button class="form-submit" type="submit" disabled={isPosting}>
+        <p>Send</p>
+        <CornerUpRight size={15} color="var(--background)" />
+      </button>
+    </div>
   </div>
 </form>
 
@@ -214,7 +214,9 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+
     background: var(--background);
+    border-top: 1px solid var(--border);
   }
 
   .dropped-file-area {
