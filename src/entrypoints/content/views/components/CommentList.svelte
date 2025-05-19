@@ -86,15 +86,15 @@
     display: flex;
     flex-direction: column;
     flex: 1 1 auto;
-    padding: 0 16px;
+    padding: 0 16px 16px 16px;
+    margin: 0;
 
     list-style-type: none;
-
     overflow-y: scroll;
     -ms-overflow-style: none;
     scrollbar-width: none;
 
-    margin: 0;
+    background-color: var(--accent);
   }
 
   .comment {
