@@ -8,12 +8,15 @@
     extensionStatus,
   } from "@/stores/AppStatus";
   import LoadSpinner from "@/lib/components/LoadSpinner.svelte";
+  import CommentsOptions from "@/lib/components/CommentsOptions.svelte";
 
   const filter = new Filter();
 </script>
 
 {#if $initialComments.length != 0 || isEmpty}
   <ul class="comments">
+    <CommentsOptions />
+
     {#each $initialComments as comment}
       <li transition:fade>
         <div class="comment">
@@ -79,6 +82,7 @@
 
 <style lang="scss">
   .comments {
+    position: relative;
     display: flex;
     flex-direction: column;
     flex: 1 1 auto;

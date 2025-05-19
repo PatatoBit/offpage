@@ -74,12 +74,13 @@
   }
 
   .options-row {
+    position: sticky;
+    top: 10px;
+    right: 10px;
+
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
-
-    gap: 8px;
-    padding-inline: 16px;
   }
 
   .filter {
