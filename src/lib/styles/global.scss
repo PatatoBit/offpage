@@ -49,6 +49,7 @@ p,
 label,
 strong,
 i {
+  margin: 0;
   color: var(--text);
 }
 
@@ -81,7 +82,8 @@ button {
   font-family: "Open Runde", sans-serif;
   font-size: 16px;
 
-  padding: 12px 12px;
+  max-height: 30px;
+  padding: 10px 12px;
   border-radius: 6px;
   cursor: pointer;
   display: flex;
@@ -104,8 +106,17 @@ button {
     }
   }
 
-  &:hover {
-    transform: scale(1.05);
+  &.tertiary {
+    color: var(--text);
+    background-color: var(--background);
+
+    p {
+      color: var(--text);
+    }
+  }
+
+  &:active {
+    transform: scale(0.95);
   }
 
   &:disabled {

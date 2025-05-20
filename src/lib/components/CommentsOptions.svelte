@@ -22,8 +22,9 @@
 
 <div class="options-row">
   <div class="filter">
-    <button class="icon-button" onclick={() => (isOpen = !isOpen)}>
+    <button class="tertiary" onclick={() => (isOpen = !isOpen)}>
       <SlidersHorizontal class="lucide" size={16} />
+      <p>Filters</p>
     </button>
 
     {#if isOpen}
@@ -102,6 +103,7 @@
       background-color: var(--background);
 
       padding: 16px;
+      margin-top: 8px;
       z-index: 10;
 
       label {

@@ -152,7 +152,7 @@
     justify-content: space-between;
     max-width: 100%;
     gap: 8px;
-    height: 32px;
+    height: 40px;
 
     button {
       cursor: pointer;
@@ -177,10 +177,6 @@
       img {
         width: 30px;
         height: 30px;
-      }
-
-      &:hover {
-        transform: scale(1.05);
       }
     }
   }

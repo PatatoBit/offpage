@@ -311,6 +311,8 @@
     padding: 7px;
     border-radius: 7px;
 
+    color: var(--text);
+
     &:active,
     &.active {
       background-color: var(--primary);
