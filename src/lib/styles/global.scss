@@ -63,6 +63,7 @@ textarea {
   background-color: var(--inner-area);
   color: var(--text);
   font-family: "Open Runde", sans-serif;
+  font-size: 16px;
 }
 
 input {
@@ -83,7 +84,7 @@ button {
   font-size: 16px;
 
   max-height: 30px;
-  padding: 10px 12px;
+  padding: 10px 16px;
   border-radius: 6px;
   cursor: pointer;
   display: flex;

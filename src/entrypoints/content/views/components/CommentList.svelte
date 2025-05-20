@@ -95,6 +95,7 @@
     scrollbar-width: none;
 
     background-color: var(--accent);
+    border-top: 1px solid var(--border);
   }
 
   .comment {

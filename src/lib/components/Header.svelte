@@ -144,109 +144,108 @@
     </button>
   </div>
 
-  <div class="header-button">
-    <div class="votes-button">
-      <button
-        disabled={voteDisabled}
-        class:active={ThumbButtonState === "like"}
-        on:click={async () => {
-          voteDisabled = true;
+  <div class="votes-button">
+    <button
+      disabled={voteDisabled}
+      class:active={ThumbButtonState === "like"}
+      on:click={async () => {
+        voteDisabled = true;
 
-          if (ThumbButtonState === "like") {
-            ThumbButtonState = "neutral";
-          } else {
-            ThumbButtonState = "like";
+        if (ThumbButtonState === "like") {
+          ThumbButtonState = "neutral";
+        } else {
+          ThumbButtonState = "like";
+        }
+
+        const newPageId = await votePage(
+          currentPageId,
+          $userId as string,
+          1,
+          currentUrlSplit?.domain as string,
+          currentUrlSplit?.route as string,
+        );
+
+        // Update page ID and subscribe if needed
+        if (newPageId && newPageId !== currentPageId) {
+          currentPageId = newPageId;
+          if (!hasSubscribed) {
+            await subscribeToVotes(newPageId);
+            hasSubscribed = true;
           }
+        }
 
-          const newPageId = await votePage(
-            currentPageId,
-            $userId as string,
-            1,
-            currentUrlSplit?.domain as string,
-            currentUrlSplit?.route as string,
-          );
+        // Always fetch fresh counts and user vote after voting
+        currentPageVotes =
+          (await getLikeDislikeCount(currentPageId as string)) ||
+          currentPageVotes;
+        const userVote = await getUserVote(
+          currentPageId as string,
+          $userId as string,
+        );
 
-          // Update page ID and subscribe if needed
-          if (newPageId && newPageId !== currentPageId) {
-            currentPageId = newPageId;
-            if (!hasSubscribed) {
-              await subscribeToVotes(newPageId);
-              hasSubscribed = true;
-            }
+        voteDisabled = false;
+      }}
+    >
+      <div class="thumbs-button" class:active={ThumbButtonState === "like"}>
+        <ThumbsUp size={20} />
+      </div>
+
+      <p>
+        {formatter.format(currentPageVotes.likes)}
+      </p>
+    </button>
+
+    <button
+      disabled={voteDisabled}
+      on:click={async () => {
+        voteDisabled = true;
+
+        if (ThumbButtonState === "dislike") {
+          ThumbButtonState = "neutral";
+        } else {
+          ThumbButtonState = "dislike";
+        }
+        const newPageId = await votePage(
+          currentPageId,
+          $userId as string,
+          -1,
+          currentUrlSplit?.domain as string,
+          currentUrlSplit?.route as string,
+        );
+
+        // Update page ID and subscribe if needed
+        if (newPageId && newPageId !== currentPageId) {
+          currentPageId = newPageId;
+          if (!hasSubscribed) {
+            await subscribeToVotes(newPageId);
+            hasSubscribed = true;
           }
+        }
 
-          // Always fetch fresh counts and user vote after voting
-          currentPageVotes =
-            (await getLikeDislikeCount(currentPageId as string)) ||
-            currentPageVotes;
-          const userVote = await getUserVote(
-            currentPageId as string,
-            $userId as string,
-          );
+        // Always fetch fresh counts and user vote after voting
+        currentPageVotes =
+          (await getLikeDislikeCount(currentPageId as string)) ||
+          currentPageVotes;
+        const userVote = await getUserVote(
+          currentPageId as string,
+          $userId as string,
+        );
 
-          voteDisabled = false;
-        }}
-      >
-        <div class="thumbs-button" class:active={ThumbButtonState === "like"}>
-          <ThumbsUp size={20} />
-        </div>
+        voteDisabled = false;
+      }}
+    >
+      <div class="thumbs-button" class:active={ThumbButtonState === "dislike"}>
+        <ThumbsDown size={20} />
+      </div>
 
-        <p>
-          {formatter.format(currentPageVotes.likes)}
-        </p>
-      </button>
+      <p>
+        {formatter.format(currentPageVotes.dislikes)}
+      </p>
+    </button>
+  </div>
 
-      <button
-        disabled={voteDisabled}
-        on:click={async () => {
-          voteDisabled = true;
-
-          if (ThumbButtonState === "dislike") {
-            ThumbButtonState = "neutral";
-          } else {
-            ThumbButtonState = "dislike";
-          }
-          const newPageId = await votePage(
-            currentPageId,
-            $userId as string,
-            -1,
-            currentUrlSplit?.domain as string,
-            currentUrlSplit?.route as string,
-          );
-
-          // Update page ID and subscribe if needed
-          if (newPageId && newPageId !== currentPageId) {
-            currentPageId = newPageId;
-            if (!hasSubscribed) {
-              await subscribeToVotes(newPageId);
-              hasSubscribed = true;
-            }
-          }
-
-          // Always fetch fresh counts and user vote after voting
-          currentPageVotes =
-            (await getLikeDislikeCount(currentPageId as string)) ||
-            currentPageVotes;
-          const userVote = await getUserVote(
-            currentPageId as string,
-            $userId as string,
-          );
-
-          voteDisabled = false;
-        }}
-      >
-        <div
-          class="thumbs-button"
-          class:active={ThumbButtonState === "dislike"}
-        >
-          <ThumbsDown size={20} />
-        </div>
-
-        <p>
-          {formatter.format(currentPageVotes.dislikes)}
-        </p>
-      </button>
-    </div>
+  <div class="tab-head">
+    <p>comments</p>
   </div>
 </div>
 
@@ -254,6 +253,22 @@
   .webicon {
     width: 20px;
     height: 20px;
+  }
+
+  .tab-head {
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    padding: 6px 15px;
+    z-index: 10;
+
+    border-top-right-radius: 8px;
+    background-color: var(--accent);
+
+    border-width: 1px 1px 1px 0;
+    border-style: solid;
+    border-color: var(--border);
+    border-bottom-color: var(--accent);
   }
 
   .top-header {
@@ -264,13 +279,14 @@
   }
 
   .header {
+    position: relative;
     display: flex;
     flex-direction: column;
     flex: 0 0 auto;
-    gap: 16px;
+    gap: 8px;
     background-color: var(--background);
-    padding: 15px;
-    padding-top: 20px;
+
+    padding: 20px 15px 48px 15px;
 
     h3 {
       margin: 0;
