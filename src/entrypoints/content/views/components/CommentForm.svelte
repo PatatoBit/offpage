@@ -136,24 +136,34 @@
 </form>
 
 <style lang="scss">
+  textarea {
+    max-width: 100%;
+    padding: 12px 12px 48px 12px;
+  }
+
+  .form-buttons {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    max-width: 100%;
+    gap: 8px;
+    height: 32px;
+
+    button {
+      cursor: pointer;
+    }
+  }
   .file-area {
     display: flex;
     flex-direction: column;
     pointer-events: none;
     width: 100%;
     gap: 0.5rem;
-
-    .form-buttons {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      gap: 8px;
-      height: 32px;
-
-      button {
-        cursor: pointer;
-      }
-    }
 
     .file-input {
       all: unset;
@@ -210,7 +220,6 @@
     pointer-events: all;
     width: 100%;
     bottom: 0;
-    padding: 12px;
     display: flex;
     flex-direction: column;
     gap: 8px;
