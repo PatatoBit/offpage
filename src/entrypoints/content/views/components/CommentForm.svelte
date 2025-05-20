@@ -127,7 +127,7 @@
         <Image size={20} color="var(--text)" />
       </button>
 
-      <button class="form-submit" type="submit" disabled={isPosting}>
+      <button class="primary" type="submit" disabled={isPosting}>
         <p>Send</p>
         <CornerUpRight size={15} color="var(--background)" />
       </button>
@@ -181,35 +181,6 @@
 
       &:hover {
         transform: scale(1.05);
-      }
-    }
-
-    .form-submit {
-      background-color: var(--text);
-      border: none;
-      padding: 8px 10px;
-      border: 1px solid var(--text);
-      border-radius: 6px;
-      cursor: pointer;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 8px;
-      transition: scale 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
-
-      p {
-        font-size: 14px;
-        color: var(--background);
-      }
-
-      &:hover {
-        transform: scale(1.05);
-      }
-
-      &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-        transform: none;
       }
     }
   }

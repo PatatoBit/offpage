@@ -293,6 +293,7 @@
     gap: 15px;
 
     button {
+      padding: 0;
       display: flex;
       flex: 1;
       flex-direction: row;
