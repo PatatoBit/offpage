@@ -433,7 +433,6 @@
     border: none;
     border-radius: 50%;
     cursor: pointer;
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
   }
 
   input[type="range"].custom-range::-moz-range-thumb {
@@ -444,7 +443,6 @@
     border: none;
     border-radius: 50%;
     cursor: pointer;
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
   }
 
   input[type="range"].custom-range::-ms-thumb {
@@ -455,7 +453,6 @@
     border: none;
     border-radius: 50%;
     cursor: pointer;
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
   }
 
   input[type="range"].custom-range::-webkit-slider-runnable-track {
