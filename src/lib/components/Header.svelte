@@ -242,7 +242,7 @@
 
   <div class="tabhead">
     <button class="tabhead-btn">
-      <p>comments</p>
+      <p class="label">comments</p>
     </button>
 
     <button on:click={handleOpenOptions} class="tabhead-btn">

@@ -2,6 +2,7 @@
   import { SlidersHorizontal } from "@lucide/svelte";
   import { fly } from "svelte/transition";
   import { extensionStatus } from "@/stores/AppStatus";
+  import Crossbox from "./Crossbox.svelte";
 
   let isOpen = $state(false);
   let status = $derived($extensionStatus);
@@ -23,7 +24,7 @@
 <div class="options-row">
   <div class="filter">
     <button class="tertiary" onclick={() => (isOpen = !isOpen)}>
-      <p>filters</p>
+      <div class="l">filters</div>
       <SlidersHorizontal class="lucide" size={16} />
     </button>
 
@@ -33,33 +34,34 @@
         in:fly={{ y: -10, duration: 200 }}
         out:fly={{ y: -10, duration: 200 }}
       >
-        <h3>Block filter</h3>
+        <h3>Filter comments with...</h3>
 
-        <label>
-          <input
-            type="checkbox"
-            checked={status.filterBadWords}
-            onchange={(e) =>
-              extensionStatus.set({
-                ...status,
-                filterBadWords: e.currentTarget.checked,
-              })}
-          />
-          Bad words
-        </label>
+        <div class="filters">
+          <div>
+            <Crossbox
+              checked={status.filterBadWords}
+              onChange={(value) =>
+                extensionStatus.set({
+                  ...status,
+                  filterBadWords: value,
+                })}
+            />
+            <p class="labve">Bad words</p>
+          </div>
 
-        <label>
-          <input
-            type="checkbox"
-            checked={status.blockFlagged}
-            onchange={(e) =>
-              extensionStatus.set({
-                ...status,
-                blockFlagged: e.currentTarget.checked,
-              })}
-          />
-          Flagged comments
-        </label>
+          <div>
+            <Crossbox
+              checked={status.blockFlagged}
+              onChange={(value) =>
+                extensionStatus.set({
+                  ...status,
+                  blockFlagged: value,
+                })}
+            />
+
+            <p class="label">Flagged comments</p>
+          </div>
+        </div>
       </div>
     {/if}
   </div>
@@ -83,6 +85,24 @@
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
+  }
+
+  .filters {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    margin-top: 8px;
+
+    div {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 8px;
+
+      font-size: 14px;
+      color: var(--text);
+    }
   }
 
   .filter {

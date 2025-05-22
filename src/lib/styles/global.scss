@@ -53,6 +53,12 @@ i {
   color: var(--text);
 }
 
+p.label,
+label {
+  font-size: 14px;
+  font-weight: 400;
+}
+
 textarea {
   flex: 1;
   padding: 8px;
@@ -67,13 +73,12 @@ textarea {
 }
 
 input {
-  padding: 5px;
+  padding: 16px;
   border-radius: 4px;
   resize: none;
 
   color: var(--text);
-  border: 1px solid var(--border);
-  background-color: var(--inner-background);
+  background-color: var(--innie);
   font-family: "Open Runde", sans-serif;
 }
 
