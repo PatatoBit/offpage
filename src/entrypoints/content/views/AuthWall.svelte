@@ -89,7 +89,7 @@
 
     <br />
 
-    <button onclick={async () => await loginWithGoogle()}
+    <button class="tertiary" onclick={async () => await loginWithGoogle()}
       >Sign in with Google</button
     >
   </div>

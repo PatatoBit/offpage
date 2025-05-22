@@ -78,6 +78,7 @@
     position: sticky;
     top: 10px;
     right: 10px;
+    z-index: 10;
 
     display: flex;
     flex-direction: row;
@@ -104,7 +105,6 @@
 
       padding: 16px;
       margin-top: 8px;
-      z-index: 10;
 
       label {
         display: block;

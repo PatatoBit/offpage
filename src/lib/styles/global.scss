@@ -68,11 +68,11 @@ textarea {
 
 input {
   padding: 5px;
-  border-radius: 6px;
+  border-radius: 4px;
   resize: none;
 
   color: var(--text);
-  border: 1px solid var(--highlight);
+  border: 1px solid var(--border);
   background-color: var(--inner-background);
   font-family: "Open Runde", sans-serif;
 }
@@ -92,8 +92,8 @@ button {
   align-items: center;
   gap: 8px;
 
-  background-color: (--secondary);
-  color: var(--background);
+  color: var(--text);
+  background-color: var(--background);
 
   transition: scale 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
 
@@ -107,13 +107,18 @@ button {
     }
   }
 
-  &.tertiary {
-    color: var(--text);
-    background-color: var(--background);
+  &.secondary {
+    color: var(--innie);
+    background-color: var(--secondary);
+    border: none;
 
     p {
-      color: var(--text);
+      color: var(--innie);
     }
+  }
+
+  p {
+    color: var(--text);
   }
 
   &:active {

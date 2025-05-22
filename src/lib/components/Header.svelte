@@ -12,7 +12,7 @@
   import { userId } from "../stores/sessionStore";
   import { supabase } from "../supabase";
   import { getIcon } from "../utils";
-  import { EllipsisVertical, ThumbsUp, ThumbsDown } from "@lucide/svelte";
+  import { Settings, ThumbsUp, ThumbsDown } from "@lucide/svelte";
 
   export let currentUrl: string | undefined;
 
@@ -138,10 +138,6 @@
         {/if}
       {/if}
     </div>
-
-    <button on:click={handleOpenOptions} class="options-button">
-      <EllipsisVertical size={20} color="var(--text)" />
-    </button>
   </div>
 
   <div class="votes-button">
@@ -244,8 +240,14 @@
     </button>
   </div>
 
-  <div class="tab-head">
-    <p>comments</p>
+  <div class="tabhead">
+    <button class="tabhead-btn">
+      <p>comments</p>
+    </button>
+
+    <button on:click={handleOpenOptions} class="tabhead-btn">
+      <Settings size={20} color="var(--text)" />
+    </button>
   </div>
 </div>
 
@@ -255,20 +257,43 @@
     height: 20px;
   }
 
-  .tab-head {
+  .tabhead {
     position: absolute;
     bottom: -2px;
     left: 0;
-    padding: 6px 15px;
     z-index: 10;
+    width: 100%;
 
-    border-top-right-radius: 8px;
-    background-color: var(--accent);
+    display: flex;
+    flex-direction: row;
 
-    border-width: 1px 1px 1px 0;
-    border-style: solid;
-    border-color: var(--border);
-    border-bottom-color: var(--accent);
+    .tabhead-btn {
+      all: unset;
+      padding: 6px;
+
+      border-width: 1px 1px 0 1px;
+      border-style: solid;
+      border-color: var(--border);
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+
+      &:first-child {
+        padding: 6px 15px;
+        border-bottom-color: var(--accent);
+        background-color: var(--accent);
+        border-width: 1px 1px 1px 0;
+        border-top-left-radius: 0;
+        border-top-right-radius: 8px;
+      }
+
+      &:last-child {
+        cursor: pointer;
+        aspect-ratio: 1;
+        display: flex;
+        margin-left: auto;
+        margin-right: 4px;
+      }
+    }
   }
 
   .top-header {
