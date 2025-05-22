@@ -32,6 +32,13 @@
     avatar_url: "",
   };
 
+  let filterThreshold = {
+    sexualContent: 10,
+    hate: 10,
+    harassment: 10,
+    violence: 10,
+  };
+
   let previewProfilePicture: string | null = null;
 
   $: if ($userId && !userData.username && !userData.avatar_url) {
@@ -160,7 +167,58 @@
         >
       </form>
 
-      <section class="section">
+      <section>
+        <h3>Filter threshold</h3>
+
+        <div class="input">
+          <p class="label">Sexual content</p>
+
+          <span>
+            <input
+              type="range"
+              bind:value={filterThreshold.sexualContent}
+              required
+            />
+            <p>{filterThreshold.sexualContent}%</p>
+          </span>
+        </div>
+
+        <div class="input">
+          <p class="label">Hate</p>
+
+          <span>
+            <input type="range" bind:value={filterThreshold.hate} required />
+            <p>{filterThreshold.hate}%</p>
+          </span>
+        </div>
+
+        <div class="input">
+          <p class="label">Harassment</p>
+          <span>
+            <input
+              type="range"
+              bind:value={filterThreshold.harassment}
+              required
+            />
+            <p>{filterThreshold.harassment}%</p>
+          </span>
+        </div>
+
+        <div class="input">
+          <p class="label">Violence</p>
+          <span>
+            <input
+              type="range"
+              bind:value={filterThreshold.violence}
+              required
+            />
+            <p>{filterThreshold.violence}%</p>
+          </span>
+        </div>
+      </section>
+
+      <!-- Links -->
+      <section>
         <a href="https://offpage.featurebase.app/" target="_blank">
           Feedback
         </a>
@@ -189,7 +247,7 @@
     gap: 64px;
   }
 
-  .section {
+  section {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
