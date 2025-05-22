@@ -264,7 +264,7 @@
         </a>
 
         <a href="https://discord.gg/nrsug3t6ag" target="_blank"
-          >Discord Server</a
+          >Discord server</a
         >
 
         <a href="https://offpage.patato.me" target="_blank">More about us</a>
