@@ -183,13 +183,7 @@
   .input {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-
-    input {
-      padding: 0.5rem;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
+    gap: 8px;
   }
 
   label {

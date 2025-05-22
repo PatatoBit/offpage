@@ -73,13 +73,15 @@ textarea {
 }
 
 input {
-  padding: 16px;
-  border-radius: 4px;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
   resize: none;
 
   color: var(--text);
   background-color: var(--innie);
   font-family: "Open Runde", sans-serif;
+  font-size: 16px;
 }
 
 button {
@@ -90,7 +92,7 @@ button {
 
   max-height: 30px;
   padding: 10px 16px;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   display: flex;
   justify-content: center;
@@ -98,7 +100,7 @@ button {
   gap: 8px;
 
   color: var(--text);
-  background-color: var(--background);
+  background-color: var(--innie);
 
   transition: scale 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
 
@@ -119,6 +121,16 @@ button {
 
     p {
       color: var(--innie);
+    }
+  }
+
+  &.clean {
+    color: var(--text);
+    background-color: var(--background);
+    border: none;
+
+    p {
+      color: var(--text);
     }
   }
 

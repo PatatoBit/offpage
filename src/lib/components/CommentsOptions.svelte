@@ -23,7 +23,7 @@
 
 <div class="options-row">
   <div class="filter">
-    <button class="tertiary" onclick={() => (isOpen = !isOpen)}>
+    <button class="clean" onclick={() => (isOpen = !isOpen)}>
       <div class="l">filters</div>
       <SlidersHorizontal class="lucide" size={16} />
     </button>

@@ -143,6 +143,7 @@
   <div class="votes-button">
     <button
       disabled={voteDisabled}
+      class="clean"
       class:active={ThumbButtonState === "like"}
       on:click={async () => {
         voteDisabled = true;
@@ -193,6 +194,7 @@
 
     <button
       disabled={voteDisabled}
+      class="clean"
       on:click={async () => {
         voteDisabled = true;
 
