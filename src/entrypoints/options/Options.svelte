@@ -13,6 +13,7 @@
   import "../../lib/styles/global.scss";
   import "../../lib/styles/variables.scss";
   import AuthWall from "../content/views/AuthWall.svelte";
+  import { Pen } from "@lucide/svelte";
 
   let profileSaveSuccess: boolean = false;
 
@@ -107,51 +108,55 @@
 <main class="page">
   <AuthWall>
     {#if userData.username}
-      <div class="card">
-        <form
-          on:submit={async () => await handleProfileSave()}
-          on:submit|preventDefault
-        >
-          <img
-            src={previewProfilePicture
-              ? previewProfilePicture
-              : userData.avatar_url}
-            alt="User avatar"
-          />
-
-          <div class="input">
-            <label for="profile"><p class="label">Avatar</p></label>
-            <input
-              type="file"
-              accept="image/png, image/jpeg"
-              on:change={handleFileChange}
+      <form
+        on:submit={async () => await handleProfileSave()}
+        on:submit|preventDefault
+      >
+        <label class="avatar-label">
+          <div class="avatar-wrapper {previewProfilePicture ? 'unsaved' : ''}">
+            <img
+              src={previewProfilePicture
+                ? previewProfilePicture
+                : userData.avatar_url}
+              alt="User avatar"
+              class="avatar-img"
             />
+            <div class="avatar-overlay">
+              <Pen color="var(--background)" />
+            </div>
           </div>
+          <input
+            type="file"
+            accept="image/png, image/jpeg"
+            on:change={handleFileChange}
+            style="display: none;"
+          />
+        </label>
 
-          <div class="input">
-            <label for="profile"><p class="label">Username</p></label>
-            <input type="text" bind:value={changedUserData.username} required />
-          </div>
-
-          <div>
-            <button type="submit" class="primary">Save</button>
-          </div>
-        </form>
-
-        {#if profileSaveSuccess}
-          <p transition:fade>✅Profile Saved</p>
-        {/if}
-        <!-- <LoadSpinner /> -->
-
-        <div class="bottom-buttons">
-          <a href="https://offpage.featurebase.app/" target="_blank">
-            <button>Feedback</button>
-          </a>
-
-          <button class="signout" on:click={async () => await signOut()}
-            >Sign out</button
-          >
+        <div class="input">
+          <input
+            type="text"
+            bind:value={changedUserData.username}
+            placeholder="Name"
+            required
+          />
+          <button type="submit" class="primary">Save</button>
         </div>
+
+        <button class="signout" on:click={async () => await signOut()}
+          >Sign out</button
+        >
+      </form>
+
+      {#if profileSaveSuccess}
+        <p transition:fade>✅Profile Saved</p>
+      {/if}
+      <!-- <LoadSpinner /> -->
+
+      <div class="bottom-buttons">
+        <a href="https://offpage.featurebase.app/" target="_blank">
+          <button>Feedback</button>
+        </a>
       </div>
     {/if}
   </AuthWall>
@@ -163,6 +168,7 @@
 
   .page {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
@@ -171,18 +177,94 @@
     background-color: var(--overlay-background);
   }
 
+  form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 50px;
+    gap: 16px;
+
+    label {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+
+      &:hover {
+        img {
+          border-color: var(--accent);
+        }
+      }
+    }
+  }
+
   img {
-    width: 100px;
-    height: 100px;
+    width: 150px;
+    height: 150px;
     border-radius: 50%;
     border: 2px solid #ccc;
 
     object-fit: cover;
   }
 
+  .avatar-label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .avatar-wrapper {
+    position: relative;
+    display: inline-block;
+
+    &.unsaved .avatar-img {
+      border-color: var(--primary, green);
+    }
+
+    .avatar-img {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      border: 2px solid #ccc;
+      object-fit: cover;
+      transition: border-color 0.2s;
+      display: block;
+    }
+
+    .avatar-overlay {
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: rgba(128, 128, 128, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    &:hover .avatar-overlay {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+
   .input {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    width: 100%;
+
+    input {
+      flex: auto;
+    }
     gap: 8px;
   }
 

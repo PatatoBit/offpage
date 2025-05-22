@@ -6,19 +6,6 @@
 
   let isOpen = $state(false);
   let status = $derived($extensionStatus);
-
-  const broadcastChange = () => {
-    chrome.tabs.query({}, (tabs) => {
-      for (const tab of tabs) {
-        if (tab.id) {
-          chrome.tabs.sendMessage(tab.id, {
-            type: "FILTER_STATUS_CHANGE",
-            filterBadWords: status.filterBadWords,
-          });
-        }
-      }
-    });
-  };
 </script>
 
 <div class="options-row">
