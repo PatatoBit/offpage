@@ -168,7 +168,7 @@
       </form>
 
       <section>
-        <h3>Filter threshold</h3>
+        <h4>Filter threshold</h4>
 
         <div class="input">
           <p class="label">Sexual content</p>
@@ -257,6 +257,8 @@
 
       <!-- Links -->
       <section>
+        <h4>About Offpage</h4>
+
         <a href="https://offpage.featurebase.app/" target="_blank">
           Feedback
         </a>
@@ -289,7 +291,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 8px;
+    gap: 12px;
 
     width: 100%;
   }
