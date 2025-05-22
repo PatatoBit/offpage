@@ -172,22 +172,42 @@
 
         <div class="input">
           <p class="label">Sexual content</p>
-
           <span>
-            <input
-              type="range"
-              bind:value={filterThreshold.sexualContent}
-              required
-            />
+            <div class="slider-wrapper">
+              <div
+                class="slider-progress"
+                style="width: {filterThreshold.sexualContent}%"
+              ></div>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                bind:value={filterThreshold.sexualContent}
+                required
+                class="custom-range"
+              />
+            </div>
             <p>{filterThreshold.sexualContent}%</p>
           </span>
         </div>
 
         <div class="input">
           <p class="label">Hate</p>
-
           <span>
-            <input type="range" bind:value={filterThreshold.hate} required />
+            <div class="slider-wrapper">
+              <div
+                class="slider-progress"
+                style="width: {filterThreshold.hate}%"
+              ></div>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                bind:value={filterThreshold.hate}
+                required
+                class="custom-range"
+              />
+            </div>
             <p>{filterThreshold.hate}%</p>
           </span>
         </div>
@@ -195,11 +215,20 @@
         <div class="input">
           <p class="label">Harassment</p>
           <span>
-            <input
-              type="range"
-              bind:value={filterThreshold.harassment}
-              required
-            />
+            <div class="slider-wrapper">
+              <div
+                class="slider-progress"
+                style="width: {filterThreshold.harassment}%"
+              ></div>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                bind:value={filterThreshold.harassment}
+                required
+                class="custom-range"
+              />
+            </div>
             <p>{filterThreshold.harassment}%</p>
           </span>
         </div>
@@ -207,11 +236,20 @@
         <div class="input">
           <p class="label">Violence</p>
           <span>
-            <input
-              type="range"
-              bind:value={filterThreshold.violence}
-              required
-            />
+            <div class="slider-wrapper">
+              <div
+                class="slider-progress"
+                style="width: {filterThreshold.violence}%"
+              ></div>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                bind:value={filterThreshold.violence}
+                required
+                class="custom-range"
+              />
+            </div>
             <p>{filterThreshold.violence}%</p>
           </span>
         </div>
@@ -351,6 +389,86 @@
       width: 100%;
       gap: 8px;
     }
+  }
+
+  .slider-wrapper {
+    position: relative;
+    width: 100%;
+    height: 24px;
+    display: flex;
+    align-items: center;
+  }
+
+  .slider-progress {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    height: 4px;
+    background: var(--text, #4caf50);
+    border-radius: 2px;
+    transform: translateY(-50%);
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  input[type="range"].custom-range {
+    position: relative;
+    width: 100%;
+    background: transparent;
+    z-index: 2;
+    height: 24px;
+    margin: 0;
+    padding: 0;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  input[type="range"].custom-range::-webkit-slider-thumb {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    margin-top: -7px; // (18-4)/2 = 7, centers on 4px track
+    background: url("/handle.svg") no-repeat center center;
+    background-size: 16px 16px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+  }
+
+  input[type="range"].custom-range::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: url("/handle.svg") no-repeat center center;
+    background-size: 16px 16px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+  }
+
+  input[type="range"].custom-range::-ms-thumb {
+    width: 18px;
+    height: 18px;
+    background: url("/handle.svg") no-repeat center center;
+    background-size: 16px 16px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+  }
+
+  input[type="range"].custom-range::-webkit-slider-runnable-track {
+    height: 4px;
+    background: transparent;
+  }
+  input[type="range"].custom-range::-ms-fill-lower,
+  input[type="range"].custom-range::-ms-fill-upper {
+    background: transparent;
+  }
+  input[type="range"].custom-range::-moz-range-track {
+    height: 4px;
+    background: transparent;
   }
 
   .bottom-buttons {
