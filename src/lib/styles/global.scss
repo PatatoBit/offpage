@@ -135,6 +135,35 @@ input[type="range"] {
     box-shadow: none;
     transition: background 0.2s;
   }
+
+  // Chrome, Safari, Edge
+  &::-webkit-slider-runnable-track {
+    height: 4px;
+    border-radius: 2px;
+    background: var(--innie);
+  }
+
+  // Firefox
+  &::-moz-range-track {
+    height: 4px;
+    border-radius: 2px;
+    background: var(--innie);
+  }
+  &::-moz-range-progress {
+    height: 4px;
+    border-radius: 2px;
+    background: var(--primary);
+  }
+
+  // IE
+  &::-ms-fill-lower {
+    background: var(--primary);
+    border-radius: 2px;
+  }
+  &::-ms-fill-upper {
+    background: var(--innie);
+    border-radius: 2px;
+  }
 }
 
 button {
