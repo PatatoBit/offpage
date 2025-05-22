@@ -70,6 +70,10 @@
         changedUserData.username,
         changedUserData.avatar_url,
       );
+
+      // Reset preview and file after saving
+      previewProfilePicture = null;
+      file = null;
     } else {
       console.error("User not found");
     }
@@ -134,30 +138,39 @@
         </label>
 
         <div class="input">
-          <input
-            type="text"
-            bind:value={changedUserData.username}
-            placeholder="Name"
-            required
-          />
-          <button type="submit" class="primary">Save</button>
+          <p class="label">Name</p>
+
+          <span>
+            <input
+              type="text"
+              bind:value={changedUserData.username}
+              placeholder="Name"
+              required
+            />
+            <button type="submit" class="primary">Save</button>
+          </span>
         </div>
+
+        {#if profileSaveSuccess}
+          <p transition:fade>✅Profile Saved</p>
+        {/if}
 
         <button class="signout" on:click={async () => await signOut()}
           >Sign out</button
         >
       </form>
 
-      {#if profileSaveSuccess}
-        <p transition:fade>✅Profile Saved</p>
-      {/if}
-      <!-- <LoadSpinner /> -->
-
-      <div class="bottom-buttons">
+      <section class="section">
         <a href="https://offpage.featurebase.app/" target="_blank">
-          <button>Feedback</button>
+          Feedback
         </a>
-      </div>
+
+        <a href="https://discord.gg/nrsug3t6ag" target="_blank"
+          >Discord Server</a
+        >
+
+        <a href="https://offpage.patato.me" target="_blank">More about us</a>
+      </section>
     {/if}
   </AuthWall>
 </main>
@@ -169,12 +182,20 @@
   .page {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
     min-height: 100vh;
-    width: 100%;
+    max-width: 320px;
+    margin-inline: auto;
+    gap: 64px;
+  }
 
-    background-color: var(--overlay-background);
+  .section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+
+    width: 100%;
   }
 
   form {
@@ -198,15 +219,6 @@
     }
   }
 
-  img {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    border: 2px solid #ccc;
-
-    object-fit: cover;
-  }
-
   .avatar-label {
     display: flex;
     justify-content: center;
@@ -227,7 +239,7 @@
       width: 150px;
       height: 150px;
       border-radius: 50%;
-      border: 2px solid #ccc;
+      border: 1px solid #ccc;
       object-fit: cover;
       transition: border-color 0.2s;
       display: block;
@@ -257,25 +269,29 @@
     }
   }
 
+  .label {
+    font-size: 16px;
+    color: var(--text);
+    font-weight: 700;
+  }
+
   .input {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     width: 100%;
+    gap: 4px;
 
     input {
       flex: auto;
     }
-    gap: 8px;
-  }
 
-  label {
-    width: 100%;
-
-    .label {
-      margin: 0;
-      font-size: 0.8rem;
-      color: #666;
-      text-align: left;
+    span {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      gap: 8px;
     }
   }
 
