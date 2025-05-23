@@ -14,6 +14,7 @@
   import "../../lib/styles/variables.scss";
   import AuthWall from "../content/views/AuthWall.svelte";
   import { Pen } from "@lucide/svelte";
+  import { extensionStatus } from "@/stores/AppStatus";
 
   let profileSaveSuccess: boolean = false;
 
@@ -30,13 +31,6 @@
   let changedUserData = {
     username: "",
     avatar_url: "",
-  };
-
-  let filterThreshold = {
-    sexualContent: 10,
-    hate: 10,
-    harassment: 10,
-    violence: 10,
   };
 
   let previewProfilePicture: string | null = null;
@@ -114,6 +108,8 @@
 
     channel.subscribe();
   });
+
+  import { derived } from "svelte/store";
 </script>
 
 <main class="page">
@@ -170,89 +166,46 @@
       <section>
         <h4>Filter threshold</h4>
 
-        <div class="input">
-          <p class="label">Sexual content</p>
-          <span>
-            <div class="slider-wrapper">
-              <div
-                class="slider-progress"
-                style="width: {filterThreshold.sexualContent}%"
-              ></div>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                bind:value={filterThreshold.sexualContent}
-                required
-                class="custom-range"
-              />
-            </div>
-            <p>{filterThreshold.sexualContent}%</p>
-          </span>
-        </div>
+        {#each Object.entries($extensionStatus.filterThreshold) as [key, value]}
+          <div class="input">
+            <p class="label">
+              {key
+                .replace(/([A-Z])/g, " $1")
+                .replace(/^./, (m) => m.toUpperCase())}
+            </p>
+            <span>
+              <div class="slider-wrapper">
+                <div
+                  class="slider-progress"
+                  style="width: {$extensionStatus.filterThreshold[
+                    key as keyof typeof $extensionStatus.filterThreshold
+                  ] * 100}%"
+                ></div>
 
-        <div class="input">
-          <p class="label">Hate</p>
-          <span>
-            <div class="slider-wrapper">
-              <div
-                class="slider-progress"
-                style="width: {filterThreshold.hate}%"
-              ></div>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                bind:value={filterThreshold.hate}
-                required
-                class="custom-range"
-              />
-            </div>
-            <p>{filterThreshold.hate}%</p>
-          </span>
-        </div>
-
-        <div class="input">
-          <p class="label">Harassment</p>
-          <span>
-            <div class="slider-wrapper">
-              <div
-                class="slider-progress"
-                style="width: {filterThreshold.harassment}%"
-              ></div>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                bind:value={filterThreshold.harassment}
-                required
-                class="custom-range"
-              />
-            </div>
-            <p>{filterThreshold.harassment}%</p>
-          </span>
-        </div>
-
-        <div class="input">
-          <p class="label">Violence</p>
-          <span>
-            <div class="slider-wrapper">
-              <div
-                class="slider-progress"
-                style="width: {filterThreshold.violence}%"
-              ></div>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                bind:value={filterThreshold.violence}
-                required
-                class="custom-range"
-              />
-            </div>
-            <p>{filterThreshold.violence}%</p>
-          </span>
-        </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.01"
+                  bind:value={
+                    $extensionStatus.filterThreshold[
+                      key as keyof typeof $extensionStatus.filterThreshold
+                    ]
+                  }
+                  required
+                  class="custom-range"
+                />
+              </div>
+              <p>
+                {Math.round(
+                  $extensionStatus.filterThreshold[
+                    key as keyof typeof $extensionStatus.filterThreshold
+                  ] * 100,
+                )}%
+              </p>
+            </span>
+          </div>
+        {/each}
       </section>
 
       <!-- Links -->
