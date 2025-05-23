@@ -61,20 +61,8 @@ Deno.serve(async (req) => {
     const updateData: any = {
       moderation_status: result.flagged ? "flagged" : "pass",
       moderated_at: new Date().toISOString(),
+      moderation_scores: result.category_scores,
     };
-
-    if (result.flagged) {
-      // Filter only the categories that are flagged true
-      const flaggedScores: Record<string, number> = {};
-
-      for (const [category, isFlagged] of Object.entries(result.categories)) {
-        if (isFlagged) {
-          flaggedScores[category] = result.category_scores[category];
-        }
-      }
-
-      updateData.moderation_scores = flaggedScores;
-    }
 
     const { data, error } = await supabase
       .from("comments")
