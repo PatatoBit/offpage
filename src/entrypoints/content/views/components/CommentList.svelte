@@ -6,11 +6,26 @@
     initialComments,
     isEmpty,
     extensionStatus,
+    ModerationStatus,
   } from "@/stores/AppStatus";
   import LoadSpinner from "@/lib/components/LoadSpinner.svelte";
   import CommentsOptions from "@/lib/components/CommentsOptions.svelte";
 
   const filter = new Filter();
+
+  function passThreshold(value: ModerationStatus) {
+    for (const category in $extensionStatus.filterThreshold) {
+      // Check all keys in value that match the category or its subcategories
+      for (const key in value) {
+        if (key === category || key.startsWith(category + "/")) {
+          if (value[key] >= $extensionStatus.filterThreshold[category]) {
+            return false;
+          }
+        }
+      }
+    }
+    return true;
+  }
 </script>
 
 {#if $initialComments.length != 0 || isEmpty}
@@ -45,7 +60,7 @@
               </h5>
             </div>
 
-            {#if $extensionStatus.blockFlagged && comment.moderation_status == "flagged"}
+            {#if ($extensionStatus.blockFlagged && comment.moderation_status == "flagged") || ($extensionStatus.blockFlagged && !passThreshold(comment.moderation_scores as ModerationStatus))}
               <i>comment flagged</i>
             {:else if $extensionStatus.filterBadWords}
               <p>{filter.clean(comment.content)}</p>
@@ -53,9 +68,13 @@
               <p>{comment.content}</p>
             {/if}
 
+            <p>
+              {passThreshold(comment.moderation_scores as ModerationStatus)}
+            </p>
+
             {#if comment.image_url}
               <div class="comment-image">
-                {#if $extensionStatus.blockFlagged && comment.moderation_status == "flagged"}
+                {#if ($extensionStatus.blockFlagged && comment.moderation_status == "flagged") || ($extensionStatus.blockFlagged && !passThreshold(comment.moderation_scores as ModerationStatus))}
                   <div class="blur">
                     {#if comment.moderation_scores}
                       {#each Object.entries(comment.moderation_scores) as [key, value]}

@@ -13,7 +13,8 @@ export const currentPageId = writable<string | null>(null);
 export const initialComments = writable<CommentData[]>([]);
 export const isEmpty = writable<boolean>(false);
 
-interface ModerationStatus {
+export interface ModerationStatus {
+  [key: string]: number;
   harassment: number;
   "harassment/threatening": number;
   hate: number;
@@ -28,7 +29,8 @@ interface ModerationStatus {
   "violence/graphic": number;
 }
 
-interface FilterThreshold {
+export interface FilterThreshold {
+  [key: string]: number;
   harassment: number;
   hate: number;
   illicit: number;

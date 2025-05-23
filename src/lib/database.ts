@@ -1,3 +1,4 @@
+import { ModerationStatus } from "../stores/AppStatus.ts";
 import { supabase } from "./supabase.ts";
 import { getBaseUrlAndPath } from "./utils.ts";
 
@@ -10,7 +11,7 @@ export interface CommentData {
   profiles?: UserProfileData | null;
 
   moderation_status: "pending" | "pass" | "flagged";
-  moderation_scores?: Record<string, number> | null;
+  moderation_scores?: ModerationStatus | null;
   moderated_at: Date | null;
 
   image_url: string | null;
@@ -104,10 +105,7 @@ export async function findCommentsDataByPageId(
       | "pending"
       | "pass"
       | "flagged",
-    moderation_scores: comment.moderation_scores as Record<
-      string,
-      number
-    > | null,
+    moderation_scores: comment.moderation_scores as ModerationStatus | null,
     moderated_at: comment.moderated_at as Date | null,
     image_url: comment.image_url as string | null,
   }));
