@@ -261,7 +261,7 @@
 
   .tabhead {
     position: absolute;
-    bottom: -2px;
+    bottom: -1px;
     left: 0;
     z-index: 10;
     width: 100%;
