@@ -68,10 +68,6 @@
               <p>{comment.content}</p>
             {/if}
 
-            <p>
-              {passThreshold(comment.moderation_scores as ModerationStatus)}
-            </p>
-
             {#if comment.image_url}
               <div class="comment-image">
                 {#if ($extensionStatus.blockFlagged && comment.moderation_status == "flagged") || ($extensionStatus.blockFlagged && !passThreshold(comment.moderation_scores as ModerationStatus))}
