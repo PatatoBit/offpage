@@ -10,6 +10,7 @@
   } from "@/stores/AppStatus";
   import LoadSpinner from "@/lib/components/LoadSpinner.svelte";
   import CommentsOptions from "@/lib/components/CommentsOptions.svelte";
+  import { writable } from "svelte/store";
 
   const filter = new Filter();
 
@@ -25,6 +26,16 @@
       }
     }
     return true;
+  }
+
+  // Track revealed comments by their id
+  const revealed = writable<Set<string | number>>(new Set());
+
+  function revealComment(id: string | number) {
+    revealed.update((set) => {
+      set.add(id);
+      return set;
+    });
   }
 </script>
 
@@ -61,7 +72,24 @@
             </div>
 
             {#if ($extensionStatus.blockFlagged && comment.moderation_status == "flagged") || ($extensionStatus.blockFlagged && !passThreshold(comment.moderation_scores as ModerationStatus))}
-              <i>comment flagged</i>
+              <div class="blocked-wrapper">
+                <p class:invisible={!$revealed.has(comment.id)}>
+                  {#if $extensionStatus.filterBadWords}
+                    {filter.clean(comment.content)}
+                  {:else}
+                    {comment.content}
+                  {/if}
+                </p>
+                {#if !$revealed.has(comment.id)}
+                  <div
+                    class="blocked-text"
+                    on:click={() => revealComment(comment.id)}
+                    tabindex="0"
+                    role="button"
+                    aria-label="Reveal blocked comment"
+                  ></div>
+                {/if}
+              </div>
             {:else if $extensionStatus.filterBadWords}
               <p>{filter.clean(comment.content)}</p>
             {:else}
@@ -71,15 +99,16 @@
             {#if comment.image_url}
               <div class="comment-image">
                 {#if ($extensionStatus.blockFlagged && comment.moderation_status == "flagged") || ($extensionStatus.blockFlagged && !passThreshold(comment.moderation_scores as ModerationStatus))}
-                  <div class="blur">
-                    {#if comment.moderation_scores}
-                      {#each Object.entries(comment.moderation_scores) as [key, value]}
-                        <p>{key}: {Math.round(value * 100)}%</p>
-                      {/each}
-                    {/if}
-                  </div>
+                  {#if !$revealed.has(comment.id)}
+                    <div class="blur">
+                      {#if comment.moderation_scores}
+                        {#each Object.entries(comment.moderation_scores) as [key, value]}
+                          <p>{key}: {Math.round(value * 100)}%</p>
+                        {/each}
+                      {/if}
+                    </div>
+                  {/if}
                 {/if}
-
                 <img src={comment.image_url} alt={comment.content} />
               </div>
             {/if}
@@ -204,5 +233,52 @@
     justify-content: center;
     align-items: center;
     height: 100%;
+  }
+
+  .block-box {
+    background: var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 0.95rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    transition: background 0.2s;
+  }
+
+  .blocked-wrapper {
+    position: relative;
+    width: fit-content;
+    max-width: 100%;
+  }
+
+  .blocked-wrapper p {
+    margin: 0;
+    transition: opacity 0.15s;
+  }
+
+  .blocked-wrapper p.invisible {
+    visibility: hidden;
+  }
+
+  .blocked-text {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    user-select: none;
+    border: none;
+    transition: background 0.15s;
+    z-index: 1;
+    &:hover,
+    &:focus {
+      filter: brightness(1.2);
+      outline: none;
+    }
   }
 </style>
