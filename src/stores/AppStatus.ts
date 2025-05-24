@@ -13,6 +13,14 @@ export const currentPageId = writable<string | null>(null);
 export const initialComments = writable<CommentData[]>([]);
 export const isEmpty = writable<boolean>(false);
 
+interface AppStatus {
+  open: boolean;
+  filterBadWords: boolean;
+  blockFlagged: boolean;
+  filterType: "show" | "blur" | "hide";
+  filterThreshold: FilterThreshold;
+}
+
 export interface ModerationStatus {
   [key: string]: number;
   harassment: number;
@@ -40,13 +48,7 @@ export interface FilterThreshold {
 }
 
 // Add any new toggle fields here (e.g., filterBadwords)
-export const extensionStatus = writable<{
-  open: boolean;
-  filterBadWords: boolean;
-  blockFlagged: boolean;
-  filterType: "show" | "blur" | "hide";
-  filterThreshold: FilterThreshold;
-}>({
+const defaultExtensionStatus: AppStatus = {
   open: false,
   filterBadWords: true,
   blockFlagged: true,
@@ -59,12 +61,25 @@ export const extensionStatus = writable<{
     sexual: 0.5,
     violence: 0.5,
   },
+};
+
+export const extensionStatus = writable<AppStatus>({
+  ...defaultExtensionStatus,
 });
 
 // Initialize store from chrome.storage.local
 chrome.storage.local.get([appStatusKey], (data) => {
   if (data[appStatusKey]) {
-    extensionStatus.set(data[appStatusKey]);
+    // Merge defaults with loaded values, especially for filterThreshold
+    const loaded = data[appStatusKey];
+    extensionStatus.set({
+      ...defaultExtensionStatus,
+      ...loaded,
+      filterThreshold: {
+        ...defaultExtensionStatus.filterThreshold,
+        ...(loaded.filterThreshold || {}),
+      },
+    });
   }
 
   // Sync Svelte store updates to chrome.storage.local

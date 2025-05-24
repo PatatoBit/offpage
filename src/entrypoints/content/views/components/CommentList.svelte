@@ -77,7 +77,6 @@
                         <p>{key}: {Math.round(value * 100)}%</p>
                       {/each}
                     {/if}
-                    <!-- content here -->
                   </div>
                 {/if}
 
