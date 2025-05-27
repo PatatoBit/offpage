@@ -152,7 +152,7 @@
     justify-content: space-between;
     max-width: 100%;
     gap: 8px;
-    height: 40px;
+    height: 35px;
 
     button {
       cursor: pointer;
