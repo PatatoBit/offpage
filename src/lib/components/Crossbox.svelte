@@ -1,14 +1,18 @@
 <script lang="ts">
   export let checked = false;
   export let onChange: (value: boolean) => void;
+  export let onClick: ((event: MouseEvent) => void) | undefined;
   import { Square, SquareX } from "@lucide/svelte";
 
-  const toggle = () => {
+  const toggle = (event: MouseEvent) => {
     checked = !checked;
     onChange?.(checked);
+    onClick?.(event);
   };
 </script>
 
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <div
   class="checkbox"
   role="checkbox"

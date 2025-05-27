@@ -46,7 +46,16 @@
         <h3>Filter comments with...</h3>
 
         <div class="filters">
-          <div>
+          <!-- svelte-ignore a11y_click_events_have_key_events -->
+          <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+          <label
+            class="filter-option"
+            onclick={() =>
+              extensionStatus.set({
+                ...status,
+                filterBadWords: !status.filterBadWords,
+              })}
+          >
             <Crossbox
               checked={status.filterBadWords}
               onChange={(value) =>
@@ -54,11 +63,21 @@
                   ...status,
                   filterBadWords: value,
                 })}
+              onClick={(e) => e.stopPropagation()}
             />
-            <p class="labve">Bad words</p>
-          </div>
+            <p class="label">Bad words</p>
+          </label>
 
-          <div>
+          <!-- svelte-ignore a11y_click_events_have_key_events -->
+          <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+          <label
+            class="filter-option"
+            onclick={() =>
+              extensionStatus.set({
+                ...status,
+                blockFlagged: !status.blockFlagged,
+              })}
+          >
             <Crossbox
               checked={status.blockFlagged}
               onChange={(value) =>
@@ -66,10 +85,10 @@
                   ...status,
                   blockFlagged: value,
                 })}
+              onClick={(e) => e.stopPropagation()}
             />
-
             <p class="label">Flagged comments</p>
-          </div>
+          </label>
         </div>
       </div>
     {/if}
@@ -136,10 +155,22 @@
       margin-top: 8px;
 
       label {
-        display: block;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
 
-        input {
-          margin-right: 8px;
+        .label {
+          font-size: 14px;
+          color: var(--text);
+          cursor: pointer;
+          user-select: none;
+        }
+
+        &:hover {
+          background-color: var(--highlight);
+          border-radius: 4px;
         }
       }
     }
