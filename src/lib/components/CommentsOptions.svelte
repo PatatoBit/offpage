@@ -8,11 +8,17 @@
   let isOpen = $state(false);
   let status = $derived($extensionStatus);
   let popupRef = $state<HTMLDivElement | null>(null);
+  let buttonRef = $state<HTMLButtonElement | null>(null); // Add this line
 
   function handleClickOutside(event: PointerEvent) {
-    if (popupRef && !popupRef.contains(event.target as Node)) {
-      isOpen = false;
+    // If click is inside popup or button, do nothing
+    if (
+      (popupRef && popupRef.contains(event.target as Node)) ||
+      (buttonRef && buttonRef.contains(event.target as Node))
+    ) {
+      return;
     }
+    isOpen = false;
   }
 
   $effect(() => {
@@ -30,7 +36,16 @@
 
 <div class="options-row">
   <div class="filter">
-    <button class="clean" onclick={() => (isOpen = !isOpen)}>
+    <button
+      class="clean"
+      bind:this={buttonRef}
+      onpointerdown={(e) => {
+        e.stopPropagation();
+        if (!isOpen) {
+          isOpen = true;
+        }
+      }}
+    >
       <div>filters</div>
       <SlidersHorizontal class="lucide" size={16} />
     </button>
