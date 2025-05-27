@@ -1,28 +1,50 @@
 <script lang="ts">
   import { supabase } from "@/lib/supabase";
   import { Ellipsis } from "@lucide/svelte";
+  import { onDestroy } from "svelte";
   const { commentId } = $props<{ commentId: string | number }>();
 
   let popupOpen = $state(false);
+  let popupRef = $state<HTMLDivElement | null>(null);
+  let buttonRef = $state<HTMLButtonElement | null>(null);
+
+  function handleClickOutside(event: PointerEvent) {
+    if (
+      (popupRef && popupRef.contains(event.target as Node)) ||
+      (buttonRef && buttonRef.contains(event.target as Node))
+    ) {
+      return;
+    }
+    popupOpen = false;
+  }
+
+  $effect(() => {
+    if (popupOpen && popupRef) {
+      document.addEventListener("pointerdown", handleClickOutside);
+    } else {
+      document.removeEventListener("pointerdown", handleClickOutside);
+    }
+  });
+
+  onDestroy(() => {
+    document.removeEventListener("pointerdown", handleClickOutside);
+  });
 
   const deleteComment = async () => {
-    // Implement the delete comment logic here
     console.log(`Delete comment with ID: ${commentId}`);
-
     const res = await supabase.from("comments").delete().eq("id", commentId);
-
     if (res.error) {
       console.error("Error deleting comment:", res.error);
       return;
     }
-
     console.log("Comment deleted successfully");
-    popupOpen = false; // Close the popup after deletion
+    popupOpen = false;
   };
 </script>
 
 <div class="comment-options">
   <button
+    bind:this={buttonRef}
     onclick={(e) => {
       popupOpen = !popupOpen;
     }}
@@ -31,7 +53,7 @@
   </button>
 
   {#if popupOpen}
-    <div class="popup">
+    <div class="popup" bind:this={popupRef}>
       <button onclick={deleteComment}>Delete</button>
     </div>
   {/if}

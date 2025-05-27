@@ -9,7 +9,7 @@
     ModerationStatus,
   } from "@/stores/AppStatus";
   import LoadSpinner from "@/lib/components/LoadSpinner.svelte";
-  import CommentsOptions from "@/lib/components/CommentsOptions.svelte";
+  import CommentsOptions from "@/lib/components/FilterOptions.svelte";
   import { writable } from "svelte/store";
   import { userId } from "@/lib/stores/sessionStore";
   import CommentOptions from "./CommentOptions.svelte";

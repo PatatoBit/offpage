@@ -22,7 +22,7 @@
   import { getBaseUrlAndPath } from "@/lib/utils";
 
   import Header from "@/lib/components/Header.svelte";
-  import FilterOptions from "@/lib/components/CommentsOptions.svelte";
+  import FilterOptions from "@/lib/components/FilterOptions.svelte";
   import CommentList from "./components/CommentList.svelte";
   import CommentForm from "./components/CommentForm.svelte";
   import PostingSpinner from "./components/PostingSpinner.svelte";
