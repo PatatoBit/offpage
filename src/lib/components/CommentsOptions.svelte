@@ -3,21 +3,42 @@
   import { fly } from "svelte/transition";
   import { extensionStatus } from "@/stores/AppStatus";
   import Crossbox from "./Crossbox.svelte";
+  import { onMount, onDestroy } from "svelte";
 
   let isOpen = $state(false);
   let status = $derived($extensionStatus);
+  let popupRef: HTMLDivElement | null = null;
+
+  function handleClickOutside(event: MouseEvent) {
+    if (popupRef && !popupRef.contains(event.target as Node)) {
+      isOpen = false;
+    }
+  }
+
+  $effect(() => {
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+  });
+
+  onDestroy(() => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  });
 </script>
 
 <div class="options-row">
   <div class="filter">
     <button class="clean" onclick={() => (isOpen = !isOpen)}>
-      <div class="l">filters</div>
+      <div>filters</div>
       <SlidersHorizontal class="lucide" size={16} />
     </button>
 
     {#if isOpen}
       <div
         class="filter-popup-content"
+        bind:this={popupRef}
         in:fly={{ y: -10, duration: 200 }}
         out:fly={{ y: -10, duration: 200 }}
       >
