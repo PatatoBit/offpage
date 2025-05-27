@@ -171,6 +171,8 @@
       gap: 3px;
       flex: 1 1 1;
       margin-top: 0.1;
+
+      text-align: left;
     }
 
     .comment-header {

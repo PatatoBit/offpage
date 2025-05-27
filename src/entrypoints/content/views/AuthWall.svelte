@@ -105,14 +105,15 @@
     align-items: center;
     text-align: center;
 
+    width: 100%;
     height: 100%;
     gap: 16px;
     background-color: var(--background);
   }
 
   .center {
-    max-width: 960px;
-    min-height: 100%;
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
