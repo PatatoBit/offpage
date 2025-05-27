@@ -3,28 +3,28 @@
   import { fly } from "svelte/transition";
   import { extensionStatus } from "@/stores/AppStatus";
   import Crossbox from "./Crossbox.svelte";
-  import { onMount, onDestroy } from "svelte";
+  import { onDestroy } from "svelte";
 
   let isOpen = $state(false);
   let status = $derived($extensionStatus);
   let popupRef: HTMLDivElement | null = null;
 
-  function handleClickOutside(event: MouseEvent) {
+  function handleClickOutside(event: PointerEvent) {
     if (popupRef && !popupRef.contains(event.target as Node)) {
       isOpen = false;
     }
   }
 
   $effect(() => {
-    if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
+    if (isOpen && popupRef) {
+      document.addEventListener("pointerdown", handleClickOutside);
     } else {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("pointerdown", handleClickOutside);
     }
   });
 
   onDestroy(() => {
-    document.removeEventListener("mousedown", handleClickOutside);
+    document.removeEventListener("pointerdown", handleClickOutside);
   });
 </script>
 
@@ -39,6 +39,7 @@
       <div
         class="filter-popup-content"
         bind:this={popupRef}
+        onpointerdown={(e) => e.stopPropagation()}
         in:fly={{ y: -10, duration: 200 }}
         out:fly={{ y: -10, duration: 200 }}
       >
