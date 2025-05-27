@@ -64,36 +64,38 @@
   }
 </script>
 
-{#if $isSignedIn}
-  <slot />
-{:else if loading}
-  <div class="center">
-    <LoadSpinner />
-  </div>
-{:else}
-  <div class="page">
-    {#if magicLinkSent}
-      <p>✅Magic link sent to {sentMail}</p>
-      <p>Check spam / junk folders too!</p>
-    {/if}
+<div class="page">
+  {#if $isSignedIn}
+    <slot />
+  {:else if loading}
+    <div class="center">
+      <LoadSpinner />
+    </div>
+  {:else}
+    <div class="center">
+      {#if magicLinkSent}
+        <p>✅Magic link sent to {sentMail}</p>
+        <p>Check spam / junk folders too!</p>
+      {/if}
 
-    <form
-      onsubmit={async (event) => {
-        event.preventDefault();
-        await signInWithMagicLink();
-      }}
-    >
-      <input required type="email" placeholder="Email" bind:value={email} />
-      <button class="primary" type="submit">Passwordless Sign-in</button>
-    </form>
+      <form
+        onsubmit={async (event) => {
+          event.preventDefault();
+          await signInWithMagicLink();
+        }}
+      >
+        <input required type="email" placeholder="Email" bind:value={email} />
+        <button class="primary" type="submit">Passwordless Sign-in</button>
+      </form>
 
-    <br />
+      <br />
 
-    <button class="tertiary" onclick={async () => await loginWithGoogle()}
-      >Sign in with Google</button
-    >
-  </div>
-{/if}
+      <button class="tertiary" onclick={async () => await loginWithGoogle()}
+        >Sign in with Google</button
+      >
+    </div>
+  {/if}
+</div>
 
 <style lang="scss">
   .page {
@@ -105,10 +107,16 @@
 
     height: 100%;
     gap: 16px;
+    background-color: var(--background);
   }
 
   .center {
     max-width: 960px;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 
   form {

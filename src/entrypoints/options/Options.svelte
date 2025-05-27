@@ -234,10 +234,13 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     min-height: 100vh;
     max-width: 320px;
     margin-inline: auto;
     gap: 64px;
+
+    background-color: var(--background);
   }
 
   section {
