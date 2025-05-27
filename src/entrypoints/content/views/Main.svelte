@@ -152,9 +152,11 @@
                   event: "DELETE",
                   schema: "public",
                   table: "comments",
-                  filter: `page_id=eq.${pageId}`,
                 },
                 (payload: RealtimePostgresChangesPayload<CommentData>) => {
+                  console.log("====================================");
+                  console.log("Received DELETE event for comment");
+                  console.log("====================================");
                   if (Object.keys(payload.old).length > 0) {
                     const deletedComment = payload.old as CommentData;
                     initialComments.update((prev) =>

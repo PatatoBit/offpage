@@ -11,6 +11,8 @@
   import LoadSpinner from "@/lib/components/LoadSpinner.svelte";
   import CommentsOptions from "@/lib/components/CommentsOptions.svelte";
   import { writable } from "svelte/store";
+  import { userId } from "@/lib/stores/sessionStore";
+  import CommentOptions from "./CommentOptions.svelte";
 
   const filter = new Filter();
 
@@ -81,6 +83,7 @@
                   {/if}
                 </p>
                 {#if !$revealed.has(comment.id)}
+                  <!-- svelte-ignore a11y_click_events_have_key_events -->
                   <div
                     class="blocked-text"
                     on:click={() => revealComment(comment.id)}
@@ -110,6 +113,12 @@
                   {/if}
                 {/if}
                 <img src={comment.image_url} alt={comment.content} />
+              </div>
+            {/if}
+
+            {#if comment.author === $userId}
+              <div class="comment-buttons">
+                <CommentOptions commentId={comment.id} />
               </div>
             {/if}
           </div>
@@ -282,5 +291,12 @@
       filter: brightness(1.2);
       outline: none;
     }
+  }
+
+  .comment-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    margin-top: 8px;
   }
 </style>
