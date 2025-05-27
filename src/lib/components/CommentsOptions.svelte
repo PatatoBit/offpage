@@ -7,7 +7,7 @@
 
   let isOpen = $state(false);
   let status = $derived($extensionStatus);
-  let popupRef: HTMLDivElement | null = null;
+  let popupRef = $state<HTMLDivElement | null>(null);
 
   function handleClickOutside(event: PointerEvent) {
     if (popupRef && !popupRef.contains(event.target as Node)) {
