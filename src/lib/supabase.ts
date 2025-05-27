@@ -29,8 +29,6 @@ interface UserProfileData {
 export async function fetchUserProfile(
   userId: string,
 ): Promise<UserProfileData | null> {
-  console.log("Fetching user profile");
-
   const { data, error } = await supabase
     .from("profiles")
     .select("username, avatar_url")

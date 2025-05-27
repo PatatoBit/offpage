@@ -47,7 +47,7 @@ Deno.serve(async (req): Promise<Response> => {
   }
   const { domain, route } = result;
 
-  // Fetch or create the page document
+  // Fetch the page document
   let { data: page, error: pageError } = await supabase
     .from("pages")
     .select("id")
@@ -55,26 +55,9 @@ Deno.serve(async (req): Promise<Response> => {
     .eq("route", route)
     .single();
 
-  if (pageError && pageError.code === "PGRST116") {
-    // If the page doesn't exist, create it
-    const { data: newPage, error: createPageError } = await supabase
-      .from("pages")
-      .insert([{ domain, route }])
-      .select()
-      .single();
-
-    if (createPageError) {
-      console.error(
-        `Failed to create page for URL: ${baseUrl}`,
-        createPageError.message,
-      );
-      return new Response("Internal Server Error", { status: 500 });
-    }
-
-    page = newPage;
-  } else if (pageError) {
+  if (pageError) {
     console.error(`Error fetching page for URL: ${baseUrl}`, pageError.message);
-    return new Response("Internal Server Error: failed to create page", {
+    return new Response("Internal Server Error: failed to fetch page", {
       status: 500,
     });
   }

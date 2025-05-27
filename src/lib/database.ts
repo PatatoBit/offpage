@@ -1,6 +1,6 @@
-import { ModerationStatus } from "../stores/AppStatus.ts";
-import { supabase } from "./supabase.ts";
-import { getBaseUrlAndPath } from "./utils.ts";
+import { ModerationStatus } from "../stores/AppStatus";
+import { supabase } from "./supabase";
+import { getBaseUrlAndPath } from "./utils";
 
 export interface CommentData {
   id: number;
@@ -31,17 +31,32 @@ export interface UserProfileData {
 }
 
 export async function findPageByRoute(domain: string, route: string) {
-  const { data: page, error } = await supabase
+  let { data: page, error } = await supabase
     .from("pages")
     .select("id")
     .eq("domain", domain)
     .eq("route", route)
-    .single(); // Use single() since there's only one match
-  if (error) {
-    console.error("Page not found:", error);
-    return;
+    .single();
+
+  if (error && error.code === "PGRST116") {
+    // If the page doesn't exist, create it
+    const { data: newPage, error: createPageError } = await supabase
+      .from("pages")
+      .insert([{ domain, route }])
+      .select()
+      .single();
+
+    if (createPageError) {
+      console.error("Failed to create page:", createPageError.message);
+      return null;
+    }
+    page = newPage;
+  } else if (error) {
+    console.error("Error fetching page:", error.message);
+    return null;
   }
 
+  if (!page) return null;
   return page.id;
 }
 
@@ -57,8 +72,6 @@ export async function addComment(
       baseUrl,
     },
   });
-
-  console.table(data);
 }
 
 export async function findCommentsDataByPageId(
