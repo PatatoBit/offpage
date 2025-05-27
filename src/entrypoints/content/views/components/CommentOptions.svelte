@@ -53,7 +53,11 @@
   </button>
 
   {#if popupOpen}
-    <div class="popup" bind:this={popupRef}>
+    <div
+      class="popup"
+      bind:this={popupRef}
+      onpointerdown={(e) => e.stopPropagation()}
+    >
       <button onclick={deleteComment}>Delete</button>
     </div>
   {/if}
