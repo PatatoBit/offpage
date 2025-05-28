@@ -1,16 +1,21 @@
 import { createClient } from "@supabase/supabase-js";
 import { isSignedIn } from "./stores/sessionStore";
 import { supabaseAnonKey, supabaseUrl } from "./utils";
+import "dotenv/config";
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.log(supabaseUrl, supabaseAnonKey);
+const supabaseUrlKey =
+  import.meta.env.VITE_SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+const supabaseAnonKey =
+  import.meta.env.VITE_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
 
-  throw new Error("Missing Supabase URL or Anon Key");
+if (!supabaseAnonKey || !supabaseUrl) {
+  if (!supabaseUrlKey || !supabaseAnonKey) {
+    throw new Error("Missing Supabase URL or Anon Key");
+  }
 }
+export const supabase = createClient(supabaseUrlKey, supabaseAnonKey);
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
-export async function signOut() {
+export function signOut() {
   chrome.runtime.sendMessage({ type: "logout" }, (response) => {
     if (response.success) {
       console.log("Logged out successfully");
