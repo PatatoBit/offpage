@@ -9,11 +9,7 @@ const supabaseAnonKey =
   import.meta.env.VITE_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
 
 if (!supabaseAnonKey || !supabaseUrlKey) {
-  if (!supabaseUrlKey || !supabaseAnonKey) {
-    throw new Error(
-      `Missing Supabase URL or Anon Key ${supabaseUrlKey} ${supabaseAnonKey}`,
-    );
-  }
+  throw new Error(`Missing Supabase URL or Anon Key`);
 }
 export const supabase = createClient(supabaseUrlKey, supabaseAnonKey);
 
