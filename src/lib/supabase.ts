@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { isSignedIn } from "./stores/sessionStore";
-import { supabaseAnonKey, supabaseUrl } from "./utils";
 import "dotenv/config";
+import process from "node:process";
 
 const supabaseUrlKey =
   import.meta.env.VITE_SUPABASE_URL || process.env.VITE_SUPABASE_URL;
