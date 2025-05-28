@@ -1,6 +1,6 @@
 .env
 .env.submit
-.env.submit*
+.env.submit.backup*
 
 # Logs
 logs
