@@ -41,15 +41,6 @@
     user-select: none;
     transition: all 0.2s ease-in-out;
 
-    .checked {
-      background-color: #4caf50;
-      border-radius: 6px;
-    }
-
-    .unchecked {
-      background-color: transparent;
-    }
-
     &:active {
       scale: 0.9;
     }

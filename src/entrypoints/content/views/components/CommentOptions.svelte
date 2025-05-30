@@ -85,13 +85,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-
-    .lucide {
-      &:hover,
-      &:active {
-        color: var(--text);
-      }
-    }
   }
 
   .popup {

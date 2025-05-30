@@ -23,10 +23,10 @@
 </div>
 
 <style lang="scss">
-  @use "../styles/shadow-reset.scss";
   @use "../styles/global.scss";
-  @use "../styles/variables.scss";
   @use "../styles/fonts.scss";
+  @use "../styles/variables.scss";
+  @use "../styles/shadow-reset.scss";
 
   .toggle-button {
     position: absolute;

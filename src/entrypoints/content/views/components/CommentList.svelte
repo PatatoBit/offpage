@@ -225,18 +225,6 @@
       object-fit: contain;
       object-position: left;
     }
-
-    .blocker {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: var(--background);
-      border: 1px solid var(--highlight);
-      opacity: 0.5;
-      border-radius: 8px;
-    }
   }
 
   .center {
@@ -244,18 +232,6 @@
     justify-content: center;
     align-items: center;
     height: 100%;
-  }
-
-  .block-box {
-    background: var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    font-size: 0.95rem;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-    transition: background 0.2s;
   }
 
   .blocked-wrapper {
