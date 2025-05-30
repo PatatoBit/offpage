@@ -1,6 +1,7 @@
 import { defineConfig } from "wxt";
 import wasm from "vite-plugin-wasm";
 import topLevelAwait from "vite-plugin-top-level-await";
+import path from "path";
 
 // See https://wxt.dev/api/config.html
 export default defineConfig({
@@ -24,6 +25,19 @@ export default defineConfig({
   }),
   vite: () => ({
     plugins: [wasm(), topLevelAwait()],
+
+    resolve: {
+      alias: {
+        $lib: path.resolve("./src/lib"),
+      },
+    },
+    css: {
+      preprocessorOptions: {
+        scss: {
+          api: "modern-compiler",
+        },
+      },
+    },
   }),
 
   runner: {
