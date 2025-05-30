@@ -27,10 +27,18 @@ export default defineBackground(() => {
     const tabs = await chrome.tabs.query({});
     for (const tab of tabs) {
       if (tab.id) {
-        chrome.tabs.sendMessage(tab.id, {
-          type: "TOGGLE_STATUS",
-          open: newOpenState,
-        });
+        chrome.tabs.sendMessage(
+          tab.id,
+          {
+            type: "TOGGLE_STATUS",
+            open: newOpenState,
+          },
+          (response) => {
+            if (chrome.runtime.lastError) {
+              console.warn("Could not send message:", chrome.runtime.lastError);
+            }
+          },
+        );
       }
     }
   };
@@ -113,7 +121,18 @@ export default defineBackground(() => {
             for (const tab of tabs) {
               if (tab.id) {
                 console.log(`Sending logout message to tab ${tab.id}`);
-                chrome.tabs.sendMessage(tab.id, { action: "logout" });
+                chrome.tabs.sendMessage(
+                  tab.id,
+                  { action: "logout" },
+                  (response) => {
+                    if (chrome.runtime.lastError) {
+                      console.warn(
+                        "Could not send message:",
+                        chrome.runtime.lastError,
+                      );
+                    }
+                  },
+                );
               }
             }
 
@@ -203,7 +222,11 @@ async function finishUserOAuth(url: string) {
     const tabs = await chrome.tabs.query({});
     for (const tab of tabs) {
       if (tab.id) {
-        chrome.tabs.sendMessage(tab.id, { action: "login" });
+        chrome.tabs.sendMessage(tab.id, { action: "login" }, (response) => {
+          if (chrome.runtime.lastError) {
+            console.warn("Could not send message:", chrome.runtime.lastError);
+          }
+        });
       }
     }
   } catch (error) {
