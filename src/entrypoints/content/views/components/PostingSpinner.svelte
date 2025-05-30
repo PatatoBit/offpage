@@ -22,7 +22,7 @@
     gap: 3px;
     z-index: 1000;
     background-color: var(--background);
-    border: 1px solid var(--highlight);
+    border: 1px solid var(--border);
     border-radius: 32px;
     padding-right: 16px;
 

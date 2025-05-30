@@ -8,6 +8,8 @@
   import { userId } from "@/lib/stores/sessionStore";
   import { convertImageToBase64, isValidImage } from "@/lib/utils";
   import { supabase } from "@/lib/supabase";
+  import PostingSpinner from "./PostingSpinner.svelte";
+  import { fly } from "svelte/transition";
 
   export let onSubmit: (
     comment: string,
@@ -86,6 +88,12 @@
   on:dragover|preventDefault
   on:drop={handleFileDrop}
 >
+  {#if isPosting}
+    <div class="spinner-container" transition:fly={{ y: -50 }}>
+      <PostingSpinner />
+    </div>
+  {/if}
+
   <div class="input-area">
     {#if currentFileUrl}
       <div class="dropped-file-area">
@@ -159,6 +167,7 @@
     }
   }
   .file-area {
+    position: relative;
     display: flex;
     flex-direction: column;
     pointer-events: none;
@@ -179,6 +188,15 @@
         height: 30px;
       }
     }
+  }
+
+  .spinner-container {
+    position: absolute;
+    top: -50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    pointer-events: none;
   }
 
   .input-area {

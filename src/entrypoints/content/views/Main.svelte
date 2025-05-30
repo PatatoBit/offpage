@@ -227,9 +227,6 @@
     currentPageId={$currentPageId as string}
   />
 
-  {#if $postingComment}
-    <PostingSpinner />
-  {/if}
   <CommentList />
   <CommentForm onSubmit={handleCommentSubmit} isPosting={$postingComment} />
 </main>
