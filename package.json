@@ -15,6 +15,9 @@
     "firefox-extension",
     "extension"
   ],
+  "engines": {
+    "pnpm": "10"
+  },
   "scripts": {
     "dev": "wxt",
     "dev:firefox": "wxt -b firefox",
@@ -22,6 +25,7 @@
     "build:firefox": "wxt build -b firefox",
     "zip": "wxt zip",
     "zip:firefox": "wxt zip -b firefox",
+    "postinstall": "wxt prepare",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "clean": "git clean -fXd"
   },
@@ -54,7 +58,7 @@
     "vite": "^5.4.5",
     "vite-plugin-top-level-await": "^1.4.4",
     "vite-plugin-wasm": "^3.3.0",
-    "wxt": "^0.19.3"
+    "wxt": "^0.19.9"
   },
   "overrides": {
     "@sveltejs/vite-plugin-svelte": "^4.0.0-next"
