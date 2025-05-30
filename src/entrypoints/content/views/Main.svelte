@@ -1,16 +1,14 @@
 <script lang="ts">
   import { onMount, onDestroy } from "svelte";
-  import {
-    RealtimeChannel,
-    RealtimePostgresChangesPayload,
-  } from "@supabase/supabase-js";
+  import { RealtimeChannel } from "@supabase/supabase-js";
+  import type { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 
   import {
     addComment,
     findCommentsDataByPageId,
     findPageByRoute,
-    CommentData,
   } from "@/lib/database";
+  import type { CommentData } from "@/lib/database";
   import {
     currentPageId,
     currentUrl,

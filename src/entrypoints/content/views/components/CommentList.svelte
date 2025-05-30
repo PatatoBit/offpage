@@ -6,8 +6,8 @@
     initialComments,
     isEmpty,
     extensionStatus,
-    ModerationStatus,
   } from "@/stores/AppStatus";
+  import type { ModerationStatus } from "@/stores/AppStatus";
   import LoadSpinner from "@/lib/components/LoadSpinner.svelte";
   import CommentsOptions from "@/lib/components/FilterOptions.svelte";
   import { writable } from "svelte/store";

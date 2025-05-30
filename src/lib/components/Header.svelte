@@ -1,14 +1,9 @@
 <script lang="ts">
-  import {
-    RealtimeChannel,
-    RealtimePostgresChangesPayload,
-  } from "@supabase/supabase-js";
-  import {
-    getLikeDislikeCount,
-    PageVoteData,
-    getUserVote,
-    votePage,
-  } from "../database";
+  import { RealtimeChannel } from "@supabase/supabase-js";
+  import type { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
+  import { getLikeDislikeCount, getUserVote, votePage } from "../database";
+  import type { PageVoteData } from "../database";
+
   import { userId } from "../stores/sessionStore";
   import { supabase } from "../supabase";
   import { getIcon } from "../utils";
