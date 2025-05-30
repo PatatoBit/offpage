@@ -13,6 +13,7 @@
   import { writable } from "svelte/store";
   import { userId } from "@/lib/stores/sessionStore";
   import CommentOptions from "./CommentOptions.svelte";
+  import { onMount } from "svelte";
 
   const filter = new Filter();
 
@@ -38,6 +39,23 @@
       set.add(id);
       return set;
     });
+  }
+
+  // Modal state
+  const showScoresModal = writable(false);
+  let modalScores: Record<string, number> | null = null;
+  let modalTitle = "";
+
+  function openScoresModal(scores: Record<string, number>, title: string) {
+    modalScores = scores;
+    modalTitle = title;
+    showScoresModal.set(true);
+  }
+
+  function closeScoresModal() {
+    showScoresModal.set(false);
+    modalScores = null;
+    modalTitle = "";
   }
 </script>
 
@@ -104,10 +122,25 @@
                 {#if ($extensionStatus.blockFlagged && comment.moderation_status == "flagged") || ($extensionStatus.blockFlagged && !passThreshold(comment.moderation_scores as ModerationStatus))}
                   {#if !$revealed.has(comment.id)}
                     <div class="blur">
+                      <h4>Post hidden</h4>
+                      <p>
+                        This post is hidden because it's flagged / exceeded
+                        threshold.
+                      </p>
+
+                      <br />
+
                       {#if comment.moderation_scores}
-                        {#each Object.entries(comment.moderation_scores) as [key, value]}
-                          <p>{key}: {Math.round(value * 100)}%</p>
-                        {/each}
+                        <button
+                          class="secondary"
+                          on:click={() =>
+                            openScoresModal(
+                              comment.moderation_scores!,
+                              comment.content,
+                            )}
+                        >
+                          see why
+                        </button>
                       {/if}
                     </div>
                   {/if}
@@ -129,6 +162,25 @@
 {:else}
   <div class="center">
     <LoadSpinner />
+  </div>
+{/if}
+
+{#if $showScoresModal && modalScores}
+  <!-- svelte-ignore a11y_click_events_have_key_events -->
+  <!-- svelte-ignore a11y_no_static_element_interactions -->
+  <div class="modal-backdrop" on:click={closeScoresModal}>
+    <div class="modal" on:click|stopPropagation>
+      <h3>Moderation Scores</h3>
+      <ul>
+        {#each Object.entries(modalScores) as [key, value]}
+          <li>{key}: {Math.round(value * 100)}%</li>
+        {/each}
+      </ul>
+
+      <br />
+
+      <button on:click={closeScoresModal}>Close</button>
+    </div>
   </div>
 {/if}
 
@@ -202,6 +254,7 @@
     }
 
     .blur {
+      box-sizing: border-box;
       position: absolute;
       width: 100%;
       height: 100%;
@@ -215,8 +268,14 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
+      gap: 8px;
+      padding: 8px;
 
-      text-transform: capitalize;
+      h4,
+      p {
+        color: var(--background);
+        text-align: center;
+      }
     }
 
     img {
@@ -274,5 +333,31 @@
     flex-direction: row;
     gap: 8px;
     margin-top: 8px;
+  }
+
+  .modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal {
+    background: #fff;
+    padding: 32px;
+    border-radius: 8px;
+    min-width: 300px;
+    max-width: 90vw;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.2);
+
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-align: left;
   }
 </style>
