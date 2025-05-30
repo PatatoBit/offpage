@@ -30,6 +30,13 @@ export default defineConfig({
         $lib: path.resolve("./src/lib"),
       },
     },
+    css: {
+      preprocessorOptions: {
+        scss: {
+          api: "modern-compiler",
+        },
+      },
+    },
   }),
 
   runner: {
