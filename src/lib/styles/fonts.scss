@@ -10,6 +10,16 @@
 
 @font-face {
   font-family: "Open Runde";
+  font-style: medium;
+  font-weight: 500;
+  src:
+    local(""),
+    url("/fonts/OpenRunde/OpenRunde-Medium.woff2") format("woff2"),
+    url("/fonts/OpenRunde/OpenRunde-Medium.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Open Runde";
   font-style: bold;
   font-weight: 700;
   src:

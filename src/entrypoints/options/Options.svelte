@@ -13,6 +13,7 @@
   import "../../lib/styles/global.scss";
   import "../../lib/styles/variables.scss";
   import AuthWall from "../content/views/AuthWall.svelte";
+  import KofiSupport from "../content/views/components/KofiSupport.svelte";
   import { Pen } from "@lucide/svelte";
   import { extensionStatus } from "@/stores/AppStatus";
 
@@ -114,115 +115,121 @@
 
 <main class="page">
   <AuthWall>
-    {#if userData.username}
-      <form
-        on:submit={async () => await handleProfileSave()}
-        on:submit|preventDefault
-      >
-        <label class="avatar-label">
-          <div class="avatar-wrapper {previewProfilePicture ? 'unsaved' : ''}">
-            <img
-              src={previewProfilePicture
-                ? previewProfilePicture
-                : userData.avatar_url}
-              alt="User avatar"
-              class="avatar-img"
-            />
-            <div class="avatar-overlay">
-              <Pen color="var(--background)" />
-            </div>
-          </div>
-          <input
-            type="file"
-            accept="image/png, image/jpeg"
-            on:change={handleFileChange}
-            style="display: none;"
-          />
-        </label>
-
-        <div class="input">
-          <p class="label">Name</p>
-
-          <span>
-            <input
-              type="text"
-              bind:value={changedUserData.username}
-              placeholder="Name"
-              required
-            />
-            <button type="submit" class="primary">Save</button>
-          </span>
-        </div>
-
-        {#if profileSaveSuccess}
-          <p transition:fade>✅Profile Saved</p>
-        {/if}
-
-        <button class="signout" on:click={async () => await signOut()}
-          >Sign out</button
+    <div class="wrapper">
+      {#if userData.username}
+        <form
+          on:submit={async () => await handleProfileSave()}
+          on:submit|preventDefault
         >
-      </form>
-
-      <section>
-        <h4>Filter threshold</h4>
-
-        {#each Object.entries($extensionStatus.filterThreshold) as [key, value]}
-          <div class="input">
-            <p class="label">
-              {key
-                .replace(/([A-Z])/g, " $1")
-                .replace(/^./, (m) => m.toUpperCase())}
-            </p>
-            <span>
-              <div class="slider-wrapper">
-                <div
-                  class="slider-progress"
-                  style="width: {$extensionStatus.filterThreshold[
-                    key as keyof typeof $extensionStatus.filterThreshold
-                  ] * 100}%"
-                ></div>
-
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.01"
-                  bind:value={
-                    $extensionStatus.filterThreshold[
-                      key as keyof typeof $extensionStatus.filterThreshold
-                    ]
-                  }
-                  required
-                  class="custom-range"
-                />
+          <label class="avatar-label">
+            <div
+              class="avatar-wrapper {previewProfilePicture ? 'unsaved' : ''}"
+            >
+              <img
+                src={previewProfilePicture
+                  ? previewProfilePicture
+                  : userData.avatar_url}
+                alt="User avatar"
+                class="avatar-img"
+              />
+              <div class="avatar-overlay">
+                <Pen color="var(--background)" />
               </div>
-              <p>
-                {Math.round(
-                  $extensionStatus.filterThreshold[
-                    key as keyof typeof $extensionStatus.filterThreshold
-                  ] * 100,
-                )}%
-              </p>
+            </div>
+            <input
+              type="file"
+              accept="image/png, image/jpeg"
+              on:change={handleFileChange}
+              style="display: none;"
+            />
+          </label>
+
+          <div class="input">
+            <p class="label">Name</p>
+
+            <span>
+              <input
+                type="text"
+                bind:value={changedUserData.username}
+                placeholder="Name"
+                required
+              />
+              <button type="submit" class="primary">Save</button>
             </span>
           </div>
-        {/each}
-      </section>
 
-      <!-- Links -->
-      <section>
-        <h4>About Offpage</h4>
+          {#if profileSaveSuccess}
+            <p transition:fade>✅Profile Saved</p>
+          {/if}
 
-        <a href="https://offpage.featurebase.app/" target="_blank">
-          Feedback
-        </a>
+          <button class="signout" on:click={async () => await signOut()}
+            >Sign out</button
+          >
+        </form>
 
-        <a href="https://discord.gg/nrsug3t6ag" target="_blank"
-          >Discord server</a
-        >
+        <section>
+          <h4>Filter threshold</h4>
 
-        <a href="https://offpage.patato.me" target="_blank">More about us</a>
-      </section>
-    {/if}
+          {#each Object.entries($extensionStatus.filterThreshold) as [key, value]}
+            <div class="input">
+              <p class="label">
+                {key
+                  .replace(/([A-Z])/g, " $1")
+                  .replace(/^./, (m) => m.toUpperCase())}
+              </p>
+              <span>
+                <div class="slider-wrapper">
+                  <div
+                    class="slider-progress"
+                    style="width: {$extensionStatus.filterThreshold[
+                      key as keyof typeof $extensionStatus.filterThreshold
+                    ] * 100}%"
+                  ></div>
+
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    bind:value={
+                      $extensionStatus.filterThreshold[
+                        key as keyof typeof $extensionStatus.filterThreshold
+                      ]
+                    }
+                    required
+                    class="custom-range"
+                  />
+                </div>
+                <p>
+                  {Math.round(
+                    $extensionStatus.filterThreshold[
+                      key as keyof typeof $extensionStatus.filterThreshold
+                    ] * 100,
+                  )}%
+                </p>
+              </span>
+            </div>
+          {/each}
+        </section>
+
+        <!-- Links -->
+        <section>
+          <h4>More about us</h4>
+
+          <KofiSupport />
+
+          <a href="https://offpage.featurebase.app/" target="_blank">
+            Feedback
+          </a>
+
+          <a href="https://discord.gg/nrsug3t6ag" target="_blank"
+            >Discord server</a
+          >
+
+          <a href="https://offpage.patato.me" target="_blank">More about us</a>
+        </section>
+      {/if}
+    </div>
   </AuthWall>
 </main>
 
@@ -234,13 +241,18 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     min-height: 100vh;
     max-width: 320px;
     margin-inline: auto;
-    gap: 64px;
 
     background-color: var(--background);
+  }
+
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+    padding-bottom: 32px;
   }
 
   section {
