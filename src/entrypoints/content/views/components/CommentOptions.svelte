@@ -63,7 +63,7 @@
         duration: 200,
       }}
     >
-      <button onclick={deleteComment}>Delete</button>
+      <button onclick={deleteComment}><p class="label">Delete</p></button>
     </div>
   {/if}
 </div>
