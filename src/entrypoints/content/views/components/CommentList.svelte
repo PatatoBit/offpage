@@ -124,8 +124,8 @@
                     <div class="blur">
                       <h4>Post hidden</h4>
                       <p>
-                        This post is hidden because it's flagged / exceeded
-                        threshold.
+                        This post is hidden because it's flagged or has exceeded
+                        threshold(s).
                       </p>
 
                       <br />
