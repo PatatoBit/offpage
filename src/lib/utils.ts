@@ -1,6 +1,10 @@
 export const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 export const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
+export function handleOpenOptions() {
+  chrome.runtime.sendMessage({ type: "OPEN_OPTIONS_PAGE" });
+}
+
 export function getBaseUrlAndPath(
   url: string,
 ): { baseUrl: string; domain: string; route: string } | null {

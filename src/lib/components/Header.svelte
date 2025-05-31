@@ -6,7 +6,7 @@
 
   import { userId } from "../stores/sessionStore";
   import { supabase } from "../supabase";
-  import { getIcon } from "../utils";
+  import { getIcon, handleOpenOptions } from "../utils";
   import { Settings, ThumbsUp, ThumbsDown } from "@lucide/svelte";
 
   export let currentUrl: string | undefined;
@@ -28,9 +28,6 @@
   let ThumbButtonState: "like" | "dislike" | "neutral" = "neutral";
 
   const formatter = new Intl.NumberFormat("en", { notation: "compact" });
-  function handleOpenOptions() {
-    chrome.runtime.sendMessage({ type: "OPEN_OPTIONS_PAGE" });
-  }
 
   let hasSubscribed: boolean = false;
   let voteDisabled: boolean = false;

@@ -1,9 +1,10 @@
 <script lang="ts">
-  import { SlidersHorizontal } from "@lucide/svelte";
+  import { Info, SlidersHorizontal } from "@lucide/svelte";
   import { fly } from "svelte/transition";
   import { extensionStatus } from "@/stores/AppStatus";
   import Crossbox from "./Crossbox.svelte";
   import { onDestroy } from "svelte";
+  import { handleOpenOptions } from "../utils";
 
   let isOpen = $state(false);
   let status = $derived($extensionStatus);
@@ -106,6 +107,17 @@
             />
             <p class="label">Flagged comments</p>
           </label>
+
+          <div class="info">
+            <Info class="lucide" color="var(--border)" size={32} />
+            <p>
+              you can adjust filter thresholds in the
+              <!-- svelte-ignore a11y_no_static_element_interactions -->
+              <!-- svelte-ignore a11y_click_events_have_key_events -->
+              <span class="underline" onclick={handleOpenOptions}>settings</span
+              >
+            </p>
+          </div>
         </div>
       </div>
     {/if}
@@ -191,6 +203,22 @@
           border-radius: 4px;
         }
       }
+    }
+  }
+
+  .info {
+    .underline {
+      cursor: pointer;
+    }
+
+    * {
+      color: var(--border);
+    }
+
+    p {
+      font-size: 14px;
+      margin: 0;
+      padding: 0;
     }
   }
 </style>
