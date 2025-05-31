@@ -2,6 +2,7 @@
   import { initializeSession, isSignedIn } from "@/lib/stores/sessionStore";
   import { supabase } from "@/lib/supabase";
   import LoadSpinner from "@/lib/components/LoadSpinner.svelte";
+  let { children } = $props();
 
   let loading: boolean = $state(true);
 
@@ -66,7 +67,7 @@
 
 <div class="page">
   {#if $isSignedIn}
-    <slot />
+    {@render children()}
   {:else if loading}
     <div class="center">
       <LoadSpinner />
