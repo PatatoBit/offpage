@@ -105,6 +105,8 @@
     align-items: center;
     text-align: center;
 
+    margin-block: auto;
+
     width: 100%;
     height: 100%;
     gap: 16px;
