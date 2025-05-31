@@ -55,8 +55,10 @@
         class="filter-popup-content"
         bind:this={popupRef}
         onpointerdown={(e) => e.stopPropagation()}
-        in:fly={{ y: -10, duration: 200 }}
-        out:fly={{ y: -10, duration: 200 }}
+        transition:fly={{
+          y: -10,
+          duration: 200,
+        }}
       >
         <h3>Filter comments with...</h3>
 
@@ -162,9 +164,10 @@
       width: 200px;
       top: 100%;
       right: 0;
-      border: 1px solid var(--highlight);
+
+      background: var(--background);
+      border: 1px solid var(--border);
       border-radius: 8px;
-      background-color: var(--background);
 
       padding: 16px;
       margin-top: 8px;

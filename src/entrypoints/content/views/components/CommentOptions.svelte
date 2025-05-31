@@ -2,6 +2,7 @@
   import { supabase } from "@/lib/supabase";
   import { Ellipsis } from "@lucide/svelte";
   import { onDestroy } from "svelte";
+  import { fly } from "svelte/transition";
   const { commentId } = $props<{ commentId: string | number }>();
 
   let popupOpen = $state(false);
@@ -57,6 +58,10 @@
       class="popup"
       bind:this={popupRef}
       onpointerdown={(e) => e.stopPropagation()}
+      transition:fly={{
+        y: -10,
+        duration: 200,
+      }}
     >
       <button onclick={deleteComment}>Delete</button>
     </div>
@@ -91,6 +96,7 @@
     position: absolute;
     top: 100%;
     left: 0;
+
     background: var(--background);
     border: 1px solid var(--border);
     border-radius: 8px;
