@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { fade } from "svelte/transition";
+  import { fade, scale } from "svelte/transition";
   import moment from "moment";
   import { Filter } from "bad-words";
   import {
@@ -168,8 +168,16 @@
 {#if $showScoresModal && modalScores}
   <!-- svelte-ignore a11y_click_events_have_key_events -->
   <!-- svelte-ignore a11y_no_static_element_interactions -->
-  <div class="modal-backdrop" on:click={closeScoresModal}>
-    <div class="modal" on:click|stopPropagation>
+  <div
+    class="modal-backdrop"
+    on:click={closeScoresModal}
+    transition:fade={{ duration: 100 }}
+  >
+    <div
+      class="modal"
+      on:click|stopPropagation
+      transition:scale={{ duration: 100 }}
+    >
       <h3>Moderation Scores</h3>
       <ul>
         {#each Object.entries(modalScores) as [key, value]}
