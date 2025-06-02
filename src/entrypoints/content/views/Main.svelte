@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy } from "svelte";
+  import { writable } from "svelte/store";
   import { RealtimeChannel } from "@supabase/supabase-js";
   import type { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 
@@ -9,6 +10,13 @@
     findPageByRoute,
   } from "@/lib/database";
   import type { CommentData } from "@/lib/database";
+  import { fetchUserProfile, supabase } from "@/lib/supabase";
+  import { getBaseUrlAndPath } from "@/lib/utils";
+
+  import Header from "@/lib/components/Header.svelte";
+  import CommentList from "./components/CommentList.svelte";
+  import CommentForm from "./components/CommentForm.svelte";
+
   import {
     currentPageId,
     currentUrl,
@@ -16,15 +24,6 @@
     initialComments,
     isEmpty,
   } from "@/stores/AppStatus";
-  import { fetchUserProfile, supabase } from "@/lib/supabase";
-  import { getBaseUrlAndPath } from "@/lib/utils";
-
-  import Header from "@/lib/components/Header.svelte";
-  import FilterOptions from "@/lib/components/FilterOptions.svelte";
-  import CommentList from "./components/CommentList.svelte";
-  import CommentForm from "./components/CommentForm.svelte";
-  import PostingSpinner from "./components/PostingSpinner.svelte";
-  import { writable } from "svelte/store";
 
   let channel: RealtimeChannel;
   const postingComment = writable<boolean>(false);
@@ -34,8 +33,15 @@
       { type: "GET_CURRENT_URL" },
       async (response) => {
         if (response?.url) {
-          $currentUrl = response.url;
-          $currentUrlSplit = getBaseUrlAndPath(response.url);
+          // Set current URL and split it into baseUrl, domain, and route
+          currentUrl.set(response.url);
+          currentUrlSplit.set(
+            getBaseUrlAndPath(response.url) || {
+              baseUrl: "",
+              domain: "",
+              route: "",
+            },
+          );
 
           if (!$currentUrlSplit) {
             isEmpty.set(true);
