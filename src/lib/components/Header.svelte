@@ -113,6 +113,24 @@
     subscribeToVotes(currentPageId);
     lastSubscribedPageId = currentPageId;
   }
+
+  // Refetch votes and user vote when currentPageId or currentUrlSplit changes
+  $: if (currentPageId && currentUrlSplit) {
+    (async () => {
+      // Refetch vote counts
+      const upvotes = await getLikeDislikeCount(currentPageId);
+      if (upvotes) {
+        currentPageVotes = upvotes;
+      }
+      // Refetch user vote
+      if ($userId) {
+        const userVote = await getUserVote(currentPageId, $userId);
+        if (userVote === 1) ThumbButtonState = "like";
+        else if (userVote === -1) ThumbButtonState = "dislike";
+        else ThumbButtonState = "neutral";
+      }
+    })();
+  }
 </script>
 
 <div class="header">
