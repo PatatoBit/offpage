@@ -5,6 +5,7 @@
   import { getLikeDislikeCount, getUserVote, votePage } from "../database";
   import type { PageVoteData } from "../database";
 
+  import { extensionStatus } from "@/stores/AppStatus";
   import { userId } from "../stores/sessionStore";
   import { supabase } from "../supabase";
   import { getIcon, handleOpenOptions } from "../utils";
@@ -240,7 +241,12 @@
     </div>
 
     <div class="tags-toggle">
-      <Tickbox checked={true} onChange={() => {}} onClick={() => {}} />
+      <Tickbox
+        checked={$extensionStatus.useTags}
+        onChange={() => {}}
+        onClick={() =>
+          extensionStatus.update((s) => ({ ...s, useTags: !s.useTags }))}
+      />
       <p class="label">Use URL tags</p>
     </div>
   </div>

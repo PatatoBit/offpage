@@ -17,6 +17,7 @@ interface AppStatus {
   open: boolean;
   filterBadWords: boolean;
   blockFlagged: boolean;
+  useTags: boolean;
   filterType: "show" | "blur" | "hide";
   filterThreshold: FilterThreshold;
 }
@@ -52,6 +53,7 @@ const defaultExtensionStatus: AppStatus = {
   open: false,
   filterBadWords: true,
   blockFlagged: true,
+  useTags: false,
   filterType: "blur",
   filterThreshold: {
     harassment: 0.5,
