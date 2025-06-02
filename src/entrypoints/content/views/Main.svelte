@@ -45,6 +45,12 @@
 
   onMount(() => {
     initialize();
+
+    window.addEventListener("message", (event) => {
+      if (event.data?.type === "OFFPAGE_URL_CHANGED") {
+        currentUrl.set(event.data.url);
+      }
+    });
   });
 
   onDestroy(() => {

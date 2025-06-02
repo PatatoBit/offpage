@@ -51,5 +51,38 @@ export default defineContentScript({
         }
       }
     });
+
+    // --- URL change detection ---
+    function notifyUrlChange(url: string) {
+      window.postMessage({ type: "OFFPAGE_URL_CHANGED", url }, "*");
+    }
+
+    let lastUrl = window.location.href;
+    notifyUrlChange(lastUrl);
+
+    // Observe DOM mutations (for some SPA navigations)
+    const observer = new MutationObserver(() => {
+      const url = window.location.href;
+      if (url !== lastUrl) {
+        lastUrl = url;
+        notifyUrlChange(url);
+      }
+    });
+    observer.observe(document, { subtree: true, childList: true });
+
+    // Patch history API (for pushState/replaceState)
+    const origPushState = history.pushState;
+    history.pushState = function (...args) {
+      origPushState.apply(this, args);
+      notifyUrlChange(window.location.href);
+    };
+    const origReplaceState = history.replaceState;
+    history.replaceState = function (...args) {
+      origReplaceState.apply(this, args);
+      notifyUrlChange(window.location.href);
+    };
+    window.addEventListener("popstate", () =>
+      notifyUrlChange(window.location.href),
+    );
   },
 });

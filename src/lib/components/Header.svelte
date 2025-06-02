@@ -1,13 +1,8 @@
 <script lang="ts">
   import Tickbox from "./Tickbox.svelte";
-  import { RealtimeChannel } from "@supabase/supabase-js";
-  import type { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
   import { getLikeDislikeCount, getUserVote, votePage } from "../database";
-  import type { PageVoteData } from "../database";
-
   import { extensionStatus } from "@/stores/AppStatus";
   import { userId } from "../stores/sessionStore";
-  import { supabase } from "../supabase";
   import { getIcon, handleOpenOptions } from "../utils";
   import { Settings, ThumbsUp, ThumbsDown } from "@lucide/svelte";
 
@@ -25,102 +20,22 @@
     dislikes: 0,
   };
 
-  let channel: RealtimeChannel;
-
   let ThumbButtonState: "like" | "dislike" | "neutral" = "neutral";
 
   const formatter = new Intl.NumberFormat("en", { notation: "compact" });
 
-  let hasSubscribed: boolean = false;
   let voteDisabled: boolean = false;
 
-  // reusable subscription function
-  async function subscribeToVotes(pageId: string) {
-    console.log("Subscribing to votes for pageId:", pageId);
-
-    if (channel) {
-      await channel.unsubscribe();
-    }
-
-    channel = supabase
-      .channel(`votes_updates_${pageId}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "page_votes",
-          filter: `page_id=eq.${pageId}`,
-        },
-        async (payload: RealtimePostgresChangesPayload<PageVoteData>) => {
-          console.log("Votes table changed:", payload);
-          const newVote = (payload.new as Partial<PageVoteData>)?.vote ?? 0;
-
-          if (payload.eventType === "INSERT") {
-            if (newVote === 1) currentPageVotes.likes += 1;
-            if (newVote === -1) currentPageVotes.dislikes += 1;
-          } else if (payload.eventType === "UPDATE") {
-            if (newVote === 1) {
-              currentPageVotes.likes += 1;
-              currentPageVotes.dislikes -= 1;
-            } else if (newVote === -1) {
-              currentPageVotes.likes -= 1;
-              currentPageVotes.dislikes += 1;
-            }
-          } else if (payload.eventType === "DELETE") {
-            const upvotes = await getLikeDislikeCount(pageId);
-            if (upvotes) {
-              currentPageVotes = upvotes;
-            }
-          }
-        },
-      )
-      .subscribe();
-  }
-
-  onMount(async () => {
-    const checkUserVote = setInterval(async () => {
-      if (currentPageId && $userId) {
-        clearInterval(checkUserVote);
-        const userVote = await getUserVote(currentPageId, $userId);
-        if (userVote === 1) ThumbButtonState = "like";
-        else if (userVote === -1) ThumbButtonState = "dislike";
-        else ThumbButtonState = "neutral";
-      }
-    }, 100);
-
-    const checkVotes = setInterval(async () => {
-      if (currentPageId && currentUrlSplit) {
-        clearInterval(checkVotes);
-        const upvotes = await getLikeDislikeCount(currentPageId);
-        if (upvotes) {
-          currentPageVotes = upvotes;
-        }
-      }
-    }, 100);
-  });
-
-  onDestroy(() => {
-    // Unsubscribe from the channel
-    if (channel) {
-      channel.unsubscribe();
-    }
-  });
-
-  let lastSubscribedPageId: string | null = null;
-
-  $: if (currentPageId && currentPageId !== lastSubscribedPageId) {
-    subscribeToVotes(currentPageId);
-    lastSubscribedPageId = currentPageId;
-  }
-
-  // Refetch votes and user vote when currentPageId or currentUrlSplit changes
+  // Fetch votes and user vote when currentPageId or currentUrlSplit changes
   $: if (currentPageId && currentUrlSplit) {
     (async () => {
       // Refetch vote counts
       const upvotes = await getLikeDislikeCount(currentPageId);
       if (upvotes) {
         currentPageVotes = upvotes;
+      } else {
+        // If no data exists, initialize to zero
+        currentPageVotes = { likes: 0, dislikes: 0 };
       }
       // Refetch user vote
       if ($userId) {
@@ -175,23 +90,20 @@
             currentUrlSplit?.route as string,
           );
 
-          // Update page ID and subscribe if needed
           if (newPageId && newPageId !== currentPageId) {
             currentPageId = newPageId;
-            if (!hasSubscribed) {
-              await subscribeToVotes(newPageId);
-              hasSubscribed = true;
-            }
           }
 
           // Always fetch fresh counts and user vote after voting
-          currentPageVotes =
-            (await getLikeDislikeCount(currentPageId as string)) ||
-            currentPageVotes;
+          const upvotes = await getLikeDislikeCount(currentPageId as string);
+          currentPageVotes = upvotes || { likes: 0, dislikes: 0 };
           const userVote = await getUserVote(
             currentPageId as string,
             $userId as string,
           );
+          if (userVote === 1) ThumbButtonState = "like";
+          else if (userVote === -1) ThumbButtonState = "dislike";
+          else ThumbButtonState = "neutral";
 
           voteDisabled = false;
         }}
@@ -224,23 +136,20 @@
             currentUrlSplit?.route as string,
           );
 
-          // Update page ID and subscribe if needed
           if (newPageId && newPageId !== currentPageId) {
             currentPageId = newPageId;
-            if (!hasSubscribed) {
-              await subscribeToVotes(newPageId);
-              hasSubscribed = true;
-            }
           }
 
           // Always fetch fresh counts and user vote after voting
-          currentPageVotes =
-            (await getLikeDislikeCount(currentPageId as string)) ||
-            currentPageVotes;
+          const upvotes = await getLikeDislikeCount(currentPageId as string);
+          currentPageVotes = upvotes || { likes: 0, dislikes: 0 };
           const userVote = await getUserVote(
             currentPageId as string,
             $userId as string,
           );
+          if (userVote === 1) ThumbButtonState = "like";
+          else if (userVote === -1) ThumbButtonState = "dislike";
+          else ThumbButtonState = "neutral";
 
           voteDisabled = false;
         }}
