@@ -136,7 +136,7 @@
       </button>
 
       <button class="primary" type="submit" disabled={isPosting}>
-        <p>Send</p>
+        <p>send</p>
         <CornerUpRight size={15} color="var(--background)" />
       </button>
     </div>
