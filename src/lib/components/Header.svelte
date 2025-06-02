@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Tickbox from "./Tickbox.svelte";
   import { RealtimeChannel } from "@supabase/supabase-js";
   import type { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
   import { getLikeDislikeCount, getUserVote, votePage } from "../database";
@@ -132,106 +133,116 @@
     </div>
   </div>
 
-  <div class="votes-button">
-    <button
-      disabled={voteDisabled}
-      class="clean"
-      class:active={ThumbButtonState === "like"}
-      on:click={async () => {
-        voteDisabled = true;
+  <div class="header-buttons">
+    <div class="votes-button">
+      <button
+        disabled={voteDisabled}
+        class="clean"
+        class:active={ThumbButtonState === "like"}
+        on:click={async () => {
+          voteDisabled = true;
 
-        if (ThumbButtonState === "like") {
-          ThumbButtonState = "neutral";
-        } else {
-          ThumbButtonState = "like";
-        }
-
-        const newPageId = await votePage(
-          currentPageId,
-          $userId as string,
-          1,
-          currentUrlSplit?.domain as string,
-          currentUrlSplit?.route as string,
-        );
-
-        // Update page ID and subscribe if needed
-        if (newPageId && newPageId !== currentPageId) {
-          currentPageId = newPageId;
-          if (!hasSubscribed) {
-            await subscribeToVotes(newPageId);
-            hasSubscribed = true;
+          if (ThumbButtonState === "like") {
+            ThumbButtonState = "neutral";
+          } else {
+            ThumbButtonState = "like";
           }
-        }
 
-        // Always fetch fresh counts and user vote after voting
-        currentPageVotes =
-          (await getLikeDislikeCount(currentPageId as string)) ||
-          currentPageVotes;
-        const userVote = await getUserVote(
-          currentPageId as string,
-          $userId as string,
-        );
+          const newPageId = await votePage(
+            currentPageId,
+            $userId as string,
+            1,
+            currentUrlSplit?.domain as string,
+            currentUrlSplit?.route as string,
+          );
 
-        voteDisabled = false;
-      }}
-    >
-      <div class="thumbs-button" class:active={ThumbButtonState === "like"}>
-        <ThumbsUp size={20} />
-      </div>
-
-      <p>
-        {formatter.format(currentPageVotes.likes)}
-      </p>
-    </button>
-
-    <button
-      disabled={voteDisabled}
-      class="clean"
-      on:click={async () => {
-        voteDisabled = true;
-
-        if (ThumbButtonState === "dislike") {
-          ThumbButtonState = "neutral";
-        } else {
-          ThumbButtonState = "dislike";
-        }
-        const newPageId = await votePage(
-          currentPageId,
-          $userId as string,
-          -1,
-          currentUrlSplit?.domain as string,
-          currentUrlSplit?.route as string,
-        );
-
-        // Update page ID and subscribe if needed
-        if (newPageId && newPageId !== currentPageId) {
-          currentPageId = newPageId;
-          if (!hasSubscribed) {
-            await subscribeToVotes(newPageId);
-            hasSubscribed = true;
+          // Update page ID and subscribe if needed
+          if (newPageId && newPageId !== currentPageId) {
+            currentPageId = newPageId;
+            if (!hasSubscribed) {
+              await subscribeToVotes(newPageId);
+              hasSubscribed = true;
+            }
           }
-        }
 
-        // Always fetch fresh counts and user vote after voting
-        currentPageVotes =
-          (await getLikeDislikeCount(currentPageId as string)) ||
-          currentPageVotes;
-        const userVote = await getUserVote(
-          currentPageId as string,
-          $userId as string,
-        );
+          // Always fetch fresh counts and user vote after voting
+          currentPageVotes =
+            (await getLikeDislikeCount(currentPageId as string)) ||
+            currentPageVotes;
+          const userVote = await getUserVote(
+            currentPageId as string,
+            $userId as string,
+          );
 
-        voteDisabled = false;
-      }}
-    >
-      <div class="thumbs-button" class:active={ThumbButtonState === "dislike"}>
-        <ThumbsDown size={20} />
-      </div>
+          voteDisabled = false;
+        }}
+      >
+        <div class="thumbs-button" class:active={ThumbButtonState === "like"}>
+          <ThumbsUp size={20} />
+        </div>
 
-      <p>
-        {formatter.format(currentPageVotes.dislikes)}
-      </p>
-    </button>
+        <p>
+          {formatter.format(currentPageVotes.likes)}
+        </p>
+      </button>
+
+      <button
+        disabled={voteDisabled}
+        class="clean"
+        on:click={async () => {
+          voteDisabled = true;
+
+          if (ThumbButtonState === "dislike") {
+            ThumbButtonState = "neutral";
+          } else {
+            ThumbButtonState = "dislike";
+          }
+          const newPageId = await votePage(
+            currentPageId,
+            $userId as string,
+            -1,
+            currentUrlSplit?.domain as string,
+            currentUrlSplit?.route as string,
+          );
+
+          // Update page ID and subscribe if needed
+          if (newPageId && newPageId !== currentPageId) {
+            currentPageId = newPageId;
+            if (!hasSubscribed) {
+              await subscribeToVotes(newPageId);
+              hasSubscribed = true;
+            }
+          }
+
+          // Always fetch fresh counts and user vote after voting
+          currentPageVotes =
+            (await getLikeDislikeCount(currentPageId as string)) ||
+            currentPageVotes;
+          const userVote = await getUserVote(
+            currentPageId as string,
+            $userId as string,
+          );
+
+          voteDisabled = false;
+        }}
+      >
+        <div
+          class="thumbs-button"
+          class:active={ThumbButtonState === "dislike"}
+        >
+          <ThumbsDown size={20} />
+        </div>
+
+        <p>
+          {formatter.format(currentPageVotes.dislikes)}
+        </p>
+      </button>
+    </div>
+
+    <div class="tags-toggle">
+      <Tickbox checked={true} onChange={() => {}} onClick={() => {}} />
+      <p class="label">Use URL tags</p>
+    </div>
   </div>
 
   <div class="tabhead">
@@ -321,6 +332,14 @@
     }
   }
 
+  .header-buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
   .votes-button {
     display: flex;
     flex-direction: row;
@@ -333,6 +352,20 @@
       flex: 1;
       flex-direction: row;
       align-items: center;
+    }
+  }
+
+  .tags-toggle {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    width: max-content;
+    margin-left: auto;
+
+    p.label {
+      font-size: 14px;
+      color: var(--text);
+      font-weight: 500;
     }
   }
 
