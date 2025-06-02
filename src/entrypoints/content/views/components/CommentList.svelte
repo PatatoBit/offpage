@@ -210,6 +210,10 @@
     border-top: 1px solid var(--border);
   }
 
+  .label {
+    color: var(--border);
+  }
+
   .comment {
     display: flex;
     flex-direction: row;
