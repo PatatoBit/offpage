@@ -265,7 +265,7 @@
         onClick={() =>
           extensionStatus.update((s) => ({ ...s, useTags: !s.useTags }))}
       />
-      <p class="label">Use URL tags</p>
+      <p class="label">URL tags</p>
     </div>
   </div>
 
