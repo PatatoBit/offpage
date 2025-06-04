@@ -29,26 +29,29 @@
     // Log when initialize is called
     console.log("[ContentScript] initialize called");
 
-    chrome.runtime.sendMessage(
-      { type: "GET_CURRENT_URL" },
-      (response) => {
-        console.log("[ContentScript] GET_CURRENT_URL response:", response);
-        if (response?.url) {
-          currentUrl.set(response.url);
-        } else {
-          currentUrl.set("Unable to fetch URL");
-        }
-      },
-    );
+    chrome.runtime.sendMessage({ type: "GET_CURRENT_URL" }, (response) => {
+      console.log("[ContentScript] GET_CURRENT_URL response:", response);
+      if (response?.url) {
+        currentUrl.set(response.url);
+      } else {
+        currentUrl.set("Unable to fetch URL");
+      }
+    });
   }
 
   onMount(() => {
-    console.log("[ContentScript] onMount, window.location.href:", window.location.href);
+    console.log(
+      "[ContentScript] onMount, window.location.href:",
+      window.location.href,
+    );
     initialize();
 
     window.addEventListener("message", (event) => {
       if (event.data?.type === "OFFPAGE_URL_CHANGED") {
-        console.log("[ContentScript] OFFPAGE_URL_CHANGED event:", event.data.url);
+        console.log(
+          "[ContentScript] OFFPAGE_URL_CHANGED event:",
+          event.data.url,
+        );
         currentUrl.set(event.data.url);
       }
     });
