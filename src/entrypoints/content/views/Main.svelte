@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy } from "svelte";
-  import { writable, get } from "svelte/store";
+  import { writable } from "svelte/store";
   import { RealtimeChannel } from "@supabase/supabase-js";
   import type { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 

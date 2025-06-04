@@ -41,6 +41,7 @@ export default defineConfig({
   }),
 
   runner: {
+    chromiumArgs: ["--disable-features=DisableLoadExtensionCommandLineSwitch"],
     startUrls: ["https://www.example.com"],
   },
 });
