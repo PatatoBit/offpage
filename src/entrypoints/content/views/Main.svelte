@@ -21,7 +21,6 @@
   import {
     currentPageId,
     currentUrl,
-    currentUrlSplit,
     initialComments,
     isEmpty,
   } from "@/stores/AppStatus";
@@ -60,24 +59,20 @@
     }
   });
 
-  // Reactively update currentUrlSplit when currentUrl or extensionStatus changes
+  // Remove all usage/import of currentUrlSplit from stores
+  // Use a local reactive variable instead, with a new name:
+  let urlMeta: { baseUrl: string; domain: string; route: string } | null = null;
   $: if ($currentUrl && $extensionStatus) {
-    const split = getBaseUrlAndPath($currentUrl, $extensionStatus.useTags);
-    if (split) {
-      currentUrlSplit.set(split);
-    }
+    urlMeta = getBaseUrlAndPath($currentUrl, $extensionStatus.useTags);
   }
 
-  // Reactively handle subscription and data fetching when currentUrlSplit changes
-  $: if ($currentUrlSplit) {
+  // Reactively handle subscription and data fetching when urlMeta changes
+  $: if (urlMeta) {
     (async () => {
       isEmpty.set(false);
 
       // Find or create the pageId
-      const pageId = await findPageByRoute(
-        $currentUrlSplit.domain,
-        $currentUrlSplit.route,
-      );
+      const pageId = await findPageByRoute(urlMeta.domain, urlMeta.route);
       currentPageId.set(pageId);
 
       if (!pageId) {
@@ -181,7 +176,7 @@
   }
 
   async function handleCommentSubmit(comment: string, imageUrl: string | null) {
-    if (!$currentUrlSplit || !$currentUrl) {
+    if (!urlMeta || !$currentUrl) {
       console.error("Unable to fetch current URL.");
       return;
     }
@@ -193,10 +188,7 @@
       // After adding comment, check if pageId was null before
       if (!$currentPageId) {
         console.log("Page was missing, trying to fetch again.");
-        const pageId = await findPageByRoute(
-          $currentUrlSplit.domain,
-          $currentUrlSplit.route,
-        );
+        const pageId = await findPageByRoute(urlMeta.domain, urlMeta.route);
 
         if (pageId) {
           currentPageId.set(pageId);
@@ -215,7 +207,7 @@
 <main>
   <Header
     currentUrl={$currentUrl as string}
-    currentUrlSplit={$currentUrlSplit}
+    currentUrlSplit={urlMeta}
     currentPageId={$currentPageId as string}
   />
 
