@@ -18,23 +18,23 @@
   import CommentList from "./components/CommentList.svelte";
   import CommentForm from "./components/CommentForm.svelte";
 
-  import {
-    currentPageId,
-    currentUrl,
-    initialComments,
-    isEmpty,
-  } from "@/stores/AppStatus";
+  import { currentPageId, initialComments, isEmpty } from "@/stores/AppStatus";
+
+  const currentUrl = writable<string | null>(null);
 
   let channel: RealtimeChannel;
   const postingComment = writable<boolean>(false);
 
   async function initialize() {
+    // Log when initialize is called
+    console.log("[ContentScript] initialize called");
+
     chrome.runtime.sendMessage(
       { type: "GET_CURRENT_URL" },
-      async (response) => {
+      (response) => {
+        console.log("[ContentScript] GET_CURRENT_URL response:", response);
         if (response?.url) {
           currentUrl.set(response.url);
-          // Remove currentUrlSplit.set here, let the reactive statement handle it
         } else {
           currentUrl.set("Unable to fetch URL");
         }
@@ -43,10 +43,12 @@
   }
 
   onMount(() => {
+    console.log("[ContentScript] onMount, window.location.href:", window.location.href);
     initialize();
 
     window.addEventListener("message", (event) => {
       if (event.data?.type === "OFFPAGE_URL_CHANGED") {
+        console.log("[ContentScript] OFFPAGE_URL_CHANGED event:", event.data.url);
         currentUrl.set(event.data.url);
       }
     });
@@ -59,19 +61,16 @@
     }
   });
 
-  // Remove all usage/import of currentUrlSplit from stores
-  // Use a local reactive variable instead, with a new name:
   let urlMeta: { baseUrl: string; domain: string; route: string } | null = null;
+  $: $currentUrl, $extensionStatus;
   $: if ($currentUrl && $extensionStatus) {
     urlMeta = getBaseUrlAndPath($currentUrl, $extensionStatus.useTags);
   }
 
-  // Reactively handle subscription and data fetching when urlMeta changes
   $: if (urlMeta) {
     (async () => {
       isEmpty.set(false);
 
-      // Find or create the pageId
       const pageId = await findPageByRoute(urlMeta.domain, urlMeta.route);
       currentPageId.set(pageId);
 
@@ -81,14 +80,12 @@
         return;
       }
 
-      // Fetch comments
       const comments = await findCommentsDataByPageId(pageId);
       initialComments.set(comments || []);
       if (!comments || comments.length === 0) {
         isEmpty.set(true);
       }
 
-      // Subscribe to real-time updates
       if (channel) {
         await channel.unsubscribe();
       }
@@ -185,7 +182,6 @@
       postingComment.set(true);
       await addComment($currentUrl as string, comment, imageUrl);
 
-      // After adding comment, check if pageId was null before
       if (!$currentPageId) {
         console.log("Page was missing, trying to fetch again.");
         const pageId = await findPageByRoute(urlMeta.domain, urlMeta.route);

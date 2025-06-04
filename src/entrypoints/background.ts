@@ -52,16 +52,21 @@ export default defineBackground(() => {
 
   // Add cleanup for message listener
   const messageListener = (message: any, sender: any, sendResponse: any) => {
-    console.log("Message received:", message, message.type);
+    console.log("[Background] Message received:", message, "Sender:", sender);
+
     switch (message.type) {
       case "GET_CURRENT_URL":
-        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-          if (tabs.length > 0) {
-            sendResponse({ url: tabs[0].url });
-          } else {
-            sendResponse({ url: null });
-          }
-        });
+        const tabId = sender.tab?.id;
+        console.log("[Background] GET_CURRENT_URL for tabId:", tabId);
+        if (tabId) {
+          chrome.tabs.get(tabId, (tab) => {
+            console.log("[Background] chrome.tabs.get result:", tab);
+            sendResponse({ url: tab.url });
+          });
+        } else {
+          console.log("[Background] No tabId found in sender.");
+          sendResponse({ url: null });
+        }
         return true; // Keeps message channel open
 
       case "OPEN_OPTIONS_PAGE":
