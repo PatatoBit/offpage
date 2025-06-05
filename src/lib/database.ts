@@ -32,12 +32,11 @@ export interface UserProfileData {
 
 export async function findPageByRoute(domain: string, route: string) {
   // Always encode route before querying
-  const encodedRoute = encodeURIComponent(route);
   let { data: page, error } = await supabase
     .from("pages")
     .select("*")
     .eq("domain", domain)
-    .eq("route", encodedRoute)
+    .eq("route", route)
     .single();
 
   if (error && error.code === "PGRST116") {
@@ -48,12 +47,12 @@ export async function findPageByRoute(domain: string, route: string) {
       "Route:",
       route,
       "Encoded Route:",
-      encodedRoute,
+      route,
     );
 
     const { data: newPage, error: createPageError } = await supabase
       .from("pages")
-      .insert([{ domain, route: encodedRoute }]) // <-- encode here too
+      .insert([{ domain, route: route }]) // <-- encode here too
       .select()
       .single();
 
@@ -86,9 +85,6 @@ export async function addComment(
   content: string,
   image_url: string | null,
 ) {
-  // If you ever pass route/domain here, encode route before sending to backend
-  // const encodedRoute = encodeURIComponent(route);
-
   const { data, error } = await supabase.functions.invoke("submit-comment", {
     body: {
       domain,
@@ -249,21 +245,18 @@ export async function votePage(
 ): Promise<string | null> {
   console.log("Voting for page:", pageId, userId, value);
 
-  // Always encode route before querying
-  const encodedRoute = encodeURIComponent(route);
-
   // Step 0: Ensure the page exists
   let { data: page, error: pageFetchError } = await supabase
     .from("pages")
     .select("id")
     .eq("domain", domain)
-    .eq("route", encodedRoute)
+    .eq("route", route)
     .single();
 
   if (pageFetchError && pageFetchError.code === "PGRST116") {
     const { data: newPage, error: createPageError } = await supabase
       .from("pages")
-      .insert([{ domain, route: encodedRoute }])
+      .insert([{ domain, route: route }])
       .select()
       .single();
 

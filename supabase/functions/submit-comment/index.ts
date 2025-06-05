@@ -47,15 +47,12 @@ Deno.serve(async (req): Promise<Response> => {
     });
   }
 
-  // Always encode the route before querying the DB!
-  const encodedRoute = encodeURIComponent(route);
-
   // Fetch the page document
   const { data: page, error: pageError } = await supabase
     .from("pages")
     .select("id")
     .eq("domain", domain)
-    .eq("route", encodedRoute)
+    .eq("route", route)
     .single();
 
   if (pageError) {
@@ -157,23 +154,3 @@ Deno.serve(async (req): Promise<Response> => {
     },
   });
 });
-
-function getBaseUrlAndPath(
-  url: string,
-): { baseUrl: string; domain: string; route: string } | null {
-  try {
-    const parsedUrl = new URL(url);
-    const baseUrl: string = parsedUrl.origin; // Get origin (scheme + hostname + port)
-    const domain: string = parsedUrl.hostname; // Get hostname (domain name)
-    const route: string = parsedUrl.pathname.endsWith("/")
-      ? parsedUrl.pathname.slice(0, -1) // Remove trailing slash
-      : parsedUrl.pathname; // Get pathname without trailing slash
-
-    return { baseUrl, domain, route };
-  } catch (error) {
-    console.error("Invalid URL:", error);
-    console.error(url);
-
-    return null;
-  }
-}
