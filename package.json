@@ -2,7 +2,7 @@
   "name": "offpage",
   "description": "a community behind every page of the internet",
   "private": true,
-  "version": "1.2.4",
+  "version": "1.2.5",
   "type": "module",
   "keywords": [
     "wxt",
