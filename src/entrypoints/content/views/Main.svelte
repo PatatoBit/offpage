@@ -105,6 +105,10 @@
             filter: `page_id=eq.${pageId}`,
           },
           async (payload: RealtimePostgresChangesPayload<CommentData>) => {
+            console.log(
+              "[ContentScript] Received INSERT event for comments",
+              payload,
+            );
             isEmpty.set(false);
             if (Object.keys(payload.new).length > 0) {
               const comment = payload.new as CommentData;
@@ -129,6 +133,10 @@
             filter: `page_id=eq.${pageId}`,
           },
           async (payload: RealtimePostgresChangesPayload<CommentData>) => {
+            console.log(
+              "[ContentScript] Received UPDATE event for comments",
+              payload,
+            );
             if (Object.keys(payload.new).length > 0) {
               const updatedComment = payload.new as CommentData;
               const newUpdatedComment = {
@@ -159,6 +167,10 @@
             table: "comments",
           },
           (payload: RealtimePostgresChangesPayload<CommentData>) => {
+            console.log(
+              "[ContentScript] Received DELETE event for comments",
+              payload,
+            );
             if (Object.keys(payload.old).length > 0) {
               const deletedComment = payload.old as CommentData;
               initialComments.update((prev) =>
@@ -183,7 +195,7 @@
 
     try {
       postingComment.set(true);
-      await addComment($currentUrl as string, comment, imageUrl);
+      await addComment(urlMeta.domain, urlMeta.route, comment, imageUrl);
 
       if (!$currentPageId) {
         console.log("Page was missing, trying to fetch again.");

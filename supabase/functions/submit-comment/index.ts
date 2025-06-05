@@ -39,31 +39,37 @@ Deno.serve(async (req): Promise<Response> => {
   }
 
   // Handle actual POST request
-  const { content, imageData, baseUrl } = await req.json();
+  const { domain, route, content, imageData } = await req.json();
 
-  const result = getBaseUrlAndPath(baseUrl);
-  if (!result) {
-    return new Response("Invalid base URL", { status: 400 });
+  if (!domain || !route || !content) {
+    return new Response("Bad Request: missing required fields", {
+      status: 400,
+    });
   }
-  const { domain, route } = result;
+
+  // Always encode the route before querying the DB!
+  const encodedRoute = encodeURIComponent(route);
 
   // Fetch the page document
-  let { data: page, error: pageError } = await supabase
+  const { data: page, error: pageError } = await supabase
     .from("pages")
     .select("id")
     .eq("domain", domain)
-    .eq("route", route)
+    .eq("route", encodedRoute)
     .single();
 
   if (pageError) {
-    console.error(`Error fetching page for URL: ${baseUrl}`, pageError.message);
+    console.error(
+      `Error fetching page for URL: ${domain} ${route}`,
+      pageError.message,
+    );
     return new Response("Internal Server Error: failed to fetch page", {
       status: 500,
     });
   }
 
   if (!page) {
-    console.error(`Page not found for URL: ${baseUrl}`);
+    console.error(`Page not found for URL: ${domain} ${route}`);
     return new Response("Internal Server Error: page not found for URL", {
       status: 500,
     });

@@ -13,7 +13,6 @@
   import { writable } from "svelte/store";
   import { userId } from "@/lib/stores/sessionStore";
   import CommentOptions from "./CommentOptions.svelte";
-  import { onMount } from "svelte";
 
   const filter = new Filter();
 
