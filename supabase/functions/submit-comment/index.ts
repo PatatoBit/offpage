@@ -41,12 +41,6 @@ Deno.serve(async (req): Promise<Response> => {
   // Handle actual POST request
   const { domain, route, content, imageData } = await req.json();
 
-  if (!domain || !route || !content) {
-    return new Response("Bad Request: missing required fields", {
-      status: 400,
-    });
-  }
-
   // Fetch the page document
   const { data: page, error: pageError } = await supabase
     .from("pages")
