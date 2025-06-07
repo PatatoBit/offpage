@@ -65,12 +65,23 @@
   });
 
   let urlMeta: { baseUrl: string; domain: string; route: string } | null = null;
+  let lastUrlMeta: { baseUrl: string; domain: string; route: string } | null =
+    null;
+
   $: $currentUrl, $extensionStatus;
   $: if ($currentUrl && $extensionStatus) {
     urlMeta = getBaseUrlAndPath($currentUrl, $extensionStatus.useTags);
   }
 
-  $: if (urlMeta) {
+  // Only run when urlMeta actually changes
+  $: if (
+    urlMeta &&
+    (!lastUrlMeta ||
+      urlMeta.domain !== lastUrlMeta.domain ||
+      urlMeta.route !== lastUrlMeta.route)
+  ) {
+    lastUrlMeta = { ...urlMeta }; // update cache
+
     (async () => {
       isEmpty.set(false);
 
