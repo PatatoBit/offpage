@@ -4,12 +4,8 @@
   all: initial;
   color: initial;
   font-family: initial;
-  position: relative;
+  position: absolute;
   z-index: 10000000;
-
-  -webkit-box-shadow: 0px 10px 15px 0px rgba(207, 207, 207, 1);
-  -moz-box-shadow: 0px 10px 15px 0px rgba(207, 207, 207, 1);
-  box-shadow: 0px 10px 15px 0px rgba(207, 207, 207, 1);
 }
 
 html,
