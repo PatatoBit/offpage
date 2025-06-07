@@ -1,7 +1,7 @@
 <script lang="ts">
   import { extensionStatus } from "@/stores/AppStatus";
 
-  browser.runtime.onMessage.addListener((message) => {
+  browser.runtime.onMessage.addListener((message: any) => {
     if (message.type === "TOGGLE_STATUS") {
       extensionStatus.update((prev) => ({ ...prev, open: message.open }));
     }
