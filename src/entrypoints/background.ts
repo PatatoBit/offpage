@@ -2,7 +2,7 @@ import { supabase } from "@/lib/supabase";
 import { supabaseUrl, supabaseAnonKey } from "@/lib/utils";
 import { createClient } from "@supabase/supabase-js";
 
-export default defineBackground(() => {
+export default defineBackground(async () => {
   console.log("Background Initiated", { id: browser.runtime.id });
 
   // Store cleanup functions

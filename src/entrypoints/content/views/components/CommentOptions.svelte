@@ -3,7 +3,11 @@
   import { Ellipsis } from "@lucide/svelte";
   import { onDestroy } from "svelte";
   import { fly } from "svelte/transition";
-  const { commentId } = $props<{ commentId: string | number }>();
+  // Accept commentId and imageUrl as props from the parent
+  const { commentId, imageUrl = null } = $props<{
+    commentId: string | number;
+    imageUrl?: string | null;
+  }>();
 
   let popupOpen = $state(false);
   let popupRef = $state<HTMLDivElement | null>(null);
@@ -33,6 +37,26 @@
 
   const deleteComment = async () => {
     console.log(`Delete comment with ID: ${commentId}`);
+    // If imageUrl exists, delete the image via edge function
+    if (imageUrl) {
+      let storagePath = imageUrl;
+      const prefix =
+        "https://blbixtcshtlrvmgkgpco.supabase.co/storage/v1/object/public/comments-images/";
+      if (imageUrl.startsWith(prefix)) {
+        storagePath = imageUrl.slice(prefix.length);
+      }
+
+      console.log(`Deleting image at storage path: ${storagePath}`);
+
+      const { error } = await supabase.storage
+        .from("comments-images")
+        .remove([storagePath]);
+      if (error) {
+        console.error("Error deleting image:", error.message);
+        return;
+      }
+    }
+
     const res = await supabase.from("comments").delete().eq("id", commentId);
     if (res.error) {
       console.error("Error deleting comment:", res.error);

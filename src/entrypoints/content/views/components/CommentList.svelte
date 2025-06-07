@@ -150,7 +150,10 @@
 
             {#if comment.author === $userId}
               <div class="comment-buttons">
-                <CommentOptions commentId={comment.id} />
+                <CommentOptions
+                  commentId={comment.id}
+                  imageUrl={comment.image_url}
+                />
               </div>
             {/if}
           </div>

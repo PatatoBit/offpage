@@ -92,6 +92,17 @@ Deno.serve(async (req): Promise<Response> => {
       return new Response("Image upload failed", { status: 500 });
     }
 
+    // Set the owner in storage.objects
+    const { error: ownerError } = await supabase
+      .from("storage.objects")
+      .update({ owner: userId })
+      .eq("name", path);
+
+    if (ownerError) {
+      console.error("Error setting owner for image:", ownerError.message);
+      // Optionally, you can handle this error (e.g., delete the uploaded file)
+    }
+
     const { data: urlData } = supabase.storage
       .from("comments-images")
       .getPublicUrl(path);
