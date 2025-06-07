@@ -264,7 +264,9 @@
     gap: 8px;
     width: 100%;
     height: 100%;
-    top: -140px;
+
+    top: -105%;
+    left: 8px;
 
     .dropped-image {
       position: relative;
