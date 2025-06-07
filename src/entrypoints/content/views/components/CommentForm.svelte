@@ -22,6 +22,8 @@
   let inputRef: HTMLInputElement | null = null;
   let file: File | null = null;
   let currentFileUrl: string | null = null;
+  let alertMessage: string | null = null;
+  let alertTimeout: number | null = null;
 
   async function handleSubmit() {
     if (!currentComment) {
@@ -55,23 +57,51 @@
     }
   }
 
-  function handleFileDrop(event: DragEvent) {
-    event.preventDefault();
-    const droppedFile = event.dataTransfer?.files[0];
-
-    if (droppedFile && isValidImage(droppedFile)) {
-      file = droppedFile;
-      currentFileUrl = URL.createObjectURL(file);
-    }
+  function showAlert(message: string) {
+    alertMessage = message;
+    if (alertTimeout) clearTimeout(alertTimeout);
+    alertTimeout = window.setTimeout(() => {
+      alertMessage = null;
+    }, 4000);
   }
 
   function handleFileSelect(event: Event) {
     const selectedFile = (event.target as HTMLInputElement)?.files?.[0];
     if (selectedFile && isValidImage(selectedFile)) {
+      // File size limits: 5MB for images, 8MB for GIFs
+      const isGif = selectedFile.type === "image/gif";
+      const maxSize = isGif ? 8 * 1024 * 1024 : 5 * 1024 * 1024;
+      if (selectedFile.size > maxSize) {
+        showAlert(
+          `File too large. Max size: ${isGif ? "8MB for GIFs" : "5MB for images"}.`,
+        );
+        return;
+      }
       file = selectedFile;
       currentFileUrl = URL.createObjectURL(file);
     } else {
-      console.error("Invalid file type.");
+      showAlert("Invalid file type.");
+    }
+  }
+
+  function handleFileDrop(event: DragEvent) {
+    event.preventDefault();
+    const droppedFile = event.dataTransfer?.files[0];
+
+    if (droppedFile && isValidImage(droppedFile)) {
+      // File size limits: 5MB for images, 8MB for GIFs
+      const isGif = droppedFile.type === "image/gif";
+      const maxSize = isGif ? 8 * 1024 * 1024 : 5 * 1024 * 1024;
+      if (droppedFile.size > maxSize) {
+        showAlert(
+          `File too large. Max size: ${isGif ? "8MB for GIFs" : "5MB for images"}.`,
+        );
+        return;
+      }
+      file = droppedFile;
+      currentFileUrl = URL.createObjectURL(file);
+    } else {
+      showAlert("Invalid file type.");
     }
   }
 
@@ -141,6 +171,12 @@
       </button>
     </div>
   </div>
+
+  {#if alertMessage}
+    <div class="alert" transition:fly={{ y: -50 }}>
+      {alertMessage}
+    </div>
+  {/if}
 </form>
 
 <style lang="scss">
@@ -255,5 +291,30 @@
         width: auto;
       }
     }
+  }
+
+  .alert {
+    position: absolute;
+    top: -50%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--red);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    z-index: 1000;
+  }
+
+  .alert-message {
+    background: var(--red, #ff4d4f);
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    text-align: center;
+    font-size: 0.95rem;
+    z-index: 100;
+    position: relative;
   }
 </style>
