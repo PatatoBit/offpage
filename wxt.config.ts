@@ -6,7 +6,8 @@ import path from "path";
 // See https://wxt.dev/api/config.html
 export default defineConfig({
   srcDir: "src",
-  modules: ["@wxt-dev/module-svelte"],
+  publicDir: "src/public",
+  modules: ["@wxt-dev/module-svelte", "@wxt-dev/auto-icons"],
   manifest: () => ({
     name: "offpage",
     key: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxtClUs8pzWpvqVpIJsaJxTjzeET8JpTaodC5w3UATeJkIXiZDnn/sMV2L+QSCWDFOn7wdVkZ+w+vVBMeMzvFdQLRNuZlSsQdQVjD8QbEDJAjcl/uvFXzWEwkrZOjXeKN+l8dBiNEBttuINPre9qzBAa/a++1fc3d0Fny66CCooaaTGRp1qZaXaDaia4eJpsyH2NylsSjYJ6fy+geXkt66ERW1CKkFn8JlYIxXbeifkBWYJAG2KKgmzmAjnlRo2YTFuKY6zeQwEoPInWtvc4ueSoUPSPM0/4+yQgzFW7eVV9mg26LkdwIlKq5LpRu+smsoRHUyPN+aLiEPTZGJgnFOQIDAQAB",
@@ -23,6 +24,7 @@ export default defineConfig({
       open_in_tab: true,
     },
   }),
+
   vite: () => ({
     plugins: [wasm(), topLevelAwait()],
 
@@ -40,7 +42,7 @@ export default defineConfig({
     },
   }),
 
-  runner: {
+  webExt: {
     chromiumArgs: ["--disable-features=DisableLoadExtensionCommandLineSwitch"],
     startUrls: ["https://www.example.com"],
   },

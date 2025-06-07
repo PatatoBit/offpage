@@ -47,6 +47,7 @@
     "@sveltejs/vite-plugin-svelte": "4.0.0-next.7",
     "@tsconfig/svelte": "^5.0.4",
     "@types/chrome": "^0.0.269",
+    "@wxt-dev/auto-icons": "^1.0.2",
     "@wxt-dev/module-svelte": "^1.0.1",
     "autoprefixer": "^10.4.20",
     "prettier": "^3.3.3",
@@ -59,7 +60,7 @@
     "vite": "^5.4.5",
     "vite-plugin-top-level-await": "^1.4.4",
     "vite-plugin-wasm": "^3.3.0",
-    "wxt": "^0.19.29"
+    "wxt": "^0.20.7"
   },
   "overrides": {
     "@sveltejs/vite-plugin-svelte": "^4.0.0-next"
