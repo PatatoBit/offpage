@@ -1,6 +1,7 @@
 <script lang="ts">
   import { CornerUpRight, Image } from "@lucide/svelte";
   import axios from "axios";
+  import imageCompression from "browser-image-compression";
 
   import Cross from "@/assets/icons/cross.svg";
   import { uploadCommentImage } from "@/lib/database";
@@ -37,13 +38,25 @@
     let image64Data: string | null = null;
 
     if (file) {
-      image64Data = await convertImageToBase64(file);
+      // Compress the image before converting to base64
+      try {
+        const compressedFile = await imageCompression(file, {
+          maxSizeMB: 1, // Target max size (MB)
+          maxWidthOrHeight: 1200, // Resize if larger
+          useWebWorker: true,
+        });
+        image64Data = await convertImageToBase64(compressedFile);
 
-      if (image64Data) {
-        file = null;
-        currentFileUrl = null;
-      } else {
-        console.error("Unable to upload image.");
+        if (image64Data) {
+          file = null;
+          currentFileUrl = null;
+        } else {
+          console.error("Unable to upload image.");
+        }
+      } catch (err) {
+        console.error("Image compression failed:", err);
+        showAlert("Image compression failed.");
+        return;
       }
     }
 
