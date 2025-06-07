@@ -1,14 +1,9 @@
 <script lang="ts">
   import { CornerUpRight, Image } from "@lucide/svelte";
-  import axios from "axios";
   import imageCompression from "browser-image-compression";
 
   import Cross from "@/assets/icons/cross.svg";
-  import { uploadCommentImage } from "@/lib/database";
-  import { currentPageId } from "@/stores/AppStatus";
-  import { userId } from "@/lib/stores/sessionStore";
   import { convertImageToBase64, isValidImage } from "@/lib/utils";
-  import { supabase } from "@/lib/supabase";
   import PostingSpinner from "./PostingSpinner.svelte";
   import { fly } from "svelte/transition";
 
