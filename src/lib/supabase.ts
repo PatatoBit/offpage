@@ -1,8 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
 import { isSignedIn } from "./stores/sessionStore";
 
-const supabaseUrlKey = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseUrlKey = import.meta.env.WXT_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.WXT_SUPABASE_ANON_KEY;
 
 if (!supabaseAnonKey || !supabaseUrlKey) {
   throw new Error(`Missing Supabase URL or Anon Key`);

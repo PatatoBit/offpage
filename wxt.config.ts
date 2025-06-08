@@ -10,7 +10,7 @@ export default defineConfig({
   modules: ["@wxt-dev/module-svelte", "@wxt-dev/auto-icons"],
   manifest: () => ({
     name: "offpage",
-    key: import.meta.env.VITE_EXTENSION_KEY,
+    key: import.meta.env.WXT_EXTENSION_KEY,
     description: "a community behind every page of the internet",
     permissions: ["storage", "identity", "tabs"],
     action: {},

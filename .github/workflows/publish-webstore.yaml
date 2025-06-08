@@ -26,19 +26,19 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --no-frozen-lockfile
         env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          WXT_SUPABASE_URL: ${{ secrets.WXT_SUPABASE_URL }}
+          WXT_SUPABASE_ANON_KEY: ${{ secrets.WXT_SUPABASE_ANON_KEY }}
           WXT_OAUTH_CLIENT_ID: ${{ secrets.WXT_OAUTH_CLIENT_ID }}
-          VITE_TURNSTILE_SITE_KEY: ${{ secrets.VITE_TURNSTILE_SITE_KEY }}
+          WXT_TURNSTILE_SITE_KEY: ${{ secrets.WXT_TURNSTILE_SITE_KEY }}
 
       - name: Zip extensions
         run: |
           pnpm zip
         env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          WXT_SUPABASE_URL: ${{ secrets.WXT_SUPABASE_URL }}
+          WXT_SUPABASE_ANON_KEY: ${{ secrets.WXT_SUPABASE_ANON_KEY }}
           WXT_OAUTH_CLIENT_ID: ${{ secrets.WXT_OAUTH_CLIENT_ID }}
-          VITE_TURNSTILE_SITE_KEY: ${{ secrets.VITE_TURNSTILE_SITE_KEY }}
+          WXT_TURNSTILE_SITE_KEY: ${{ secrets.WXT_TURNSTILE_SITE_KEY }}
 
       - name: Submit to stores
         run: |
