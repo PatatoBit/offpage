@@ -10,15 +10,14 @@ export default defineConfig({
   modules: ["@wxt-dev/module-svelte", "@wxt-dev/auto-icons"],
   manifest: () => ({
     name: "offpage",
-    key: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxtClUs8pzWpvqVpIJsaJxTjzeET8JpTaodC5w3UATeJkIXiZDnn/sMV2L+QSCWDFOn7wdVkZ+w+vVBMeMzvFdQLRNuZlSsQdQVjD8QbEDJAjcl/uvFXzWEwkrZOjXeKN+l8dBiNEBttuINPre9qzBAa/a++1fc3d0Fny66CCooaaTGRp1qZaXaDaia4eJpsyH2NylsSjYJ6fy+geXkt66ERW1CKkFn8JlYIxXbeifkBWYJAG2KKgmzmAjnlRo2YTFuKY6zeQwEoPInWtvc4ueSoUPSPM0/4+yQgzFW7eVV9mg26LkdwIlKq5LpRu+smsoRHUyPN+aLiEPTZGJgnFOQIDAQAB",
+    key: import.meta.env.VITE_EXTENSION_KEY,
     description: "a community behind every page of the internet",
     permissions: ["storage", "identity", "tabs"],
     action: {},
-    oauth2: {
-      client_id:
-        "128510583025-7je22o18sg3eo5h2jk1jt62q1hdvqp05.apps.googleusercontent.com",
+    oauth2: () => ({
+      client_id: import.meta.env.WXT_OAUTH_CLIENT_ID,
       scopes: ["profile", "email", "openid"],
-    },
+    }),
     options_ui: {
       page: "entrypoints/options/index.html",
       open_in_tab: true,
