@@ -22,8 +22,8 @@
   let alertTimeout: number | null = null;
 
   async function handleSubmit() {
-    if (!currentComment) {
-      console.error("Comment cannot be empty.");
+    if (!currentComment && !file) {
+      showAlert("Please enter a comment or attach an image.");
       return;
     }
 
@@ -154,7 +154,6 @@
       bind:value={currentComment}
       on:keydown={handleEnterKey}
       placeholder="Share your thoughts..."
-      required
       rows="3"
       maxlength="500"
       disabled={isPosting}
